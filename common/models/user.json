@@ -20,6 +20,11 @@
       "model": "userCredential",
       "foreignKey": "userId"
     },
+    "protocols": {
+      "type": "hasMany",
+      "model": "Protocol",
+      "foreignKey": "userId"
+    },
     "roles": {
       "type": "hasMany",
       "model": "Role",

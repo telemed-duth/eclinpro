@@ -1,0 +1,146 @@
+{
+  "name": "Protocol",
+  "plural": "protocols",
+  "base": "PersistedModel",
+  "properties": { 
+    
+    //Generic Properties
+    "title": {
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean",
+      "required": true
+    },
+    
+    //Protocol Goal
+    "goal_type": {
+      "type": "string",
+      "enum": ["prevention", "diagnosis", "management"]
+      "required": true
+    },
+    "goal_disease_umls": {
+      "type": "string",
+      "required": true
+    },
+    "goal_outcomes": {
+      "type": "array"
+    },
+    
+    //Protocol Evidence Source
+    "evidence_url":{
+      "type":"string"
+    },
+    "evidence_author":{
+      "type":"string"
+    },
+    "evidence_date":{
+      "type":"string"
+    },   
+    
+    //Protocol Data Source
+    "data_url":{
+      "type":"string"
+    },
+    "data_author":{
+      "type":"string"
+    },
+    "data_institute":{
+      "type":"string"
+    }, 
+    
+    //Protocol Release
+    "release_version":{
+      "type":"string"
+    },
+    "release_date":{
+      "type":"string"
+    },
+     
+    //Protocol Required resources 
+    "resources_infastructure":{ //Mappings: 
+      "type":"string"
+    },
+    "resources_human":{ //Mappings: 
+      "type":"string"
+    },
+    
+        
+    //Patient Cohort
+    "cohort_demographics_gender": {
+      "type": "string",
+      "enum": ["male", "female", "both"]
+      "required": true
+    },
+    "cohort_demographics_occupation": { //Mappings: 
+      "type": "string",
+    },
+    "cohort_demographics_insurance": { 
+      "type": "string",
+    },
+    "cohort_demographics_agegroup": { 
+      "type": "string",
+    },
+    "cohort_demographics_nationality": { //Mappings: 
+      "type": "string",
+    },
+    "cohort_exposure": { //Mappings: 
+      "type": "array"
+    },
+    "cohort_comorbidities": { //Mappings: 
+      "type": "array"
+    },
+    "cohort_riskfactors": { //Mappings: 
+      "type": "array"
+    },
+    "cohort_symptoms": { 
+      "type": "string"
+    },
+    "cohort_contraindications": {
+      "type": "array"
+    },
+    "cohort_medicalhistory": {
+      "type": "array"
+    },
+    
+    "created": {
+      "type": "number"
+    }
+    
+  },
+  "validations": [],
+  "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": []
+}
