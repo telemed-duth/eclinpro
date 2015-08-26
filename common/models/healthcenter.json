@@ -1,0 +1,24 @@
+{
+  "name": "Healthcenter",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "geopoint"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "approved_by": {
+      "type": "hasAndBelongsToMany",
+      "model": "Protocol",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": []
+}

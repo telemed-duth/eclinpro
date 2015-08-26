@@ -1,146 +1,145 @@
 {
-  "name": "Protocol",
-  "plural": "protocols",
-  "base": "PersistedModel",
-  "properties": { 
-    
-    //Generic Properties
-    "title": {
-      "type": "string"
+    "name": "Protocol",
+    "plural": "protocols",
+    "base": "PersistedModel",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "active": {
+            "type": "boolean",
+            "required": true
+        },
+        "goal_type": {
+            "type": "string",
+            "enum": [
+                "prevention",
+                "diagnosis",
+                "management"
+            ],
+            "required": true
+        },
+        "goal_disease_umls": {
+            "type": "string",
+            "required": true
+        },
+        "goal_outcomes": {
+            "type": "array"
+        },
+        "evidence_url": {
+            "type": "string"
+        },
+        "evidence_author": {
+            "type": "string"
+        },
+        "evidence_date": {
+            "type": "string"
+        },
+        "data_url": {
+            "type": "string"
+        },
+        "data_author": {
+            "type": "string"
+        },
+        "data_institute": {
+            "type": "string"
+        },
+        "release_version": {
+            "type": "string"
+        },
+        "release_date": {
+            "type": "string"
+        },
+        "resources_infastructure": {
+            "type": "string"
+        },
+        "resources_human": {
+            "type": "string"
+        },
+        "cohort_demographics_gender": {
+            "type": "string",
+            "enum": [
+                "male",
+                "female",
+                "both"
+            ],
+            "required": true
+        },
+        "cohort_demographics_occupation": {
+            "type": "string"
+        },
+        "cohort_demographics_insurance": {
+            "type": "string"
+        },
+        "cohort_demographics_agegroup": {
+            "type": "string"
+        },
+        "cohort_demographics_nationality": {
+            "type": "string"
+        },
+        "cohort_exposure": {
+            "type": "array"
+        },
+        "cohort_comorbidities": {
+            "type": "array"
+        },
+        "cohort_riskfactors": {
+            "type": "array"
+        },
+        "cohort_symptoms": {
+            "type": "string"
+        },
+        "cohort_contraindications": {
+            "type": "array"
+        },
+        "cohort_medicalhistory": {
+            "type": "array"
+        },
+        "modified": {
+            "type": "date"
+        },
+        "created": {
+            "type": "date"
+        }
     },
-    "active": {
-      "type": "boolean",
-      "required": true
+    "validations": [],
+    "relations": {
+        "owner": {
+            "type": "belongsTo",
+            "model": "user",
+            "foreignKey": "userId"
+        },
+        "approved_by": {
+        "type": "hasAndBelongsToMany",
+        "model": "Healthcenter",
+        "foreignKey": ""
+      }
     },
-    
-    //Protocol Goal
-    "goal_type": {
-      "type": "string",
-      "enum": ["prevention", "diagnosis", "management"]
-      "required": true
-    },
-    "goal_disease_umls": {
-      "type": "string",
-      "required": true
-    },
-    "goal_outcomes": {
-      "type": "array"
-    },
-    
-    //Protocol Evidence Source
-    "evidence_url":{
-      "type":"string"
-    },
-    "evidence_author":{
-      "type":"string"
-    },
-    "evidence_date":{
-      "type":"string"
-    },   
-    
-    //Protocol Data Source
-    "data_url":{
-      "type":"string"
-    },
-    "data_author":{
-      "type":"string"
-    },
-    "data_institute":{
-      "type":"string"
-    }, 
-    
-    //Protocol Release
-    "release_version":{
-      "type":"string"
-    },
-    "release_date":{
-      "type":"string"
-    },
-     
-    //Protocol Required resources 
-    "resources_infastructure":{ //Mappings: 
-      "type":"string"
-    },
-    "resources_human":{ //Mappings: 
-      "type":"string"
-    },
-    
-        
-    //Patient Cohort
-    "cohort_demographics_gender": {
-      "type": "string",
-      "enum": ["male", "female", "both"]
-      "required": true
-    },
-    "cohort_demographics_occupation": { //Mappings: 
-      "type": "string",
-    },
-    "cohort_demographics_insurance": { 
-      "type": "string",
-    },
-    "cohort_demographics_agegroup": { 
-      "type": "string",
-    },
-    "cohort_demographics_nationality": { //Mappings: 
-      "type": "string",
-    },
-    "cohort_exposure": { //Mappings: 
-      "type": "array"
-    },
-    "cohort_comorbidities": { //Mappings: 
-      "type": "array"
-    },
-    "cohort_riskfactors": { //Mappings: 
-      "type": "array"
-    },
-    "cohort_symptoms": { 
-      "type": "string"
-    },
-    "cohort_contraindications": {
-      "type": "array"
-    },
-    "cohort_medicalhistory": {
-      "type": "array"
-    },
-    
-    "created": {
-      "type": "number"
-    }
-    
-  },
-  "validations": [],
-  "relations": {
-    "owner": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "userId"
-    }
-  },
-  "acls": [
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "admin",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "READ",
-      "principalType": "ROLE",
-      "principalId": "$unauthenticated",
-      "permission": "DENY"
-    },
-    {
-      "accessType": "READ",
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW"
-    }
-  ],
-  "methods": []
+    "acls": [
+        {
+            "accessType": "*",
+            "principalType": "ROLE",
+            "principalId": "admin",
+            "permission": "ALLOW"
+        },
+        {
+            "accessType": "READ",
+            "principalType": "ROLE",
+            "principalId": "$unauthenticated",
+            "permission": "DENY"
+        },
+        {
+            "accessType": "READ",
+            "principalType": "ROLE",
+            "principalId": "$authenticated",
+            "permission": "ALLOW"
+        },
+        {
+            "accessType": "*",
+            "principalType": "ROLE",
+            "principalId": "$owner",
+            "permission": "ALLOW"
+        }
+    ],
+    "methods": []
 }

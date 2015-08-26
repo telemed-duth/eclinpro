@@ -58,6 +58,14 @@
     "dataSource": "db",
     "public": true
   },
+  "Protocol": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Healthcenter": {
+    "dataSource": "db",
+    "public": true
+  },
   "Category": {
     "dataSource": "db",
     "public": true
