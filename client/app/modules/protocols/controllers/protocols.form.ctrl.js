@@ -2,10 +2,17 @@
 var app = angular.module('com.module.protocols');
 
 function ProtocolsFormCtrl($state, CoreService, Protocol, gettextCatalog,
-                          healthcenters, protocol) {
+                          healthcenters, protocol,Meta) {
 
   var self = this;
-
+  
+  //retrieve protocol model
+  this.protocolModel={};
+  Meta.getModelProperties(function(obj) {
+    this.protocolModel=obj.Protocol;
+  });
+  
+  //
   this.protocol = protocol;
 
   this.schema = {

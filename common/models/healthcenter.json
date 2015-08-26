@@ -13,10 +13,10 @@
   },
   "validations": [],
   "relations": {
-    "approved_by": {
+    "protocols": {
       "type": "hasAndBelongsToMany",
       "model": "Protocol",
-      "foreignKey": ""
+      "foreignKey": "healthcenterId"
     }
   },
   "acls": [],

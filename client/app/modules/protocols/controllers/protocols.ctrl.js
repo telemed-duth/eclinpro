@@ -4,13 +4,13 @@ angular.module('com.module.protocols')
                                         CoreService, gettextCatalog, Protocol, Healthcenter) {
 
     var protocolId = $stateParams.id;
-    var HealthcenterId = $stateParams.HealthcenterId;
+    var healthcenterId = $stateParams.healthcenterId;
 
     if (protocolId) {
       $scope.protocol = Protocol.findById({
         id: protocolId
       }, function (protocol) {
-        protocol.Healthcenter = Protocol.Healthcenter({
+        protocol.healthcenter = Protocol.healthcenter({
           id: protocol.id
         });
       }, function (err) {
@@ -20,19 +20,19 @@ angular.module('com.module.protocols')
       $scope.protocol = {};
     }
 
-    if (HealthcenterId) {
-      $scope.protocol.HealthcenterId = HealthcenterId;
+    if (healthcenterId) {
+      $scope.protocol.healthcenterId = healthcenterId;
     }
 
     function loadItems() {
-      $scope.categories = [];
-      Healthcenter.find(function (categories) {
-        angular.forEach(categories, function (Healthcenter) {
-          Healthcenter.protocols = Healthcenter.protocols({
-            id: Healthcenter.id
+      $scope.healthcenters = [];
+      Healthcenter.find(function (healthcenters) {
+        angular.forEach(healthcenters, function (healthcenter) {
+          healthcenter.protocols = Healthcenter.protocols({
+            id: healthcenter.id
           });
-          this.push(Healthcenter);
-        }, $scope.categories);
+          this.push(healthcenter);
+        }, $scope.healthcenters);
       });
     }
 
@@ -59,16 +59,16 @@ angular.module('com.module.protocols')
         });
     };
 
-    $scope.deleteHealthcenter = function (id) {
+    $scope.deletehealthcenter = function (id) {
       Healthcenter.deleteById(id, function () {
         CoreService.toastSuccess(gettextCatalog.getString(
           'Healthcenter deleted'), gettextCatalog.getString(
-          'Your Healthcenter is deleted!'));
+          'Your healthcenter is deleted!'));
         loadItems();
       }, function (err) {
         CoreService.toastError(gettextCatalog.getString(
-          'Error deleting Healthcenter'), gettextCatalog.getString(
-            'Your Healthcenter is not deleted: ') + err);
+          'Error deleting healthcenter'), gettextCatalog.getString(
+            'Your healthcenter is not deleted: ') + err);
       });
     };
   });

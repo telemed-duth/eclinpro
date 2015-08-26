@@ -36,6 +36,8 @@ angular.module('loopbackApp', [
     'schemaForm',
     'ui.select',
     'com.module.core',
+    'com.module.protocols',
+    'com.module.users',
     'com.module.about',
     'com.module.events',
     'com.module.files',
@@ -45,8 +47,6 @@ angular.module('loopbackApp', [
     'com.module.products',
     'com.module.sandbox',
     'com.module.settings',
-    'com.module.users',
-    'com.module.protocols'
   ])
   .run(function($rootScope, $cookies, gettextCatalog) {
 
