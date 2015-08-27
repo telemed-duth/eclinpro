@@ -10,6 +10,12 @@
             "type": "boolean",
             "required": true
         },
+        "modified": {
+            "type": "date"
+        },
+        "created": {
+            "type": "date"
+        },
         "goal_type": {
             "type": "string",
             "enum": [
@@ -20,8 +26,7 @@
             "required": true
         },
         "goal_disease_umls": {
-            "type": "string",
-            "required": true
+            "type": "string"
         },
         "goal_outcomes": {
             "type": "array"
@@ -94,12 +99,6 @@
         },
         "cohort_medicalhistory": {
             "type": "array"
-        },
-        "modified": {
-            "type": "date"
-        },
-        "created": {
-            "type": "date"
         }
     },
     "validations": [],

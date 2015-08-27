@@ -7,6 +7,7 @@
  *
  * Main module of the application.
  */
+
 angular.module('loopbackApp', [
     'angular-loading-bar',
     'angular.filter',
@@ -46,7 +47,7 @@ angular.module('loopbackApp', [
     'com.module.posts',
     'com.module.products',
     'com.module.sandbox',
-    'com.module.settings',
+    'com.module.settings'
   ])
   .run(function($rootScope, $cookies, gettextCatalog) {
 
