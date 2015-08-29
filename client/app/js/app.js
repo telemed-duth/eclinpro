@@ -33,6 +33,7 @@ angular.module('loopbackApp', [
     'toasty',
     'autofields',
     'gettext',
+    'pascalprecht.translate',
     'angular-underscore/filters',
     'schemaForm',
     'ui.select',

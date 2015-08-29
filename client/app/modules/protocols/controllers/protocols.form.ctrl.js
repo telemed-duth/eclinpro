@@ -1,7 +1,8 @@
 'use strict';
+/*global angular */
 var app = angular.module('com.module.protocols');
 
-function ProtocolsFormCtrl($scope,$http,$state, CoreService, Protocol, gettextCatalog, healthcenters, protocol,Meta) {
+function ProtocolsFormCtrl($scope,$http,$state, CoreService, Protocol, gettextCatalog, healthcenters, protocol,Meta,Bioportal) {
 
   var self = this;
   
@@ -30,13 +31,17 @@ var _protocolModel={
   "evidence_url": "",
   "evidence_author": "",
   "evidence_date": "",
+  
   "data_url": "",
   "data_author": "",
   "data_institute": "",
+  
   "release_version": "",
   "release_date": "",
+  
   "resources_infastructure": "",
   "resources_human": "",
+  
   "cohort_demographics_gender": "",
   "cohort_demographics_occupation": "",
   "cohort_demographics_insurance": "",
@@ -59,20 +64,24 @@ var _protocolModel={
     "any"
   ]
 };
- this.refreshSelect = function(schema, options, search) {
-    console.log('refreshSelect is called');
-    return [
-      { value: 'refreshed1', label: 'refreshed1'},
-      { value: 'refreshed2', label: 'refreshed2'},
-      { value: 'refreshed3', label: 'refreshed3'}
-    ];
-  }
 
-  this.refreshSelectAsync = function(schema, options, search) {
-    console.log('refreshSelectAsync is called');
-    return $http.get(options.async.url);
-  }
-  
+
+$scope.autocompleteResults=[];
+
+//autocomplete fetch from bioportal
+this.bioportalAutocomplete = function(schema, options, search) {
+  Bioportal.autocomplete(schema, options, search)
+  .then(function(res){
+    $scope.autocompleteResults=res.data.collection.map(function(obj){
+      if(obj){
+        var id=!!obj['cui']?obj['cui'][0]:(obj['id']||obj['@id']); 
+        return { "label": obj.prefLabel, "value": id  };
+      }
+    });
+  },function(err){console.log(err);});
+  return $scope.autocompleteResults;  
+};
+
   this.protocol = protocol;
   
   
@@ -121,7 +130,13 @@ var _protocolModel={
         title: 'Dyanmic Multi Select',
         type: 'array',
         format: 'uiselect',
-        description: 'Multi single items arre allowed',
+        description: 'Multi single items arre allowed'
+      },
+      "equipment": {
+        title: 'Equipment',
+        type: 'array',
+        format: 'uiselect',
+        description: 'Multi single items arre allowed'
       },
       "asyncselect": {
         title: 'Load Json Async Single Select',
@@ -300,18 +315,25 @@ var _protocolModel={
  {
    key: 'dynamicmultiselect',
    options: {
-     uiClass: 'short',
      refreshDelay: 100,
-     callback: "refreshSelect"
+     callback: this.bioportalAutocomplete,
+     ontologies:"SNOMEDCT,ICD10,SYMP"
    }
   },
  {
    key: 'asyncselect',
    options: {
-       async: {
-           call: "refreshSelectAsync",
-           url : "testdata.json"
-       }
+     refreshDelay: 100,
+     callback: this.bioportalAutocomplete,
+     ontologies:"ICD10,SNOMEDCT"
+   }
+ }, 
+ {
+   key: 'equipment',
+   options: {
+     refreshDelay: 100,
+     callback: this.bioportalAutocomplete,
+     ontologies:"SNOMEDCT"
    }
  },
   "soul",
@@ -392,7 +414,7 @@ var _protocolModel={
   //   }
   // ];
   
-  
+  $scope.schema=this.schema;
 
   this.onSubmit = function() {
 

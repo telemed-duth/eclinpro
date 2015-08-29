@@ -49,3 +49,14 @@
 .nav-tabs > li > a, .nav-tabs > li > a:hover {
   cursor: pointer;
 }
+.short {
+  width: 200px;
+}
+.ui-select-bootstrap > .ui-select-match > .caret {
+  display: none;
+}
+.ui-state-highlight {
+  display: inline-block;
+  width: 50px;
+  min-height: 100%;
+}
