@@ -3,13 +3,7 @@
     "plural": "protocols",
     "base": "PersistedModel",
     "properties": {
-        "title": {
-            "type": "string"
-        },
-        "active": {
-            "type": "boolean",
-            "required": true
-        },
+
         "modified": {
             "type": "date"
         },
@@ -21,11 +15,12 @@
             "enum": [
                 "prevention",
                 "diagnosis",
-                "management"
+                "management",
+                "therapeutic"
             ],
             "required": true
         },
-        "goal_disease_umls": {
+        "goal_disease": {
             "type": "string"
         },
         "goal_outcomes": {
@@ -40,14 +35,22 @@
         "evidence_date": {
             "type": "string"
         },
-        "data_url": {
+        "release_url": {
             "type": "string"
         },
-        "data_author": {
+        "release_author": {
             "type": "string"
         },
-        "data_institute": {
+        "release_institute": {
             "type": "string"
+        },
+        
+        "release_title": {
+            "type": "string"
+        },
+        "release_active": {
+            "type": "boolean",
+            "required": true
         },
         "release_version": {
             "type": "string"
@@ -61,7 +64,7 @@
         "resources_human": {
             "type": "string"
         },
-        "cohort_demographics_gender": {
+        "demographics_gender": {
             "type": "string",
             "enum": [
                 "male",
@@ -70,16 +73,16 @@
             ],
             "required": true
         },
-        "cohort_demographics_occupation": {
+        "demographics_occupation": {
             "type": "string"
         },
-        "cohort_demographics_insurance": {
+        "demographics_insurance": {
             "type": "string"
         },
-        "cohort_demographics_agegroup": {
+        "demographics_agegroup": {
             "type": "string"
         },
-        "cohort_demographics_nationality": {
+        "demographics_nationality": {
             "type": "string"
         },
         "cohort_exposure": {
@@ -115,30 +118,7 @@
       }
     },
     "acls": [
-        {
-            "accessType": "*",
-            "principalType": "ROLE",
-            "principalId": "admin",
-            "permission": "ALLOW"
-        },
-        {
-            "accessType": "READ",
-            "principalType": "ROLE",
-            "principalId": "$unauthenticated",
-            "permission": "DENY"
-        },
-        {
-            "accessType": "READ",
-            "principalType": "ROLE",
-            "principalId": "$authenticated",
-            "permission": "ALLOW"
-        },
-        {
-            "accessType": "*",
-            "principalType": "ROLE",
-            "principalId": "$owner",
-            "permission": "ALLOW"
-        }
+
     ],
     "methods": []
 }

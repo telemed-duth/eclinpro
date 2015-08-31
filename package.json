@@ -18,7 +18,7 @@
     "url": "https://github.com/beeman/loopback-angular-admin/issues"
   },
   "scripts": {
-    "start": "node server/server.js",
+    "start": "forever server/server.js",
     "dev": "nodemon server/server.js --watch server --watch common --ext js,json ",
     "postinstall": "bower install && grunt build"
   },
