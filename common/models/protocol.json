@@ -1,21 +1,112 @@
 {
-  "name": "Protocol",
-  "plural": "protocols",
-  "base": "AppModel",
-  "properties": {
-    "title": {
-      "type": "string",
-      "required": true
+    "name": "Protocol",
+    "plural": "protocols",
+    "base": "AppModel",
+    "properties": {
+        "goal_type": {
+            "type": "string",
+            "enum": [
+                "prevention",
+                "diagnosis",
+                "management",
+                "therapeutic"
+            ],
+            "required": true
+        },
+        "goal_disease": {
+            "type": "string"
+        },
+        "goal_outcomes": {
+            "type": "array"
+        },
+        "evidence_url": {
+            "type": "string"
+        },
+        "evidence_author": {
+            "type": "string"
+        },
+        "evidence_date": {
+            "type": "string"
+        },
+        "release_url": {
+            "type": "string"
+        },
+        "release_author": {
+            "type": "string"
+        },
+        "release_institute": {
+            "type": "string"
+        },
+        
+        "release_title": {
+            "type": "string"
+        },
+        "release_active": {
+            "type": "boolean",
+            "required": true
+        },
+        "release_version": {
+            "type": "string"
+        },
+        "release_date": {
+            "type": "string"
+        },
+        "resources_infastructure": {
+            "type": "string"
+        },
+        "resources_human": {
+            "type": "string"
+        },
+        "demographics_gender": {
+            "type": "string",
+            "enum": [
+                "male",
+                "female",
+                "both"
+            ],
+            "required": true
+        },
+        "demographics_occupation": {
+            "type": "string"
+        },
+        "demographics_insurance": {
+            "type": "string"
+        },
+        "demographics_agegroup": {
+            "type": "string"
+        },
+        "demographics_nationality": {
+            "type": "string"
+        },
+        "cohort_exposure": {
+            "type": "array"
+        },
+        "cohort_comorbidities": {
+            "type": "array"
+        },
+        "cohort_riskfactors": {
+            "type": "array"
+        },
+        "cohort_symptoms": {
+            "type": "string"
+        },
+        "cohort_contraindications": {
+            "type": "array"
+        },
+        "cohort_medicalhistory": {
+            "type": "array"
+        }
     },
-    "content": {
-      "type": "string"
+    "validations": [],
+    "relations": {
+        "owner": {
+            "type": "belongsTo",
+            "model": "user",
+            "foreignKey": "userId"
+        }
     },
-    "image": {
-      "type": "string"
-    }
-  },
-  "validations": [],
-  "relations": {},
-  "acls": [],
-  "methods": []
+    "acls": [
+
+    ],
+    "methods": []
 }

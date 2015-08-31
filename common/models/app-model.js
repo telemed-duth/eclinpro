@@ -1,13 +1,12 @@
 module.exports = function(AppModel) {
-
-  AppModel.beforeCreate = function(next, instance) {
-    instance.created = instance.modified = Date.now();
+  
+  AppModel.observe('before save', function updateTimestamp(ctx, next) {
+    if (ctx.instance) {
+      ctx.instance.modified = Date.now();
+    } else {
+      ctx.data.created = Date.now();
+    }
     next();
-  };
-
-  AppModel.beforeUpdate = function(next, instance) {
-    instance.modified = Date.now();
-    next();
-  };
+  });
 
 };

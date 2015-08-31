@@ -16,3 +16,11 @@
 <div class="controls">
     <button class="btn btn-primary btn-success" ng-click="onSubmit()" translate>Submit</button>
 </div>
+
+<h4>
+    <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
+    <span ng-show="!ctrl.protocol.id" translate>Add a new protocol</span>
+    <span ng-show="ctrl.protocol.id" translate>Edit protocol</span>
+</h4>
+
+
