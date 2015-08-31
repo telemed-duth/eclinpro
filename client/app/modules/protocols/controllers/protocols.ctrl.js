@@ -1,12 +1,15 @@
 'use strict';
 angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta) {
+    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal) {
       
-
-
+var test_setting_val=$rootScope.getSetting("com.module.protocols.release_active");
+console.log(test_setting_val);
 
 $scope.autocompleteResults=[];
+
+$scope.BioportalSplitter=".";
+$scope.CategorySplitter="_";
 
 //autocomplete fetch from bioportal
 $scope.bioportalAutocomplete = function(schema, options, search) {
@@ -15,7 +18,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     $scope.autocompleteResults=res.data.collection.map(function(obj){
       if(obj){
         var id=!!obj['cui']?obj['cui'][0]:(obj['id']||obj['@id']); 
-        return { "label": obj.prefLabel, "value": id  };
+        return { "label": obj.prefLabel, "value": id+$scope.BioportalSplitter+obj.prefLabel  };
       }
     });
   },function(err){console.log(err);});
@@ -25,6 +28,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   
 //retrieve protocol model
   var curModel={};
+  $scope.protocol={}
   $scope.requiredProps=[];
   $scope.schemaProps={};
   $scope.formProps=[];
@@ -37,7 +41,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
         for(var key in curModel){
           
-          if( key.indexOf("_")>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
+          if( key.indexOf($scope.CategorySplitter)>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
             
             
             //schema builder
@@ -47,20 +51,36 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             keyObj.title=gettextCatalog.getString(key);
             if(keyObj.required){$scope.requiredProps.push(key);}
             keyObj.type=(curModel[key].stringType==="objectid")?"string":curModel[key].stringType;
-            if($scope.uiselectArray.indexOf(key)>0){
+            if($scope.uiselectArray.indexOf(key)>=0){
               keyObj.format="uiselect";
-            } else if (key.type==="array"){
+              keyObj.items=[];
+                if(typeof $scope.protocol[key]==="string"){
+                  keyObj.items=[{
+                      "label":$scope.protocol[key].split($scope.BioportalSplitter)[1],
+                      "value":$scope.protocol[key]
+                    }];
+                } else if($scope.protocol[key] instanceof Array){
+                  //map the string into object for the autocomplete
+                  keyObj.items=$scope.protocol[key].map(function(str){
+                    return {
+                      "label":str.split($scope.BioportalSplitter)[1],
+                      "value":str
+                    };
+                  });
+                }
+              
+            } else if (keyObj.type==="array"){
               keyObj.items={
                   "title":keyObj.title,
                   "type":"string"
-              }
+              };
             }
             
             delete keyObj['required'];
             delete keyObj['stringType'];
             
             //form builder
-            var category=key.split("_")[0];
+            var category=key.split($scope.CategorySplitter)[0];
             var item={};
             propCategories[category]=propCategories[category] || {
               "title":category,
@@ -99,45 +119,57 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
           }
         }
         
-    $scope.formProps.push({
+    $scope.formProps.push({  
+      "type":"fieldset",
+      "title":"Clinical Protocol",
+      "items":[{
         "type": "tabs",
         "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
+      }]
     });      
         
-    console.log($scope.schemaProps);
-    console.log($scope.formProps);
         
-    $scope.formProps.push({
-      type: 'submit',
-      title: 'OK'
-    });
+    $scope.formProps.push({  
+      "type":"actions",
+      "items":[  
+         {  
+            "type":"submit",
+            "style":"btn-info",
+            "title":"Submit"
+         },
+         {  
+            "type":"button",
+            "style":"btn-danger",
+            "title":"Cancel",
+            "onClick":"sayNo()"
+         }
+      ]
+   });
+   
     
+    // console.log(JSON.stringify($scope.schema));
+    // console.log(JSON.stringify($scope.form));
+    console.log($scope.schema);
+    console.log($scope.form);
   });
   
   
   
 
-    this.schema = {
+    $scope.schema = {
       type: 'object',
       title: 'Product',
       properties: $scope.schemaProps,
-      required: ['name', 'categoryId']
+      required: $scope.requiredProps
     };
   
-    this.form = $scope.formProps;
+    $scope.form = $scope.formProps;
 
 
     $scope.delete = function(id) {
       ProtocolsService.deleteProtocol(id, function() {
         $state.reload();
       });
-    };
-
-    this.formHelper = new FormHelper(Protocol);
-    $scope.cancel = function() {
-      console.log('Cancel');
-      console.log(this.formHelper);
-      //this.formHelper.cancel('app.protocols.list');
     };
 
     var protocolId = $stateParams.id;
@@ -152,28 +184,6 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       $scope.protocol = {};
     }
 
-    $scope.formFields = [{
-      key: 'title',
-      type: 'text',
-      label: gettextCatalog.getString('Title'),
-      required: true
-    }, {
-      key: 'content',
-      type: 'textarea',
-      label: gettextCatalog.getString('Content'),
-      required: true
-    }, {
-      key: 'image',
-      type: 'text',
-      label: gettextCatalog.getString('image'),
-      required: true
-    }];
-
-    $scope.formOptions = {
-      uniqueFormId: true,
-      hideSubmit: false,
-      submitCopy: gettextCatalog.getString('Save')
-    };
 
     $scope.onSubmit = function() {
       Protocol.upsert($scope.protocol, function() {

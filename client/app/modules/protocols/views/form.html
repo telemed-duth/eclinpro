@@ -1,26 +1,37 @@
 <h4>
-  <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-
-  <span ng-show="!protocol.id" translate>Add a new protocol</span>
-  <span ng-show="protocol.id" translate>Edit protocol</span>
-
+    <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
+    <span ng-show="!protocol.id" translate>Add a new protocol</span>
+    <span ng-show="protocol.id" translate>Edit protocol</span>
 </h4>
 
 
 <div class="row">
-  <div class="col-md-4">
-    <div class="alert alert-danger" ng-if="addError" translate>Could not add protocol!</div>
-    <formly-form result="protocol" fields="formFields" options="formOptions" ng-submit="onSubmit()"></formly-form>
-  </div>
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"></h3>
+            </div>
+            <div class="box-body">
+                <form id="protocolForm"
+                      sf-schema="schema"
+                      sf-form="form"
+                      sf-model="protocol"
+                      ng-submit="onSubmit(protocolForm)">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Protocol</h3>
+            </div>
+            <div class="box-body">
+                <pre>{{protocol|json}}</pre>
+            </div>
+        </div>
+    </div>
+
 </div>
-<div class="controls">
-    <button class="btn btn-primary btn-success" ng-click="onSubmit()" translate>Submit</button>
-</div>
-
-<h4>
-    <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-    <span ng-show="!ctrl.protocol.id" translate>Add a new protocol</span>
-    <span ng-show="ctrl.protocol.id" translate>Edit protocol</span>
-</h4>
-
-

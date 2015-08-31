@@ -52,10 +52,10 @@
             "type": "string"
         },
         "resources_infastructure": {
-            "type": "string"
+            "type": "array"
         },
         "resources_human": {
-            "type": "string"
+            "type": "array"
         },
         "demographics_gender": {
             "type": "string",

@@ -31,6 +31,28 @@ app.service('Bioportal', function($q, $http, ENV) {
      } else return false;
     });
   };
-
+  
+  //autocomplete fetch from bioportal
+  this.getLabel = function(cui) {
+    return $q(function(res, err) {
+        $http.get(
+          
+        apiurl
+        
+        +'?include=prefLabel'
+        +'&suggest=true'
+        +'&display_context=false'
+        +'&display_links=false'
+        
+        +'&pagesize='+(!!options.pagesize?options.pagesize:'20')
+        +'&cui='+cui
+        +(options.subtree?'&ontology='+options.subtree:'')
+        +(options.ontologies?'&ontologies='+options.ontologies:'&ontologies=ICD10,SNOMEDCT')
+        +'&q='+search
+        +'&apikey='+apikey
+        
+        ).then(res,err);
+    });
+  };
 
 });
