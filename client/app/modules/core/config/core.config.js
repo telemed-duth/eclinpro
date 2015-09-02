@@ -5,13 +5,15 @@ app.run(function($rootScope, Setting, gettextCatalog) {
   // Left Sidemenu
   $rootScope.menu = [];
 
-  // Add Sidebar Menu
+  // Add Sidebar Menu //filterout non-admin menus
   $rootScope.addMenu = function(name, uisref, icon) {
-    $rootScope.menu.push({
-      name: name,
-      sref: uisref,
-      icon: icon
-    });
+    if((name==="Users"||name==="Settings") && $rootScope.currentUser.roles[0].name==="admin"){
+      $rootScope.menu.push({
+        name: name,
+        sref: uisref,
+        icon: icon
+      });
+    }
   };
 
   // Add Menu Dashboard
