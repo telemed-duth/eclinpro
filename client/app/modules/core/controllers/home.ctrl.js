@@ -50,7 +50,7 @@ angular.module('com.module.core')
 
     }; 
     $scope.start=function(){
-      $timeout($scope.draw,500);
+      $timeout($scope.draw,10);
     };
       
 });
