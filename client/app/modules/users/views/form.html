@@ -19,8 +19,12 @@
   </div>
   <div class="box-body">
     <div class="alert alert-danger" ng-if="addError" translate>Could not add user!</div>
-
-    <formly-form result="user" fields="formFields" options="formOptions" ng-submit="onSubmit()"></formly-form>
+<label>Is Admin?
+      <input type="checkbox" ng-model="isAdmin" ng-change="changeRole()"/>
+           </label>
+    <formly-form result="user" fields="formFields" options="formOptions" ng-submit="onSubmit()">
+       
+           </formly-form>
     
     <div ng-if="!user.id" class="form-group">
       <label translate>Password</label>

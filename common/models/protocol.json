@@ -3,6 +3,37 @@
     "plural": "protocols",
     "base": "AppModel",
     "properties": {
+        "childType": {
+            "type": "string",
+            "enum": [
+                "Migration",
+                "Update",
+                "Variation"
+            ],
+            "required": false
+        },
+        "release_title": {
+            "type": "string"
+        },
+        "release_url": {
+            "type": "string"
+        },
+        "release_author": {
+            "type": "string"
+        },
+        "release_institute": {
+            "type": "string"
+        },
+        "release_active": {
+            "type": "boolean",
+            "required": true
+        },
+        "release_version": {
+            "type": "string"
+        },
+        "release_date": {
+            "type": "string"
+        },
         "goal_type": {
             "type": "string",
             "enum": [
@@ -26,29 +57,6 @@
             "type": "string"
         },
         "evidence_date": {
-            "type": "string"
-        },
-        "release_url": {
-            "type": "string"
-        },
-        "release_author": {
-            "type": "string"
-        },
-        "release_institute": {
-            "type": "string"
-        },
-        
-        "release_title": {
-            "type": "string"
-        },
-        "release_active": {
-            "type": "boolean",
-            "required": true
-        },
-        "release_version": {
-            "type": "string"
-        },
-        "release_date": {
             "type": "string"
         },
         "resources_infastructure": {
@@ -99,14 +107,35 @@
     },
     "validations": [],
     "relations": {
-        "owner": {
-            "type": "belongsTo",
-            "model": "user",
-            "foreignKey": "userId"
+        "parent": {
+            "type": "hasOne",
+            "model": "Protocol",
+            "foreignKey": "createdFrom"
+        },
+        "healthcenters": {
+          "type": "hasMany",
+          "model": "Healthcenter",
+          "foreignKey": "protocolId",
+          "through": "ProtocolApproval"
+        },
+        "usedBy": {
+          "type": "hasMany",
+          "model": "user",
+          "foreignKey": "protocolId",
+          "through": "ProtocolUsage"
+        },
+        "createdBy":{
+            "type":"belongsTo",
+            "model":"user",
+            "foreignKey":"ownerId"
         }
     },
-    "acls": [
-
-    ],
+      "acls": [  {
+    "accessType": "EXECUTE",
+    "principalType": "ROLE",
+    "principalId": "$authenticated",
+    "permission": "ALLOW",
+    "property": "upsert"
+  }],
     "methods": []
 }

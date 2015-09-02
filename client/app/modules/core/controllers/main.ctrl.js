@@ -11,10 +11,22 @@
  * @requires gettextCatalog
  **/
 angular.module('com.module.core')
-  .controller('MainCtrl', function($scope, $rootScope, $state, $location,
+  .controller('MainCtrl', function($scope, $rootScope, $state,$stateParams, $location,
     CoreService, User, gettextCatalog) {
-
-    $scope.currentUser = User.getCurrent();
+    
+    $scope.currentUser = {};
+    User.getCurrent(function(result) {
+      User.roles({"id":result.id},function(roles){
+      result.roles=roles.map(function(role){
+        return role.name;
+      });
+      $scope.currentUser = result;
+      $rootScope.currentUser = result;
+    });
+    }, function(err) {
+      console.log(err);
+    });
+    
 
     $scope.menuoptions = $rootScope.menu;
 

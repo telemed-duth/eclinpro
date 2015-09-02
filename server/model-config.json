@@ -38,7 +38,31 @@
     "dataSource": "db",
     "public": false
   },
+  "HealthcenterMember": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Healthcenter": {
+    "dataSource": "db",
+    "public": true
+  },
   "Protocol": {
+    "dataSource": "db",
+    "public": true
+  },
+  "ProtocolApproval": {
+    "dataSource": "db",
+    "public": true
+  },
+  "ProtocolUsage": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Product": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Category": {
     "dataSource": "db",
     "public": true
   },

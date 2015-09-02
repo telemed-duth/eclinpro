@@ -5,7 +5,7 @@ angular.module('com.module.protocols')
       
 var test_setting_val=$rootScope.getSetting("com.module.protocols.release_active");
 console.log(test_setting_val);
-
+$scope.user=$rootScope.currentUser;
 $scope.autocompleteResults=[];
 
 $scope.BioportalSplitter=".";

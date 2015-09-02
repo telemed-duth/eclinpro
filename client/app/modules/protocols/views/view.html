@@ -3,7 +3,7 @@
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
   {{protocol.title}}
 
-  <span class="pull-right btn-group" style="margin-top: 7px;">
+  <span ng-show="item.ownerId==user.id||user.roles[0]=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: protocol.id})">
       <i class="fa fa-pencil"></i>
     </a>

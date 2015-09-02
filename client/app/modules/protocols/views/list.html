@@ -1,21 +1,13 @@
 <div class="box" ng-repeat="item in protocols">
   <div class="box-header">
     <h3 class="box-title">
-      <a href="" ui-sref="^.view({id: item.id})">{{item.title}}</a>
+      <a href="" ui-sref="^.view({id: item.id})">{{item.release_title}}</a>
       <br/>
-      <small>
-        Created:
-        {{item.created | date:'medium'}}
-        <span ng-if="item.created !== item.modified">
-          &middot; modified:
-          {{item.modified | date:'medium'}}
-        </span>
-      </small>
     </h3>
 
     <div class="box-tools pull-right">
 
-      <span class="pull-right btn-group" style="margin-top: 7px;">
+      <span ng-show="item.ownerId==user.id" class="pull-right btn-group" style="margin-top: 7px;">
         <a href="" class="btn btn-xs btn-default"
            ui-sref="^.edit({id: item.id})">
           <i class="fa fa-pencil"></i>
@@ -40,10 +32,6 @@
   <div class="box-footer">
     <span class="text-muted">
       {{item.created | date:'medium'}}
-      &middot;
-      0 comments
-      &middot;
-      0 likes
     </span>
   </div>
 </div>

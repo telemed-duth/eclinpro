@@ -16,7 +16,7 @@ angular.module('com.module.users')
               console.log('401 while on router on login path');
             } else {
               if ($location.path() !== '/register') {
-                $location.path('/login');
+                //$location.path('/login');
               }
               CoreService.toastWarning('Error 401 received',
                 'We received a 401 error from the API! Redirecting to login'

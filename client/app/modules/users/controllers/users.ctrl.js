@@ -1,10 +1,15 @@
 'use strict';
 var app = angular.module('com.module.users');
 
-app.controller('UsersCtrl', function($scope, $stateParams, $state, CoreService,
+app.controller('UsersCtrl', function($scope, $stateParams, $state, CoreService,Role ,RoleMapping,
   User, gettextCatalog) {
-
-
+  $scope.roles=[];
+  Role.find(function(roles){
+    roles.forEach(function(role){
+      $scope.roles[role.name]=role.id;
+    });
+  });
+  
   if ($stateParams.id) {
     User.findOne({
       filter: {
@@ -14,14 +19,17 @@ app.controller('UsersCtrl', function($scope, $stateParams, $state, CoreService,
         include: ['roles', 'identities', 'credentials', 'accessTokens']
       }
     }, function(result) {
-      $scope.user = result;
+        User.roles({"id":result.id},function(roles){
+          result.roles=roles;
+          $scope.user = result;
+        });
     }, function(err) {
       console.log(err);
     });
   } else {
     $scope.user = {};
   }
-
+  
   $scope.delete = function(id) {
     CoreService.confirm(gettextCatalog.getString('Are you sure?'),
       gettextCatalog.getString('Deleting this cannot be undone'),
@@ -52,6 +60,30 @@ app.controller('UsersCtrl', function($scope, $stateParams, $state, CoreService,
     $scope.loading = false;
   });
 
+$scope.changeRole=function(){
+  if($scope.isAdmin){
+    RoleMapping.upsert({
+  "principalType": "USER",
+  "principalId": $scope.user.id,
+  "roleId": $scope.roles["admin"]
+  },function(res){
+      console.log(res);
+    });
+  } else {
+    RoleMapping.findOne(
+      {"principalType": "USER",
+      "principalId": $scope.user.id,
+      "roleId": $scope.roles["admin"]},function(res){
+      RoleMapping.destroyById({id:res.id},function(res){
+        console.log(res);
+      });
+    });
+  }
+    $scope.user.roles=$scope.isAdmin?['admin']:['user'];
+    console.log($scope.user.roles);
+    console.log($scope.roles);
+    console.log("Admin role id: "+$scope.roles["admin"]);
+}
   $scope.onSubmit = function() {
     User.upsert($scope.user, function() {
       CoreService.toastSuccess(gettextCatalog.getString('User saved'),
