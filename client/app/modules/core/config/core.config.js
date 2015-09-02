@@ -7,13 +7,11 @@ app.run(function($rootScope, Setting, gettextCatalog) {
 
   // Add Sidebar Menu //filterout non-admin menus
   $rootScope.addMenu = function(name, uisref, icon) {
-    if((name==="Users"||name==="Settings") && $rootScope.currentUser.roles[0].name==="admin"){
       $rootScope.menu.push({
         name: name,
         sref: uisref,
         icon: icon
       });
-    }
   };
 
   // Add Menu Dashboard

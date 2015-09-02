@@ -38,10 +38,6 @@
     "dataSource": "db",
     "public": false
   },
-  "HealthcenterMember": {
-    "dataSource": "db",
-    "public": true
-  },
   "Healthcenter": {
     "dataSource": "db",
     "public": true
