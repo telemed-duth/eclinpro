@@ -8,8 +8,8 @@ console.log(test_setting_val);
 $scope.user=$rootScope.currentUser;
 $scope.autocompleteResults=[];
 
-$scope.BioportalSplitter=".";
-$scope.CategorySplitter="_";
+var BioportalSplitter=".";
+var CategorySplitter="_";
 
 //autocomplete fetch from bioportal
 $scope.bioportalAutocomplete = function(schema, options, search) {
@@ -18,13 +18,20 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     $scope.autocompleteResults=res.data.collection.map(function(obj){
       if(obj){
         var id=!!obj['cui']?obj['cui'][0]:(obj['id']||obj['@id']); 
-        return { "label": obj.prefLabel, "value": id+$scope.BioportalSplitter+obj.prefLabel  };
+        return { "label": obj.prefLabel, "value": id+BioportalSplitter+obj.prefLabel  };
       }
     });
   },function(err){console.log(err);});
   return $scope.autocompleteResults;  
 };
-
+  
+  function capFirst(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
+  var propname=function(str){
+    return capFirst(str.split(CategorySplitter)[1]||" ");
+  };  
+  var catname=function(str){
+    return capFirst(str.split(CategorySplitter)[0]||" ");
+  };
   
 //retrieve protocol model
   var curModel={};
@@ -33,7 +40,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   $scope.schemaProps={};
   $scope.formProps=[];
   
-  $scope.uiselectArray=["goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
+  $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
   Meta.getModelProperties(function(obj) {
     
     curModel=obj.Protocol;
@@ -41,14 +48,14 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
         for(var key in curModel){
           
-          if( key.indexOf($scope.CategorySplitter)>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
+          if( key.indexOf(CategorySplitter)>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
             
             
             //schema builder
             var keyObj={};
             angular.copy(curModel[key],keyObj);
             
-            keyObj.title=gettextCatalog.getString(key);
+            keyObj.title=gettextCatalog.getString(propname(key));
             if(keyObj.required){$scope.requiredProps.push(key);}
             keyObj.type=(curModel[key].stringType==="objectid")?"string":curModel[key].stringType;
             if($scope.uiselectArray.indexOf(key)>=0){
@@ -56,14 +63,14 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
               keyObj.items=[];
                 if(typeof $scope.protocol[key]==="string"){
                   keyObj.items=[{
-                      "label":$scope.protocol[key].split($scope.BioportalSplitter)[1],
+                      "label":$scope.protocol[key].split(BioportalSplitter)[1],
                       "value":$scope.protocol[key]
                     }];
                 } else if($scope.protocol[key] instanceof Array){
                   //map the string into object for the autocomplete
                   keyObj.items=$scope.protocol[key].map(function(str){
                     return {
-                      "label":str.split($scope.BioportalSplitter)[1],
+                      "label":str.split(BioportalSplitter)[1],
                       "value":str
                     };
                   });
@@ -80,7 +87,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             delete keyObj['stringType'];
             
             //form builder
-            var category=key.split($scope.CategorySplitter)[0];
+            var category=catname(key);
             var item={};
             propCategories[category]=propCategories[category] || {
               "title":category,
