@@ -97,7 +97,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             if(keyObj.format) {
               item={
                 "key":key,
-                "feedback":false,
+                "feedback":true,
+                "placeholder":"Add "+propname(key),
                 "options": {
                   "refreshDelay": 100,
                   "callback": $scope.bioportalAutocomplete
@@ -106,7 +107,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             } else {
               item={
                 "key":key,
-                "feedback":false,
+                "placeholder":"Add "+propname(key),
+                "feedback":true,
               };
             }
             
