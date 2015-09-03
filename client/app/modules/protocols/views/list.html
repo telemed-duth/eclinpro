@@ -20,7 +20,7 @@
 
     <div class="box-tools pull-right">
 
-      <span ng-show="item.ownerId==user.id" class="pull-right btn-group" style="margin-top: 7px;">
+      <span ng-show="item.ownerId==user.id||isadmin" class="pull-right btn-group" style="margin-top: 7px;">
         <a href="" class="btn btn-xs btn-default"
            ui-sref="^.edit({id: item.id})">
           <i class="fa fa-pencil"></i>

@@ -13,14 +13,14 @@ angular.module('com.module.core')
       })
       .state('app', {
         abstract: true,
-        url: '/app',
+        url: '',
         templateUrl: 'modules/core/views/app.html',
         controller: 'MainCtrl'
       })
       .state('app.home', {
-        url: '',
+        url: '/app',
         templateUrl: 'modules/core/views/home.html',
         controller: 'HomeCtrl'
       });
-    $urlRouterProvider.otherwise('/router');
+    $urlRouterProvider.otherwise('/app');
   });

@@ -13,7 +13,9 @@ angular.module('com.module.core')
 
     $scope.boxes = $rootScope.dashboardBox;
     
-    $scope.user=$rootScope.currentUser;
+    // $scope.user=$rootScope.currentUser;
+    // $scope.isadmin=$rootScope.isadmin;
+
     
     
     // Visualizations

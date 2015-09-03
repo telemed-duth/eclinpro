@@ -16,23 +16,27 @@ angular.module('com.module.core')
     
     $scope.currentUser = {};
     User.getCurrent(function(result) {
+      
       User.roles({"id":result.id},function(roles){
       result.roles=roles;
-      // roles.map(function(role){
-      //   return role.name;
-      // });
       $scope.currentUser = result;
       $rootScope.currentUser = result;
-          
-        //handle permissions on menu
-        $scope.menuoptions = $rootScope.menu.filter(function(obj){
-          if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
-            if(roles[0]) {
-              return roles[0].name=='admin';
-            } else return false;
+      if(roles[0]) {
+          if(roles[0].name==='admin'){
+            console.log('Admin asserted!');
+            $rootScope.isadmin=true;
+            $scope.isadmin=true;
           }
-          return true;
-        });
+      }
+      
+          
+      //handle permissions on menu
+      $scope.menuoptions = $rootScope.menu.filter(function(obj){
+        if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
+          return $scope.isadmin;
+        }
+        return true;
+      });
         
     });
     }, function(err) {

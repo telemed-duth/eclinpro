@@ -1,34 +1,16 @@
 'use strict';
 var app = angular.module('com.module.users');
 
-app.controller('UsersCtrl', function($scope, $stateParams, $state, CoreService,Role ,RoleMapping,
+app.controller('UsersCtrl', function($rootScope,$scope, $stateParams, $state, CoreService,Role ,RoleMapping,
   User, gettextCatalog) {
+  $scope.user=$rootScope.currentUser;
+  $scope.isadmin=$rootScope.isadmin;
   $scope.roles=[];
   Role.find(function(roles){
     roles.forEach(function(role){
       $scope.roles[role.name]=role.id;
     });
   });
-  
-  if ($stateParams.id) {
-    User.findOne({
-      filter: {
-        where: {
-          id: $stateParams.id
-        },
-        include: ['roles', 'identities', 'credentials', 'accessTokens']
-      }
-    }, function(result) {
-        User.roles({"id":result.id},function(roles){
-          result.roles=roles;
-          $scope.user = result;
-        });
-    }, function(err) {
-      console.log(err);
-    });
-  } else {
-    $scope.user = {};
-  }
   
   $scope.delete = function(id) {
     CoreService.confirm(gettextCatalog.getString('Are you sure?'),

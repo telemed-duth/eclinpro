@@ -6,6 +6,8 @@ angular.module('com.module.protocols')
 var test_setting_val=$rootScope.getSetting("com.module.protocols.release_active");
 console.log(test_setting_val);
 $scope.user=$rootScope.currentUser;
+$scope.isadmin=$rootScope.isadmin;
+
 $scope.autocompleteResults=[];
 
 
@@ -195,7 +197,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
 
     $scope.delete = function(id) {
       ProtocolsService.deleteProtocol(id, function() {
-        $state.reload();
+        $state.go('app.protocols.list', {}, { reload: true });
       });
     };
 
@@ -216,7 +218,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       Protocol.upsert($scope.protocol, function() {
         CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
           gettextCatalog.getString('Your protocol is safe with us!'));
-        $state.go('^.list');
+        $state.go('app.protocols.list');
       }, function(err) {
         console.log(err);
       });

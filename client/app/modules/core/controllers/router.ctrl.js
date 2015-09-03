@@ -10,12 +10,12 @@
  * @requires AppAuth
  **/
 angular.module('com.module.core')
-  .controller('RouteCtrl', function(ApiService, AppAuth, $location) {
+  .controller('RouteCtrl', function(ApiService, LoopBackAuth , $location) {
 
     ApiService.checkConnection()
       .then(function() {
         console.log('ApiService.checkConnection success');
-        if (!AppAuth.currentUser) {
+        if (!LoopBackAuth.currentUserId) {
           $location.path('/login');
         } else {
           $location.path('/app');
