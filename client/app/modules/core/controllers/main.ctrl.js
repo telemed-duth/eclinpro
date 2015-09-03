@@ -17,18 +17,27 @@ angular.module('com.module.core')
     $scope.currentUser = {};
     User.getCurrent(function(result) {
       User.roles({"id":result.id},function(roles){
-      result.roles=roles.map(function(role){
-        return role.name;
-      });
+      result.roles=roles;
+      // roles.map(function(role){
+      //   return role.name;
+      // });
       $scope.currentUser = result;
       $rootScope.currentUser = result;
+          
+        //handle permissions on menu
+        $scope.menuoptions = $rootScope.menu.filter(function(obj){
+          if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
+            if(roles[0]) {
+              return roles[0].name=='admin';
+            } else return false;
+          }
+          return true;
+        });
+        
     });
     }, function(err) {
       console.log(err);
     });
-    
-
-    $scope.menuoptions = $rootScope.menu;
 
     $scope.logout = function() {
       User.logout(function() {

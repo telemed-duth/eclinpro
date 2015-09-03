@@ -19,11 +19,14 @@
           </div>
         </tab>
         <tab select="start()" heading="{{ 'Visualizations' | translate }}">
+
           <div class="row">
+            <div ng-if="loading" class="overlay"></div>
+            <div ng-if="loading" class="loading-img"></div>
             <div id="mynetwork"></div>
           </div>
         </tab>
-        <tab ng-show="user.roles[0].name=='admin'" heading="{{ 'Variables' | translate }}">
+        <tab ng-show="currentUser.roles[0].name==='admin'" heading="{{ 'Variables' | translate }}">
           <div class="row">
             <div class="col-md-6">
               <h4 translate>Current user</h4>
@@ -35,7 +38,7 @@
             </div>
           </div>
         </tab>
-        <tab ng-show="user.roles[0].name=='admin'" heading="{{ 'Theme' | translate }}">
+        <tab ng-show="currentUser.roles[0].name==='admin'" heading="{{ 'Theme' | translate }}">
           <div class="row">
             <div class="col-md-6">
               <h4> {{ 'Theme' | translate }}
