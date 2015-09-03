@@ -35,6 +35,7 @@ angular.module('loopbackApp', [
     'angular-underscore/filters',
     'schemaForm',
     'ui.select',
+    "angular-advanced-searchbox",
     'com.module.core',
     'com.module.about',
     'com.module.files',

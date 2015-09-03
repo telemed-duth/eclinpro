@@ -8,6 +8,8 @@ console.log(test_setting_val);
 $scope.user=$rootScope.currentUser;
 $scope.autocompleteResults=[];
 
+
+
 var BioportalSplitter=".";
 var CategorySplitter="_";
 
@@ -100,7 +102,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
                 "feedback":true,
                 "placeholder":"Add "+propname(key),
                 "options": {
-                  "refreshDelay": 100,
+                  "refreshDelay": 50,
                   "callback": $scope.bioportalAutocomplete
                 }
               };
@@ -155,7 +157,23 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       ]
    });
    
-    
+   $scope.availableSearchParams=[];
+   var obj={};
+   for (var key in $scope.schemaProps) {
+     obj=$scope.schemaProps[key];
+     if(
+      obj.type==="string" &&
+      key!=="release_url" &&
+      key!=="release_version" &&
+      key!=="release_date" &&
+      key!=="evidence_url" &&
+      key!=="evidence_date"
+     ) {
+      // console.log(key+" is inserted to filters");
+       $scope.availableSearchParams.push({"key":key,"name":catname(key)+" "+propname(key), "placeholder": propname(key)+"..."});
+     }
+    }
+
     // console.log(JSON.stringify($scope.schema));
     // console.log(JSON.stringify($scope.form));
     console.log($scope.schema);
