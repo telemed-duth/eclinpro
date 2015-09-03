@@ -13,7 +13,7 @@ module.exports = function(app) {
     var settings = [{
       type: 'string',
       key: 'appName',
-      value: 'Loopback Admin'
+      value: 'e-ClinPro'
     }, {
       type: 'select',
       key: 'appTheme',

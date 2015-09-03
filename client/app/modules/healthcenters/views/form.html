@@ -1,0 +1,37 @@
+<h4>
+    <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
+    <span ng-show="!healthcenter.id" translate>Add a new healthcenter</span>
+    <span ng-show="healthcenter.id" translate>Edit healthcenter</span>
+</h4>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"></h3>
+            </div>
+            <div class="box-body">
+                <form id="healthcenterForm"
+                      sf-schema="schema"
+                      sf-form="form"
+                      sf-model="healthcenter"
+                      ng-submit="onSubmit(healthcenterForm)">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Healthcenter</h3>
+            </div>
+            <div class="box-body">
+                <pre>{{healthcenter|json}}</pre>
+            </div>
+        </div>
+    </div>
+
+</div>

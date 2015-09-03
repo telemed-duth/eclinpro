@@ -37,12 +37,10 @@ angular.module('loopbackApp', [
     'ui.select',
     "angular-advanced-searchbox",
     'com.module.core',
-    'com.module.about',
     'com.module.files',
     'com.module.protocols',
     'com.module.healthcenters',
     'com.module.products',
-    'com.module.sandbox',
     'com.module.settings',
     'com.module.users'
   ]);

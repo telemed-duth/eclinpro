@@ -1,0 +1,23 @@
+{
+  "name": "ProtocolUsage",
+  "plural": "ProtocolUsages",
+  "base": "PersistedModel",
+  "properties": {
+      "approvalDate": {
+        "type": "date"
+      }
+    },
+    "validations": [],
+    "relations": {
+      "doctors": {
+        "type": "belongsTo",
+        "model": "user"
+      },
+      "protocol": {
+        "type": "belongsTo",
+        "model": "Protocol"
+      }
+    },
+  "acls": [],
+  "methods": []
+}

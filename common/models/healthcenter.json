@@ -1,0 +1,69 @@
+{
+  "name": "Healthcenter",
+  "plural": "healthcenters",
+  "base": "AppModel",
+  "properties": {
+    "main_name": {
+      "type": "string"
+    },
+    "main_location": {
+      "type": "string"
+    },        
+    "resources_infastructure": {
+      "type": "array"
+    },
+    "resources_pharmaceutical": {
+        "type": "array"
+    },
+    "resources_human": {
+        "type": "array"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "protocols": {
+      "type": "hasMany",
+      "model": "Protocol",
+      "foreignKey": "healthcenterId",
+      "through": "ProtocolApproval"
+    },
+    "createdBy":{
+        "type":"belongsTo",
+        "model":"user",
+        "foreignKey":"ownerId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "admin",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+    "accessType": "EXECUTE",
+    "principalType": "ROLE",
+    "principalId": "$authenticated",
+    "permission": "ALLOW",
+    "property": "upsert"
+  }],
+  "methods": []
+}

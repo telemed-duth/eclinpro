@@ -5,7 +5,7 @@ var log = require('debug')('boot:03-load-content');
 
 module.exports = function(app) {
 
-  if (app.dataSources.db.name !== 'Memory' && !process.env.INITDB) {
+  if (app.dataSources.db.name !== 'Memory' && !process.env.INIT_CONTENT) {
     return;
   }
 

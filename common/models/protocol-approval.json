@@ -1,0 +1,23 @@
+{
+  "name": "ProtocolApproval",
+  "plural": "ProtocolApprovals",
+  "base": "PersistedModel",
+  "properties": {
+      "approvalDate": {
+        "type": "date"
+      }
+    },
+    "validations": [],
+    "relations": {
+      "healthcenter": {
+        "type": "belongsTo",
+        "model": "Healthcenter"
+      },
+      "protocol": {
+        "type": "belongsTo",
+        "model": "Protocol"
+      }
+    },
+  "acls": [],
+  "methods": []
+}

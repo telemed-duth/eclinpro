@@ -147,10 +147,10 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: 8080,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: '<%= yeoman.host %>',
-        livereload: 35729
+        hostname: '0.0.0.0',
+        livereload: false
       },
       livereload: {
         options: {
@@ -618,7 +618,8 @@ module.exports = function (grunt) {
       'wiredep:server',
       'concurrent:server',
       'autoprefixer',
-      'connect:livereload',
+      'connect',
+      // 'connect:livereload',
       'watch'
     ]);
   });
@@ -656,7 +657,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'test',
+    // 'test',
     'ngconstant:production',
     'loopback_sdk_angular:production',
     'includeSource:dist',
@@ -675,6 +676,7 @@ module.exports = function (grunt) {
     'htmlmin'
   ]);
 
+
   grunt.registerTask('devbuild', [
     'clean:dist',
     // 'test',
@@ -684,9 +686,9 @@ module.exports = function (grunt) {
     'wiredep:dist',
     'useminPrepare',
     //'concurrent:dist',
-    // 'autoprefixer',
+    //'autoprefixer',
     'concat',
-    'ngAnnotate',
+    // 'ngAnnotate',
     'copy:dist',
     //'cdnify',
     'cssmin',
@@ -696,21 +698,29 @@ module.exports = function (grunt) {
     'htmlmin'
   ]);
   
+  
   grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
+    // 'newer:jshint',
+    // 'test',
     'ngconstant:development',
     'loopback_sdk_angular:development',
-    'docular',
-    'nggettext_extract',
-    'nggettext_compile',
-    'build'
+    'clean:server',
+    'api',
+    'includeSource:server',
+    'ngconstant:development',
+    'loopback_sdk_angular:development',
+    'wiredep:server',
+    'concurrent:server',
+    'autoprefixer'
+    // 'docular',
+    // 'nggettext_extract',
+    // 'nggettext_compile',
+    // 'build'
   ]);
 
   grunt.registerTask('loopback', [
     'ngconstant:development',
     'loopback_sdk_angular:development',
-    'docular'
   ]);
 
   grunt.registerTask('gettext', [
