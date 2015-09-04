@@ -1,7 +1,8 @@
 
 <h3>
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-  {{protocol.release_title}}
+  {{protocol.release_title}} 
+  <div ng-show="isadmin">{{protocol.id}}</div>
 
   <span ng-show="protocol.ownerId==user.id||user.roles[0]=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: protocol.id})">

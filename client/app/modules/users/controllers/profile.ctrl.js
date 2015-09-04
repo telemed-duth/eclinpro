@@ -5,7 +5,8 @@ angular.module('com.module.users')
     $scope.user = $rootScope.currentUser;
 
     $scope.specialties=["Accident and emergency medicine","Allergology","Anaesthetics","Biological hematology","Cardiology","Child psychiatry","Clinical biology","Clinical chemistry","Clinical neurophysiology","Clinical radiology","Dental, oral and maxillo-facial surgery","Dermato-venerology","Dermatology","Endocrinology","Gastro-enterologic surgery","Gastroenterology","General hematology","General Practice","General surgery","Geriatrics","Immunology","Infectious diseases","Internal medicine","Laboratory medicine","Maxillo-facial surgery","Microbiology","Nephrology","Neuro-psychiatry","Neurology","Neurosurgery","Nuclear medicine","Obstetrics and gynecology","Occupational medicine","Ophthalmology","Orthopaedics","Otorhinolaryngology","Paediatric surgery","Paediatrics","Pathology","Pharmacology","Physical medicine and rehabilitation","Plastic surgery","Podiatric Medicine","Podiatric Surgery","Psychiatry","Public health and Preventive Medicine","Radiology","Radiotherapy","Respiratory medicine","Rheumatology","Stomatology","Thoracic surgery","Tropical medicine","Urology","Vascular surgery","Venereology"];
-
+    $scope.specialtiesObj=$scope.specialties.map(function(str) {return {"label":str,"value":str.replace(" ","_")}});
+    console.log($scope.specialtiesObj);
     $scope.formFields = [{
       key: 'username',
       type: 'text',
@@ -31,12 +32,12 @@ angular.module('com.module.users')
       type: 'select',    
       "templateOptions": {
       "label": "Medical Specialty",
-      "options":$scope.specialties.map(function(str) {return {"label":str,"value":str.replace(" ","_")}})
+      "options":$scope.specialtiesObj
       }
       
     }
 ];
-
+console.log($scope.formFields);
     $scope.formOptions = {
       uniqueFormId: true,
       hideSubmit: false,

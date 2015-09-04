@@ -41,14 +41,6 @@ app.config(function($stateProvider) {
   }).state('app.protocols.view', {
     url: '/:id',
     templateUrl: 'modules/protocols/views/view.html',
-    resolve: {
-      protocol: ['$stateParams', 'ProtocolsService', function($stateParams,
-        ProtocolsService) {
-        return ProtocolsService.getProtocol($stateParams.id);
-      }]
-    },
-    controller: function($scope, protocol) {
-      $scope.protocol = protocol;
-    }
+    controller: 'ProtocolsCtrl'
   });
 });
