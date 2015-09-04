@@ -3,7 +3,10 @@
   "plural": "users",
   "base": "User",
   "properties": {
-    "role":{
+    "specialty":{
+      "type":"string"
+    },
+    "location":{
       "type":"string"
     }
     

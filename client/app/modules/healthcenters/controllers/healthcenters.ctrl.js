@@ -161,7 +161,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
     // console.log(JSON.stringify($scope.schema));
     // console.log(JSON.stringify($scope.form));
-    console.log($scope.schema);
+    console.log($scope.schemaProps);
     console.log($scope.form);
   });
   
@@ -180,6 +180,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
 
     $scope.delete = function(id) {
       HealthcentersService.deleteHealthcenter(id, function() {
+        updateDashboard();
         $state.reload();
       });
     };
@@ -203,6 +204,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
         Healthcenter.upsert($scope.healthcenter, function() {
           CoreService.toastSuccess(gettextCatalog.getString('Health center saved'),
             gettextCatalog.getString('Your healthcenter is safe with us!'));
+            updateDashboard();
           $state.go('app.healthcenters.list');
         }, function(err) {
           console.log(err);
@@ -211,6 +213,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
         Healthcenter.create($scope.healthcenter, function() {
           CoreService.toastSuccess(gettextCatalog.getString('Health center created'),
             gettextCatalog.getString('Your healthcenter is safe with us!'));
+            updateDashboard();
           $state.go('app.healthcenters.list');
         }, function(err) {
           console.log(err);
@@ -218,5 +221,17 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       }
 
     };
+    
+        
+    function updateDashboard(){
+      Healthcenter.count(function(he){
+        $rootScope.dashboardBox=$rootScope.dashboardBox.map(function(obj){
+            if(obj.name==='Healthcenters') obj.quantity=he.count;
+            return obj;
+        });
+      });
+    };
+    
+       
 
   });

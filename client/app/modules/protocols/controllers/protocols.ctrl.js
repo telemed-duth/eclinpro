@@ -30,7 +30,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   
   function capFirst(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
   var propname=function(str){
-    return capFirst(str.split(CategorySplitter)[1]||" ");
+    return capFirst(str.split(CategorySplitter)[1].replace("@"," ")||" ");
   };  
   var catname=function(str){
     return capFirst(str.split(CategorySplitter)[0]||" ");
@@ -106,7 +106,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             if(keyObj.format) {
               item={
                 "key":key,
-                "feedback":true,
+                "feedback":false,
                 "placeholder":"Add "+propname(key),
                 "options": {
                   "refreshDelay": 50,
@@ -169,7 +169,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       
       
     //create view tabs from formProps
-    console.log($scope.formProps);
+    console.log($scope.schemaProps);
+    // console.log($scope.formProps);
     $scope.tabs=$scope.formProps[0].items[0].tabs;
       
 });
@@ -236,6 +237,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
 
     $scope.delete = function(id) {
       ProtocolsService.deleteProtocol(id, function() {
+        updateDashboard();
         $state.go('app.protocols.list', {}, { reload: true });
       });
     };
@@ -263,6 +265,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
           Protocol.create($scope.protocol, function() {
           CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
             gettextCatalog.getString('Your protocol is safe with us!'));
+            updateDashboard();
+
           $state.go('app.protocols.list', {}, { reload: true });
           }, function(err) {
           console.log(err);
@@ -273,6 +277,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
         Protocol.upsert($scope.protocol, function() {
           CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
             gettextCatalog.getString('Your protocol is safe with us!'));
+            updateDashboard();
+
           $state.go('app.protocols.list', {}, { reload: true });
         }, function(err) {
           console.log(err);
@@ -281,6 +287,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
           Protocol.create($scope.protocol, function() {
           CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
             gettextCatalog.getString('Your protocol is safe with us!'));
+            updateDashboard();
           $state.go('app.protocols.list', {}, { reload: true });
           }, function(err) {
           console.log(err);
@@ -290,7 +297,14 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
 
     };
     
-    
+    function updateDashboard(){
+      Protocol.count(function(pr){
+        $rootScope.dashboardBox=$rootScope.dashboardBox.map(function(obj){
+            if(obj.name==='Protocols') obj.quantity=pr.count;
+            return obj;
+        });
+      });
+    };
     
        
 

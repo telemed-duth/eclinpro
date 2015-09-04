@@ -4,7 +4,13 @@ angular.module('com.module.settings')
     $stateProvider.state('app.settings', {
         abstract: true,
         url: '/settings',
-        templateUrl: 'modules/settings/views/main.html'
+        templateUrl: 'modules/settings/views/main.html',
+        data: {
+          permissions: {
+            only: ['admin'],
+            redirectTo: 'app.home'
+          }
+        }
       })
       .state('app.settings.list', {
         url: '',

@@ -3,11 +3,11 @@
     "plural": "protocols",
     "base": "AppModel",
     "properties": {
-        "release_childType": {
+        "release_reason@of@deviation": {
             "type": "string",
             "enum": [
-                "Update",
-                "Deviation"
+                "update",
+                "deviation"
             ],
             "required": false
         },
@@ -24,8 +24,7 @@
             "type": "string"
         },
         "release_active": {
-            "type": "boolean",
-            "required": true
+            "type": "boolean"
         },
         "release_version": {
             "type": "string"
@@ -40,8 +39,7 @@
                 "diagnosis",
                 "management",
                 "therapeutic"
-            ],
-            "required": true
+            ]
         },
         "goal_disease": {
             "type": "string"
@@ -73,8 +71,7 @@
                 "male",
                 "female",
                 "both"
-            ],
-            "required": true
+            ]
         },
         "demographics_occupation": {
             "type": "string"
@@ -98,7 +95,7 @@
             "type": "array"
         },
         "cohort_symptoms": {
-            "type": "string"
+            "type": "array"
         },
         "cohort_contraindications": {
             "type": "array"
