@@ -21,9 +21,9 @@
         <tab select="start()" heading="{{ 'Visualizations' | translate }}">
 
           <div class="row">
-            <div ng-if="loading" class="overlay"></div>
-            <div ng-if="loading" class="loading-img"></div>
-            <div id="mynetwork"></div>
+            <div ng-show="graphloaded" class="overlay"></div>
+            <div ng-show="graphloaded" class="loading-img"></div>
+            <vis-network ng-show="graphloaded" data="visdata" options="visoptions" events="visevents"></vis-network>
           </div>
         </tab>
         <tab ng-show="isadmin" heading="{{ 'Variables' | translate }}">

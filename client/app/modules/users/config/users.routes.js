@@ -16,6 +16,7 @@ angular.module('com.module.users')
         abstract: true,
         url: '/users',
         templateUrl: 'modules/users/views/main.html'
+        
       })
       .state('app.users.profile', {
         url: '/profile',
@@ -26,19 +27,34 @@ angular.module('com.module.users')
         url: '',
         templateUrl: 'modules/users/views/list.html',
         controller: 'UsersCtrl',
-        authenticate: true
+        authenticate: true,
+          data: {
+            permissions: {
+              only: ['admin']
+            }
+          }
       })
       .state('app.users.add', {
         url: '/add',
         templateUrl: 'modules/users/views/form.html',
         controller: 'UsersCtrl',
-        authenticate: true
+        authenticate: true,
+          data: {
+            permissions: {
+              only: ['admin']
+            }
+          }
       })
       .state('app.users.edit', {
         url: '/edit/:id',
         templateUrl: 'modules/users/views/form.html',
         controller: 'UsersCtrl',
-        authenticate: true
+        authenticate: true,
+            data: {
+      permissions: {
+        only: ['admin']
+      }
+    }
       })
       .state('app.users.view', {
         url: '/view/:id',
@@ -49,6 +65,11 @@ angular.module('com.module.users')
       .state('app.users.delete', {
         url: '/delete/:id',
         controller: 'UsersCtrl',
-        authenticate: true
+        authenticate: true,
+            data: {
+      permissions: {
+        only: ['admin']
+      }
+    }
       });
   });

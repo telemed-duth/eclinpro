@@ -20,7 +20,15 @@ angular.module('com.module.core')
       .state('app.home', {
         url: '/app',
         templateUrl: 'modules/core/views/home.html',
-        controller: 'HomeCtrl'
+        controller: 'HomeCtrl',
+        resolve: {
+          visdata: function ($stateParams, Vis) {
+            return {"nodes":Vis.nodes(),"edges":Vis.edges()}
+          }
+        }
       });
-    $urlRouterProvider.otherwise('/app');
+    $urlRouterProvider.otherwise( function($injector) {
+      var $state = $injector.get("$state");
+      $state.go('app.home');
+    });
   });

@@ -197,14 +197,26 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     }
 
 
+    
     $scope.onSubmit = function() {
-      Healthcenter.upsert($scope.healthcenter, function() {
-        CoreService.toastSuccess(gettextCatalog.getString('Healthcenter saved'),
-          gettextCatalog.getString('Your healthcenter is safe with us!'));
-        $state.go('^.list');
-      }, function(err) {
-        console.log(err);
-      });
+      if($scope.healthcenter.id){
+        Healthcenter.upsert($scope.healthcenter, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Health center saved'),
+            gettextCatalog.getString('Your healthcenter is safe with us!'));
+          $state.go('app.healthcenters.list');
+        }, function(err) {
+          console.log(err);
+        });
+      } else {
+        Healthcenter.create($scope.healthcenter, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Health center created'),
+            gettextCatalog.getString('Your healthcenter is safe with us!'));
+          $state.go('app.healthcenters.list');
+        }, function(err) {
+          console.log(err);
+        });
+      }
+
     };
 
   });

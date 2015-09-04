@@ -27,7 +27,13 @@ app.config(function($stateProvider) {
   }).state('app.healthcenters.edit', {
     url: '/:id/edit',
     templateUrl: 'modules/healthcenters/views/form.html',
-    controller: 'HealthcentersCtrl'
+    controller: 'HealthcentersCtrl',
+    data: {
+      permissions: {
+        only: ['admin','healthcenterowner'],
+        redirectTo: 'app.healthcenters.list'
+      }
+    }
   }).state('app.healthcenters.view', {
     url: '/:id',
     templateUrl: 'modules/healthcenters/views/view.html',

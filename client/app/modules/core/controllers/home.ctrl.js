@@ -7,52 +7,54 @@
  * @requires $rootScope
  **/
 angular.module('com.module.core')
-  .controller('HomeCtrl', function($scope, $rootScope,Vis,$timeout) {
+  .controller('HomeCtrl', function($scope, $rootScope,Vis,$timeout,visdata) {
 
     $scope.count = {};
 
     $scope.boxes = $rootScope.dashboardBox;
     
-    // $scope.user=$rootScope.currentUser;
-    // $scope.isadmin=$rootScope.isadmin;
+// Network graph related
 
     
+     $scope.draw=function(){
+        
+    // var nodes=new VisDataSet();
+    // var edges=new VisDataSet();
     
-    // Visualizations
-    $scope.draw=function() {
-            // create some nodes
-            var nodes=Vis.nodes();
-            var edges=Vis.edges();
-            console.log('draw invoked!');
-            // create a network
-            var container = document.getElementById('mynetwork');
-            var data = {
-                nodes: nodes,
-                edges: edges
-            };
-            var options = {
-                nodes: {
-                    shape: 'dot',
-                    size: 16
+    // nodes.add(Vis.nodes());
+    // edges.add(Vis.edges());
+    
+        $scope.graphloaded=true;
+        $scope.visdata=visdata;
+        $scope.visoptions={
+            autoResize: false,
+            height: '600',
+            width: '100%',
+            nodes: {
+                shape: 'dot',
+                size: 16
+            },
+            edges:{
+                arrows:'to',
+                color:{opacity:0.3}
+            },
+            physics: {
+                forceAtlas2Based: {
+                    gravitationalConstant: -26,
+                    centralGravity: 0.005,
+                    springLength: 230,
+                    springConstant: 0.18
                 },
-                physics: {
-                    forceAtlas2Based: {
-                        gravitationalConstant: -26,
-                        centralGravity: 0.005,
-                        springLength: 230,
-                        springConstant: 0.18
-                    },
-                    maxVelocity: 146,
-                    solver: 'forceAtlas2Based',
-                    timestep: 0.35,
-                    stabilization: {iterations: 150}
-                }
-            };
-            var network = new vis.Network(container, data, options);
-
-    }; 
+                maxVelocity: 146,
+                solver: 'forceAtlas2Based',
+                timestep: 0.35,
+                stabilization: {iterations: 150}
+            }
+        };
+    };
+        
     $scope.start=function(){
-      $timeout($scope.draw,10);
+      $timeout($scope.draw(),100);
     };
       
 });

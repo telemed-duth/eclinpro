@@ -1,9 +1,9 @@
 
-<h4>
+<h3>
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-  {{protocol.title}}
+  {{protocol.release_title}}
 
-  <span ng-show="item.ownerId==user.id||user.roles[0]=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
+  <span ng-show="protocol.ownerId==user.id||user.roles[0]=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: protocol.id})">
       <i class="fa fa-pencil"></i>
     </a>
@@ -12,6 +12,69 @@
     </a>
   </span>
 
-</h4>
+</h3>
+
 <hr>
-<pre>{{protocol | json}}</pre>
+
+<div class="row">
+  <div class="col-md-2">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Actions</div>
+      <div class="panel-body">
+        
+        <div class="btn-group-vertical" role="group" aria-label="...">
+          <a href="" class="btn btn-default" ui-sref="^.deviate({parentId: protocol.id})">Create a deviation</a>
+          <a href="" ng-show="!protocolUsage.active" class="btn btn-default" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol</a>
+          <a href="" ng-show="protocolUsage.active" class="btn btn-default" ng-click="toggleProtocolUsage(protocol.id)">Stop using this protocol</a>
+        </div>
+      
+      </div>
+      
+      
+      
+      </div> 
+  </div>
+    
+  <div class="col-md-7">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Protocol Description</div>
+      <div class="panel-body">
+        
+      <tabset justified="true">
+        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+          <ul class="list-group">
+            <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{protocol[prop.key].toString()}}</li>
+          </ul>
+        </tab>
+      </tabset>
+      
+      
+      </div> 
+    </div>
+    
+  </div>
+  
+  <div class="col-md-3">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Social Information</div>
+      <div class="panel-body">
+      <tabset justified="true">
+        
+        <tab heading="Health centers">
+        </tab>
+        <tab heading="Protocol Users">
+          <ul class="list-group">
+            <li ng-repeat="user in pusers" class="list-group-item">{{user.firstName +' '+ user.lastName}} - {{user.specialty }}</li>
+          </ul>
+        </tab>
+      </tabset>
+      </div>
+      </div>
+    
+  </div>
+  
+</div>
+  

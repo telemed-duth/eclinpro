@@ -677,7 +677,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('devbuild', [
     'clean:dist',
-    // 'test',
+    'test',
     'ngconstant:production',
     'loopback_sdk_angular:production',
     'includeSource:dist',

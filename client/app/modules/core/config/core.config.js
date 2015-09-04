@@ -1,6 +1,75 @@
 'use strict';
 var app = angular.module('com.module.core');
-app.run(function($rootScope, Setting, gettextCatalog) {
+app.run(function($rootScope, Setting, gettextCatalog,Permission,User,ProtocolsService,HealthcentersService,$q) {
+
+
+   
+    //angular-permission
+     Permission.defineRole('admin', function (stateParams) {
+          var deferred = $q.defer();
+          
+          User.getCurrent(function (user) {
+            
+            User.roles({"id":user.id}).$promise.then(function(roles){
+              
+              if(roles[0]) {
+                  if(roles[0].name==='admin'){
+                    console.log('Admin asserted!');
+                    $rootScope.isadmin=true;
+                    deferred.resolve();
+                  } else deferred.reject();
+              } else deferred.reject();
+            }, function () {
+              // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });
+      
+      
+      Permission.defineRole('protocolowner', function (stateParams) {
+          var deferred = $q.defer();
+          User.getCurrent(function (user) {
+            
+            ProtocolsService.getProtocol(stateParams.id).then(function(protocol){
+              if(protocol.ownerId==user.id) deferred.resolve();
+              else deferred.reject();
+            }, function () {
+            // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });      
+      
+      Permission.defineRole('healthcenterowner', function (stateParams) {
+          var deferred = $q.defer();
+          User.getCurrent(function (user) {
+            
+            HealthcentersService.getHealthcenter(stateParams.id).then(function(protocol){
+              if(protocol.ownerId==user.id) deferred.resolve();
+              else deferred.reject();
+            }, function () {
+            // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });
+
 
   // Left Sidemenu
   $rootScope.menu = [];

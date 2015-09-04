@@ -27,6 +27,16 @@ app.config(function($stateProvider) {
   }).state('app.protocols.edit', {
     url: '/:id/edit',
     templateUrl: 'modules/protocols/views/form.html',
+    controller: 'ProtocolsCtrl',
+    data: {
+      permissions: {
+        only: ['admin','protocolowner'],
+        redirectTo: 'app.protocols.list'
+      }
+    }
+  }).state('app.protocols.deviate', {
+    url: '/:parentId/deviate',
+    templateUrl: 'modules/protocols/views/form.html',
     controller: 'ProtocolsCtrl'
   }).state('app.protocols.view', {
     url: '/:id',

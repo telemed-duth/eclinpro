@@ -24,6 +24,8 @@ angular.module('loopbackApp', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
+    'ngMap',
+    'ngVis',
     'ui.bootstrap',
     'ui.codemirror',
     'ui.gravatar',
@@ -42,7 +44,8 @@ angular.module('loopbackApp', [
     'com.module.healthcenters',
     'com.module.products',
     'com.module.settings',
-    'com.module.users'
+    'com.module.users',
+    'permission'
   ]);
   // .run(function($rootScope, $cookies, gettextCatalog) {
 

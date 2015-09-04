@@ -1,12 +1,8 @@
 'use strict';
 angular.module('com.module.users')
-  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog) {
+  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog,$rootScope) {
 
-    $scope.user = User.getCurrent(function(user) {
-      console.log(user);
-    }, function(err) {
-      console.log(err);
-    });
+    $scope.user = $rootScope.currentUser;
 
     $scope.formFields = [{
       key: 'username',

@@ -1,17 +1,16 @@
 'use strict';
 angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal) {
-      
-var test_setting_val=$rootScope.getSetting("com.module.protocols.release_active");
-console.log(test_setting_val);
+    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal,ProtocolUsage) {
+
+
 $scope.user=$rootScope.currentUser;
 $scope.isadmin=$rootScope.isadmin;
 
 $scope.autocompleteResults=[];
 
 
-
+$scope.protocolUsage={};
 var BioportalSplitter=".";
 var CategorySplitter="_";
 
@@ -37,17 +36,23 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     return capFirst(str.split(CategorySplitter)[0]||" ");
   };
   
+  $scope.cName=catname;
+  $scope.pName=propname;
+  
+  
 //retrieve protocol model
-  var curModel={};
   $scope.protocol={}
   $scope.requiredProps=[];
   $scope.schemaProps={};
   $scope.formProps=[];
   
   $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
-  Meta.getModelProperties(function(obj) {
+  
+  function buildModel() {
     
-    curModel=obj.Protocol;
+    Meta.getModelProperties(function(obj) {
+    
+    var curModel=obj.Protocol;
     var propCategories=[];
     
         for(var key in curModel){
@@ -132,56 +137,45 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
           }
         }
         
-    $scope.formProps.push({  
-      "type":"fieldset",
-      "title":"Clinical Protocol",
-      "items":[{
-        "type": "tabs",
-        "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
-      }]
-    });      
-        
-        
-    $scope.formProps.push({  
-      "type":"actions",
-      "items":[  
-         {  
-            "type":"submit",
-            "style":"btn-info",
-            "title":"Submit"
-         },
-         {  
-            "type":"button",
-            "style":"btn-danger",
-            "title":"Cancel",
-            "onClick":"sayNo()"
-         }
-      ]
-   });
-   
-   $scope.availableSearchParams=[];
-   var obj={};
-   for (var key in $scope.schemaProps) {
-     obj=$scope.schemaProps[key];
-     if(
-      obj.type==="string" &&
-      key!=="release_url" &&
-      key!=="release_version" &&
-      key!=="release_date" &&
-      key!=="evidence_url" &&
-      key!=="evidence_date"
-     ) {
-      // console.log(key+" is inserted to filters");
-       $scope.availableSearchParams.push({"key":key,"name":catname(key)+" "+propname(key), "placeholder": propname(key)+"..."});
-     }
-    }
+        $scope.formProps.push({  
+          "type":"fieldset",
+          "title":"Clinical Protocol",
+          "items":[{
+            "type": "tabs",
+            "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
+          }]
+        });      
+            
+            
+        $scope.formProps.push({  
+          "type":"actions",
+          "items":[  
+             {  
+                "type":"submit",
+                "style":"btn-info",
+                "title":"Submit"
+             },
+             {  
+                "type":"button",
+                "style":"btn-danger",
+                "title":"Cancel",
+                "onClick":"sayNo()"
+             }
+          ]
+       });
+       
+      
+      //protocol view/edit
+      
+      
+    //create view tabs from formProps
+    console.log($scope.formProps);
+    $scope.tabs=$scope.formProps[0].items[0].tabs;
+      
+});
 
-    // console.log(JSON.stringify($scope.schema));
-    // console.log(JSON.stringify($scope.form));
-    console.log($scope.schema);
-    console.log($scope.form);
-  });
-  
+};
+
   
   
 
@@ -193,7 +187,52 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     };
   
     $scope.form = $scope.formProps;
+    
+    console.log('every time running');
+    buildModel();
 
+    $scope.toggleProtocolUsage = function(id) {
+      
+      ProtocolUsage.findOne({
+        "userId":$scope.currentUser.id,
+        "protocolId":id
+        },function(usage) {
+          $scope.protocolUsage=usage;
+          
+          $scope.prUsage();
+
+          
+        },function(err){          
+          $scope.protocolUsage={
+              "userId":$scope.currentUser.id,
+              "protocolId":id,
+              "active":false
+            };
+            $scope.prUsage();
+          
+        });
+  
+    };
+    
+    $scope.prUsage=function(){
+            $scope.protocolUsage.active=!$scope.protocolUsage.active;
+      if($scope.protocolUsage.active) {
+        ProtocolUsage.upsert($scope.protocolUsage, function(res) {
+                    $scope.protocolUsage=res;
+
+        CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
+            gettextCatalog.getString('You are now using this protocol.'));
+            
+        });
+      } else {
+        ProtocolUsage.upsert($scope.protocolUsage, function(res) {
+          $scope.protocolUsage=res;
+        CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
+            gettextCatalog.getString('You have stopped using this protocol.'));
+        });   
+
+      }
+    }
 
     $scope.delete = function(id) {
       ProtocolsService.deleteProtocol(id, function() {
@@ -203,25 +242,84 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
 
     var protocolId = $stateParams.id;
 
-    if (protocolId) {
+    if (protocolId||$stateParams.parentId ) {
       $scope.protocol = Protocol.findById({
-        id: protocolId
+        id: protocolId||$stateParams.parentId
       }, function() {}, function(err) {
         console.log(err);
       });
+      
     } else {
       $scope.protocol = {};
+      $scope.protocolUsage = {};
     }
 
 
     $scope.onSubmit = function() {
-      Protocol.upsert($scope.protocol, function() {
-        CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
-          gettextCatalog.getString('Your protocol is safe with us!'));
-        $state.go('app.protocols.list');
-      }, function(err) {
-        console.log(err);
-      });
+      if($stateParams.parentId){
+          $scope.protocol.id=null;
+          delete $scope.protocol['id'];
+          $scope.protocol.parentId=$stateParams.parentId;
+          Protocol.create($scope.protocol, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
+            gettextCatalog.getString('Your protocol is safe with us!'));
+          $state.go('app.protocols.list', {}, { reload: true });
+          }, function(err) {
+          console.log(err);
+          });
+      
+      } else {
+        if($scope.protocol.id){
+        Protocol.upsert($scope.protocol, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
+            gettextCatalog.getString('Your protocol is safe with us!'));
+          $state.go('app.protocols.list', {}, { reload: true });
+        }, function(err) {
+          console.log(err);
+        });
+        } else {
+          Protocol.create($scope.protocol, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
+            gettextCatalog.getString('Your protocol is safe with us!'));
+          $state.go('app.protocols.list', {}, { reload: true });
+          }, function(err) {
+          console.log(err);
+          });
+        }
+      }
+
     };
+    
+    
+    
+       
+
 
   });
+  
+     
+   //SUPER SEARCH FILTERS!!!
+   
+  // $scope.availableSearchParams=[];
+  // var obj={};
+  // for (var key in $scope.schemaProps) {
+  //   obj=$scope.schemaProps[key];
+  //   if(
+  //     obj.type==="string" &&
+  //     key!=="release_url" &&
+  //     key!=="release_version" &&
+  //     key!=="release_date" &&
+  //     key!=="evidence_url" &&
+  //     key!=="evidence_date"
+  //   ) {
+  //     // console.log(key+" is inserted to filters");
+  //     $scope.availableSearchParams.push({"key":key,"name":catname(key)+" "+propname(key), "placeholder": propname(key)+"..."});
+  //   }
+  //   }
+
+  //   // console.log(JSON.stringify($scope.schema));
+  //   // console.log(JSON.stringify($scope.form));
+  //   console.log($scope.schema);
+  //   console.log($scope.form);
+  // });
+  

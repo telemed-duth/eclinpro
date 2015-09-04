@@ -38,13 +38,6 @@
     "permission": "ALLOW"
   },    
   {
-    "accessType": "EXECUTE",
-    "principalType": "ROLE",
-    "principalId": "$authenticated",
-    "permission": "ALLOW",
-    "property": "upsert"
-  },
-  {
     "accessType": "*",
     "principalType": "ROLE",
     "principalId": "$owner",

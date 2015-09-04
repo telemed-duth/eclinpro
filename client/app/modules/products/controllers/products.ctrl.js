@@ -6,7 +6,6 @@ angular.module('com.module.products')
     var productId = $stateParams.id;
     var categoryId = $stateParams.categoryId;
     $scope.currentUser=$rootScope.currentUser;
-    console.log($scope.currentUser);
 
     if (productId) {
       $scope.product = Product.findById({

@@ -3,12 +3,11 @@
     "plural": "protocols",
     "base": "AppModel",
     "properties": {
-        "childType": {
+        "release_childType": {
             "type": "string",
             "enum": [
-                "Migration",
                 "Update",
-                "Variation"
+                "Deviation"
             ],
             "required": false
         },
@@ -113,7 +112,7 @@
         "parent": {
             "type": "hasOne",
             "model": "Protocol",
-            "foreignKey": "createdFrom"
+            "foreignKey": "parentId"
         },
         "healthcenters": {
           "type": "hasMany",
@@ -138,7 +137,7 @@
     "principalType": "ROLE",
     "principalId": "$authenticated",
     "permission": "ALLOW",
-    "property": "upsert"
+    "property": "create"
   }],
     "methods": []
 }

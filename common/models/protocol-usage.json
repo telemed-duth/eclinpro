@@ -3,13 +3,13 @@
   "plural": "ProtocolUsages",
   "base": "PersistedModel",
   "properties": {
-      "approvalDate": {
-        "type": "date"
+      "active": {
+        "type": "boolean"
       }
     },
     "validations": [],
     "relations": {
-      "doctors": {
+      "user": {
         "type": "belongsTo",
         "model": "user"
       },

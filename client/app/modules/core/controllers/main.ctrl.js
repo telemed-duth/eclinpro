@@ -14,7 +14,20 @@ angular.module('com.module.core')
   .controller('MainCtrl', function($scope, $rootScope, $state,$stateParams, $location,
     CoreService, User, gettextCatalog) {
     
-    $scope.currentUser = {};
+    
+    
+    $scope.currentUser = $rootScope.currentUser;
+    $scope.isadmin = $rootScope.isadmin;
+    
+              
+    //handle permissions on menu
+    $scope.menuoptions = $rootScope.menu.filter(function(obj){
+      if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
+        return $scope.isadmin;
+      }
+      return true;
+    });
+    
     User.getCurrent(function(result) {
       
       User.roles({"id":result.id},function(roles){
