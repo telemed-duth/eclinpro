@@ -7,8 +7,7 @@ app.config(function($stateProvider) {
     abstract: true,
     url: '/healthcenters',
     templateUrl: 'modules/healthcenters/views/main.html',
-    controller: 'HealthcentersCtrl',
-    controllerAs: 'ctrl'
+    controller: 'HealthcentersCtrl'
   }).state('app.healthcenters.list', {
     url: '',
     templateUrl: 'modules/healthcenters/views/list.html',

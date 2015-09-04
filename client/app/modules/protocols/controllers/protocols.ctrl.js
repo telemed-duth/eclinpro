@@ -7,10 +7,44 @@ angular.module('com.module.protocols')
 $scope.user=$rootScope.currentUser;
 $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
-
+$scope.modelLoaded=false;
 
 var BioportalSplitter=".";
 var CategorySplitter="_";
+var SpaceSplitter="0";
+$scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
+  
+
+  
+  $scope.cName=catname;
+  $scope.pName=propname;
+  
+  
+//retrieve protocol model
+  $scope.requiredProps=[];
+  $scope.schemaProps={};
+  $scope.formProps=[];
+  
+  var protocolId = $stateParams.id;
+  if (protocolId||$stateParams.parentId ) {
+    
+    console.log("there is a protocol id");
+    Protocol.findById({
+      id: protocolId||$stateParams.parentId
+    }, function(protocol) {
+      console.log(protocol);
+      $scope.protocol = protocol;
+      $scope.fetchUsage();
+      
+    }, function(err) {
+      console.log(err);
+    });
+
+    
+  } else {
+    $scope.protocol = {};
+  }
+  
 
 //autocomplete fetch from bioportal
 $scope.bioportalAutocomplete = function(schema, options, search) {
@@ -28,24 +62,13 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   
   function capFirst(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
   var propname=function(str){
-    return capFirst(str.split(CategorySplitter)[1].replace("@"," ")||" ");
+    return capFirst(str.split(CategorySplitter)[1].replace(SpaceSplitter," ")||" ");
   };  
   var catname=function(str){
-    return capFirst(str.split(CategorySplitter)[0]||" ");
+    return capFirst(str.split(CategorySplitter)[0].replace(SpaceSplitter," ")||" ");
   };
-  
-  $scope.cName=catname;
-  $scope.pName=propname;
-  
-  
-//retrieve protocol model
-  $scope.protocol={}
-  $scope.requiredProps=[];
-  $scope.schemaProps={};
-  $scope.formProps=[];
-  
-  $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
-  
+
+
   function buildModel() {
     
     Meta.getModelProperties(function(obj) {
@@ -163,17 +186,19 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
        });
        
       
-      //protocol view/edit
+            //protocol view/edit
+            
+            
+          //create view tabs from formProps
+          console.log($scope.schemaProps);
+          // console.log($scope.formProps);
+          $scope.tabs=$scope.formProps[0].items[0].tabs;
+          
+          $scope.modelLoaded=true;
+            
+      });
       
-      
-    //create view tabs from formProps
-    console.log($scope.schemaProps);
-    // console.log($scope.formProps);
-    $scope.tabs=$scope.formProps[0].items[0].tabs;
-      
-});
-
-};
+      }
 
   
   
@@ -188,45 +213,23 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     $scope.form = $scope.formProps;
     
     console.log('every time running');
-    buildModel();
+    
 
     $scope.toggleProtocolUsage = function(id) {
-      console.log(id);
-      
-      if($scope.protocolUsage){
-        $scope.protocolUsage.active=!$scope.protocolUsage.active;
-
-        
+          console.log("fetchUsage----");
+          console.log(id);
+      if($scope.protocolUsage) {
         if($scope.protocolUsage.id){
-          console.log("Old usage by "+$scope.currentUser.email+"("+$scope.currentUser.id+") for protocol"+id);
-
-          $scope.prUsage();
-        } else {
-          
-          console.log("New usage (without id by "+$scope.currentUser.email+"("+$scope.currentUser.id+") for protocol"+id);
-
-          $scope.protocolUsage.userId=$scope.currentUser.id;
-          $scope.protocolUsage.protocolId=id;
-          $scope.prUsage(true);
-        }
-     
-      } else {
-        console.log("New usage by "+$scope.currentUser.email+"("+$scope.currentUser.id+") for protocol"+id);
-          $scope.protocolUsage={
-            "userId":$scope.currentUser.id,
-            "protocolId":id,
-            "active":true
-          }
-        $scope.prUsage(true);
-              
-            
-      }
+          prUsage();
+        } else prUsage(true);
+      } else console.log("No protocol usage has been defined! look it up!");
   
     };
     
-    $scope.prUsage=function(create){
+    function prUsage(create){
       
-            $scope.protocolUsage.active=!$scope.protocolUsage.active;
+      $scope.protocolUsage.active=!$scope.protocolUsage.active;
+
       if(create){
           
           if($scope.protocolUsage.active) {
@@ -272,48 +275,31 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       });
     };
 
-    var protocolId = $stateParams.id;
-    if (protocolId||$stateParams.parentId ) {
-      
-      console.log("there is a protocol id");
-      $scope.protocol = Protocol.findById({
-        id: protocolId||$stateParams.parentId
-      }, function() {}, function(err) {
-        console.log(err);
-      });
-
-      
-    } else {
-      $scope.protocol = {};
-    }
     
     $scope.fetchUsage=function(){
-      
-      ProtocolUsage.find({
-            "userId":$scope.currentUser.id
-        }
-        ,function(usage) {
-          console.log(usage);
-          usage.forEach(function(obj){
-            if(obj.protocolId===$scope.protocol.id) $scope.protocolUsage = obj
-            $scope.protocolUsage=$scope.protocolUsage||{
-              "userId":$scope.currentUser.id,
-              "protocolId":$scope.protocol.id,
-              "active":false
-            };
-          });
+      var query={
+            filter: {
+              where:  {
+                "userId": $scope.currentUser.id,
+                "protocolId": $scope.protocol.id
+              }
+            }
+          };
           
-          
+       ProtocolUsage.findOne(query,function(usage) {
+          $scope.protocolUsage=usage;
         },function(err){  
-          console.log(err);
+          // console.log(err);
           $scope.protocolUsage={
             "userId":$scope.currentUser.id,
             "protocolId":$scope.protocol.id,
             "active":false
           };
+          console.log($scope.protocolUsage);
           
-      });
-    }
+        });
+      
+    };
 
     $scope.onSubmit = function() {
       if($stateParams.parentId){
@@ -364,8 +350,15 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       });
     };
     
-    $scope.fetchUsage();
-       
+    
+    
+    //init
+    
+    
+  
+    if(!$scope.modelLoaded) buildModel();
+
+
 
 
   });

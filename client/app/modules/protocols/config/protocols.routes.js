@@ -8,7 +8,6 @@ app.config(function($stateProvider) {
     url: '/protocols',
     templateUrl: 'modules/protocols/views/main.html',
     controller: 'ProtocolsCtrl',
-    controllerAs: 'ctrl'
   }).state('app.protocols.list', {
     url: '',
     templateUrl: 'modules/protocols/views/list.html',

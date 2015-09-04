@@ -3,11 +3,14 @@
     "plural": "protocols",
     "base": "AppModel",
     "properties": {
-        "release_reason@of@deviation": {
+        "release_deviation0reason": {
             "type": "string",
             "enum": [
                 "update",
-                "deviation"
+                "variation",
+                "conformity",
+                "regularity",
+                "uniformity"
             ],
             "required": false
         },
