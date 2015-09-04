@@ -42,7 +42,6 @@ angular.module('loopbackApp', [
     'com.module.files',
     'com.module.protocols',
     'com.module.healthcenters',
-    'com.module.products',
     'com.module.settings',
     'com.module.users',
     'permission'
