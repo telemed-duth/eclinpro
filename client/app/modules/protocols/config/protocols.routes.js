@@ -22,19 +22,16 @@ app.config(function($stateProvider) {
     controller: function($scope, protocols,$stateParams,$rootScope) {
       
       if($stateParams.filtered==='own') {
-                console.log('own');
-
         $scope.protocols=protocols.filter(function(pr){
           return pr.ownerId===$rootScope.currentUser.id;
         });
-      }
-      if($stateParams.filtered==='used') {
-        console.log('used');
+      } else if($stateParams.filtered==='used') {
         $scope.protocols=protocols.filter(function(pr){
           if(pr.usedBy instanceof Array){
-            return (pr.usedBy.indexOf($rootScope.currentUser.id)>=0);
+            for (var i = pr.usedBy.length; i--; ) {
+              return pr.usedBy[i].id===$rootScope.currentUser.id;
+            }
           } else return false;
-          return pr.ownerId===$rootScope.currentUser.id;
         });
       } else {
         $scope.protocols = protocols;
