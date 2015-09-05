@@ -1,11 +1,10 @@
 'use strict';
 angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal,ProtocolUsage) {
+    FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal,ProtocolUsage,LoopBackAuth) {
 
 
-$scope.filtered=$stateParams.filtered||'all';
-$scope.user=$rootScope.currentUser;
+$scope.user=LoopBackAuth.currentUserData;
 $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
 $scope.protocolUsage={};
@@ -80,7 +79,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
         for(var key in curModel){
           
-          if( key.indexOf(CategorySplitter)>0 || $scope.protocol.parentId){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
+          if( key.indexOf(CategorySplitter)>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
             
             
             //schema builder

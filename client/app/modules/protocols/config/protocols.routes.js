@@ -11,7 +11,7 @@ app.config(function($stateProvider) {
   }).state('app.protocols.list', {
     url: '',
     params: {
-        filtered: null,
+        filtered: 'all',
     },
     templateUrl: 'modules/protocols/views/list.html',
     resolve: {
@@ -19,17 +19,18 @@ app.config(function($stateProvider) {
         return ProtocolsService.getProtocols();
       }]
     },
-    controller: function($scope, protocols,$stateParams,$rootScope) {
-      
-      if($stateParams.filtered==='own') {
+    controller: function($scope, protocols,$stateParams,LoopBackAuth) {
+      $scope.filtered=$stateParams.filtered;
+      $scope.$parent.filtered=$stateParams.filtered;
+      if($scope.filtered==='own') {
         $scope.protocols=protocols.filter(function(pr){
-          return pr.ownerId===$rootScope.currentUser.id;
+          return pr.ownerId===LoopBackAuth.currentUserId;
         });
-      } else if($stateParams.filtered==='used') {
+      } else if($scope.filtered==='used') {
         $scope.protocols=protocols.filter(function(pr){
           if(pr.usedBy instanceof Array){
             for (var i = pr.usedBy.length; i--; ) {
-              return pr.usedBy[i].id===$rootScope.currentUser.id;
+              if(pr.usedBy[i].id===LoopBackAuth.currentUserId) return true;
             }
           } else return false;
         });
