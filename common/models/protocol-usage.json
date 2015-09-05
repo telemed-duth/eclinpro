@@ -1,11 +1,8 @@
 {
   "name": "ProtocolUsage",
   "plural": "ProtocolUsages",
-  "base": "PersistedModel",
+  "base": "AppModel",
   "properties": {
-      "active": {
-        "type": "boolean"
-      }
     },
     "validations": [],
     "relations": {

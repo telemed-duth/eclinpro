@@ -6,8 +6,15 @@ app.service('ProtocolsService', ['CoreService', 'gettextCatalog', 'Protocol', fu
 
   this.getProtocols = function() {
     return Protocol.find({
+      include: {
+        relation: 'usedBy', // include the owner object
+        scope: { // further filter the owner object
+          fields: ['userId'], // only show two fields
+        }
+      },
       filter: {
-        order: 'created DESC'
+        order: 'created DESC',
+         
       }
     }).$promise;
   };

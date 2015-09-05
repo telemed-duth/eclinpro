@@ -12,11 +12,6 @@
   },
   "validations": [],
   "relations": {
-    "owner": {
-      "type": "belongsTo",
-      "model": "user",
-      "foreignKey": "ownerId"
-    }
   },
   "acls": [
   {

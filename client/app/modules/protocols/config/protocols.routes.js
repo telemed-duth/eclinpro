@@ -9,15 +9,30 @@ app.config(function($stateProvider) {
     templateUrl: 'modules/protocols/views/main.html',
     controller: 'ProtocolsCtrl',
   }).state('app.protocols.list', {
-    url: '',
+    url: '/:filtered?',
     templateUrl: 'modules/protocols/views/list.html',
     resolve: {
       protocols: ['ProtocolsService', function(ProtocolsService) {
         return ProtocolsService.getProtocols();
       }]
     },
-    controller: function($scope, protocols) {
-      $scope.protocols = protocols;
+    controller: function($scope, protocols,$stateParams,$rootScope) {
+      
+      if($stateParams.filtered==='own') {
+        $scope.protocols=protocols.filter(function(pr){
+          return pr.ownerId===$rootScope.currentUser.id;
+        });
+      }
+      if($stateParams.filtered==='used') {
+        $scope.protocols=protocols.filter(function(pr){
+          if(pr.usedBy instanceof Array){
+            return (pr.usedBy.indexOf($rootScope.currentUser.id)>=0);
+          } else return false;
+          return pr.ownerId===$rootScope.currentUser.id;
+        });
+      } else {
+        $scope.protocols = protocols;
+      }
     }
   }).state('app.protocols.add', {
     url: '/add',

@@ -5,7 +5,18 @@
     <!--    placeholder="Search...">-->
     <!--</nit-advanced-searchbox>-->
     <!--<pre>{{searchParams | json}}</pre>-->
-    <input autofocus="" type="text" ng-model="protocolSearch.$" class="form-control ng-pristine ng-valid ng-touched" placeholder="Find protocols">
+    <div class="row">
+      <div class="col-md-8">
+        <input autofocus="" type="text" ng-model="protocolSearch.$" class="form-control ng-pristine ng-valid ng-touched" placeholder="Find protocols">
+      </div>
+      <div class="col-md-4">
+        <div class="btn-group">
+            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'all'">All</a>
+            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'own'">Own</a>
+            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'used'">Used</a>
+        </div>
+      </div>
+    </div>
     <hr>
   </div>
 
