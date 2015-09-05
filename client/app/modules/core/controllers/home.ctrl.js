@@ -15,14 +15,7 @@ angular.module('com.module.core')
     
 // Network graph related
 
-    
      $scope.draw=function(){
-        
-    // var nodes=new VisDataSet();
-    // var edges=new VisDataSet();
-    
-    // nodes.add(Vis.nodes());
-    // edges.add(Vis.edges());
     
         $scope.graphloaded=true;
         $scope.visdata=visdata;
@@ -51,10 +44,6 @@ angular.module('com.module.core')
                 stabilization: {iterations: 150}
             }
         };
-    };
-        
-    $scope.start=function(){
-      $timeout($scope.draw(),100);
     };
       
 });

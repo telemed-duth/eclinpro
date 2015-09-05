@@ -1,7 +1,7 @@
 {
   "name": "ProtocolApproval",
   "plural": "ProtocolApprovals",
-  "base": "PersistedModel",
+  "base": "AppModel",
   "properties": {
       "approvalDate": {
         "type": "date"

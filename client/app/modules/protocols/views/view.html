@@ -24,10 +24,13 @@
       <div class="panel-heading">Actions</div>
       <div class="panel-body">
         
-        <div class="btn-group-vertical" role="group" aria-label="...">
-          <a href="" class="btn btn-default" ui-sref="^.deviate({parentId: protocol.id})">Create a deviation</a>
-          <a href="" ng-show="!protocolUsage.active" class="btn btn-default" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol</a>
-          <a href="" ng-show="protocolUsage.active" class="btn btn-default" ng-click="toggleProtocolUsage(protocol.id)">Stop using this protocol</a>
+        <div>
+          <ul>
+          <li><a ui-sref="^.deviate({parentId: protocol.id})">Create a deviation</a></li>
+          <li ng-show="!protocolUsage.id"><a  href="" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol</a></li>
+          <li ng-show="protocolUsage.id"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Stop using this protocol</a></li>
+          </ul>
+          
         </div>
       
       </div>
@@ -64,11 +67,15 @@
       <div class="panel-body">
       <tabset justified="true">
         
-        <tab heading="Health centers">
-        </tab>
         <tab heading="Protocol Users">
           <ul class="list-group">
-            <li ng-repeat="user in pusers" class="list-group-item">{{user.firstName +' '+ user.lastName}} - {{user.specialty }}</li>
+            <li class="list-group-item" ng-repeat="user in pusers">{{user.firstName +' '+ user.lastName}} {{ user.specialty }}</li>
+          </ul>
+        </tab>
+        <tab heading="Health centers">
+          <ul class="list-group">
+            <li ng-repeat="center in pcenters" class="list-group-item">{{center.name}} {{center.location }}</li>
+            
           </ul>
         </tab>
       </tabset>

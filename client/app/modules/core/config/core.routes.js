@@ -23,11 +23,12 @@ angular.module('com.module.core')
         controller: 'HomeCtrl',
         resolve: {
           visdata: function ($stateParams, Vis) {
-            return {"nodes":Vis.nodes(),"edges":Vis.edges()}
+            return Vis.data();
           }
         }
       });
-    $urlRouterProvider.otherwise( function($injector) {
+    $urlRouterProvider
+    .otherwise( function($injector) {
       var $state = $injector.get("$state");
       $state.go('app.home');
     });

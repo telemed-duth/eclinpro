@@ -6,14 +6,14 @@
     <!--</nit-advanced-searchbox>-->
     <!--<pre>{{searchParams | json}}</pre>-->
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-sm-9">
         <input autofocus="" type="text" ng-model="protocolSearch.$" class="form-control ng-pristine ng-valid ng-touched" placeholder="Find protocols">
       </div>
-      <div class="col-md-4">
+      <div class="col-sm-3">
         <div class="btn-group">
-            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'all'">All</a>
-            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'own'">Own</a>
-            <a class="btn btn-primary" ng-model="radioModel" btn-radio="'used'">Used</a>
+            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'all'})" ng-model="$parent.filtered" btn-radio="'all'">All</a>
+            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'own'})" ng-model="$parent.filtered" btn-radio="'own'">Own</a>
+            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'used'})" ng-model="$parent.filtered" btn-radio="'used'">Used</a>
         </div>
       </div>
     </div>
@@ -64,10 +64,10 @@
 <div class="box" ng-show="!protocols.length">
   <div class="box-header">
     <h3 class="box-title">
-      There are no protocols
+      There are no protocols 
     </h3>
   </div>
-  <div class="box-body">
+  <div class="box-body" ng-show="$parent.filtered==='all'">
     <p class="list-group-item-text" translate>Click <a href="" ui-sref="^.add">here</a>
       to add a protocol!</p>
   </div>

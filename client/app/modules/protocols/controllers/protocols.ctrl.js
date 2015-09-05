@@ -3,10 +3,12 @@ angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($scope, $state, $stateParams, CoreService,
     FormHelper, gettextCatalog, Protocol, ProtocolsService,Meta, $rootScope,Bioportal,ProtocolUsage) {
 
+
 $scope.filtered=$stateParams.filtered||'all';
 $scope.user=$rootScope.currentUser;
 $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
+$scope.protocolUsage={};
 $scope.modelLoaded=false;
 
 var BioportalSplitter=".";
@@ -20,23 +22,26 @@ $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infas
   $scope.schemaProps={};
   $scope.formProps=[];
   
-  var protocolId = $stateParams.id;
-  if (protocolId||$stateParams.parentId ) {
+  var protocolId=$stateParams.id||$stateParams.parentId||'';
+  if ( protocolId.length===24 ) {
     
     console.log("there is a protocol id");
     Protocol.findById({
-      id: protocolId||$stateParams.parentId
+      id: protocolId
     }, function(protocol) {
       console.log(protocol);
       $scope.protocol = protocol;
       $scope.fetchUsage();
+      $scope.fetchHealthcenters();
       
     }, function(err) {
+      $state.go('app.protocols.list');
       console.log(err);
     });
 
     
   } else {
+    
     $scope.protocol = {};
   }
   
@@ -213,18 +218,21 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     $scope.form = $scope.formProps;
     
     
-    function toggleProtocolUsage(){
+    $scope.toggleProtocolUsage=function(){
+      console.log($scope.protocolUsage);
       if(!$scope.protocolUsage.id){
           ProtocolUsage.create($scope.protocolUsage, function(res) {
-                      $scope.protocolUsage=res;
-  
+          $scope.protocolUsage=res;
+          updateDashboard();
+          $scope.fetchUsage();
           CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
               gettextCatalog.getString('You are now using this protocol.'));
               
           });
         } else {
           ProtocolUsage.deleteById({"id":$scope.protocolUsage.id}, function(res) {
-            $scope.protocolUsage={};
+          updateDashboard();
+          $scope.fetchUsage();
           CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
               gettextCatalog.getString('You have stopped using this protocol.'));
           });   
@@ -244,71 +252,53 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
       var query={
             filter: {
               where:  {
-                "userId": $scope.currentUser.id,
+                "userId": $scope.user.id,
                 "protocolId": $scope.protocol.id
               }
             }
           };
           
-       ProtocolUsage.findOne(query,function(usage) {
-          $scope.protocolUsage=usage;
-        },function(err){  
-          // console.log(err);
-          $scope.protocolUsage={
-            "userId":$scope.currentUser.id,
+       ProtocolUsage.find(query,function(usages) {
+         
+        $scope.fetchUsers();
+         if(usages.length>0) {
+            $scope.protocolUsage=usages[0];
+         } else {
+           $scope.protocolUsage={
+            "userId":$scope.user.id,
             "protocolId":$scope.protocol.id
           };
-          
+         }
+        },function(err){  
+         console.log(err);
         });
       
     };
     
     
     $scope.fetchUsers=function(){
-      var query={
-            filter: {
-              where:  {
-                "protocolId": $scope.protocol.id
-              }
-            }
-          };
-          
-       ProtocolUsage.find(query,function(usage) {
-          $scope.protocolUsage=usage;
+       Protocol.usedBy({id:$scope.protocol.id},function(users) {
+           if(users.length>0) $scope.pusers=users;
+           else $scope.pusers=[{
+            "firstName":"Nobody"
+          }];
         },function(err){  
-          // console.log(err);
-          $scope.protocolUsage={
-            "userId":$scope.currentUser.id,
-            "protocolId":$scope.protocol.id
-          };
-          
+          console.log(err);
         });
-      
     };
     
     $scope.fetchHealthcenters=function(){
-      var query={
-            filter: {
-              where:  {
-                "userId": $scope.currentUser.id,
-                "protocolId": $scope.protocol.id
-              }
-            }
-          };
+       Protocol.healthcenters({id:$scope.protocol.id},function(centers) {
+         console.log(centers);
+         if(centers.length>0) $scope.pcenters=centers;
+         else  $scope.pcenters=[{
+            "name":"No Health centers"
+          }];
           
-       ProtocolUsage.findOne(query,function(usage) {
-          $scope.protocolUsage=usage;
         },function(err){  
-          // console.log(err);
-          $scope.protocolUsage={
-            "userId":$scope.currentUser.id,
-            "protocolId":$scope.protocol.id
-          };
-          
+          console.log(err);
         });
-      
     };
-    
     
 
     $scope.onSubmit = function() {

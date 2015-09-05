@@ -9,7 +9,10 @@ app.config(function($stateProvider) {
     templateUrl: 'modules/protocols/views/main.html',
     controller: 'ProtocolsCtrl',
   }).state('app.protocols.list', {
-    url: '/:filtered?',
+    url: '',
+    params: {
+        filtered: null,
+    },
     templateUrl: 'modules/protocols/views/list.html',
     resolve: {
       protocols: ['ProtocolsService', function(ProtocolsService) {
@@ -19,11 +22,14 @@ app.config(function($stateProvider) {
     controller: function($scope, protocols,$stateParams,$rootScope) {
       
       if($stateParams.filtered==='own') {
+                console.log('own');
+
         $scope.protocols=protocols.filter(function(pr){
           return pr.ownerId===$rootScope.currentUser.id;
         });
       }
       if($stateParams.filtered==='used') {
+        console.log('used');
         $scope.protocols=protocols.filter(function(pr){
           if(pr.usedBy instanceof Array){
             return (pr.usedBy.indexOf($rootScope.currentUser.id)>=0);
