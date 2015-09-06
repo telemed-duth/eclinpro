@@ -1,13 +1,10 @@
 
-<h3>
+<h4>
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
   {{protocol.release_title}} 
-  <div ng-show="isadmin">{{protocol.id}}</div>
 
 
-</h3>
-
-  <span ng-show="protocol.ownerId==$parent.user.id||$parent.isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
+  <span ng-show="protocol.ownerId==user.id||isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: protocol.id})">
       <i class="fa fa-pencil"></i>
     </a>
@@ -16,6 +13,8 @@
     </a>
   </span>
 
+
+</h4>
 <hr>
 
 <div class="row">

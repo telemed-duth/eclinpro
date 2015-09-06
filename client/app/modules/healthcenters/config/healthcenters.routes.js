@@ -36,14 +36,6 @@ app.config(function($stateProvider) {
   }).state('app.healthcenters.view', {
     url: '/:id',
     templateUrl: 'modules/healthcenters/views/view.html',
-    resolve: {
-      healthcenter: ['$stateParams', 'HealthcentersService', function($stateParams,
-        HealthcentersService) {
-        return HealthcentersService.getHealthcenter($stateParams.id);
-      }]
-    },
-    controller: function($scope, healthcenter) {
-      $scope.healthcenter = healthcenter;
-    }
+    controller: 'HealthcentersCtrl'
   });
 });

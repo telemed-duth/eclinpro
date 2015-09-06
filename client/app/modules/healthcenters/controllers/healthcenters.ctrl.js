@@ -1,17 +1,48 @@
 'use strict';
 angular.module('com.module.healthcenters')
   .controller('HealthcentersCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Healthcenter, HealthcentersService,Meta, $rootScope,Bioportal) {
-      
-var test_setting_val=$rootScope.getSetting("com.module.healthcenters.release_active");
-console.log(test_setting_val);
-$scope.user=$rootScope.currentUser;
-$scope.isadmin=$rootScope.isadmin;
+    FormHelper, gettextCatalog, Healthcenter, HealthcentersService,Meta, $rootScope,Bioportal,ProtocolApproval,LoopBackAuth) {
 
+
+$scope.user=LoopBackAuth.currentUserData;
+$scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
+$scope.protocolApproval={};
 
 var BioportalSplitter=".";
 var CategorySplitter="_";
+var SpaceSplitter="0";
+$scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
+  
+  
+//retrieve healthcenter model
+  $scope.requiredProps=[];
+  $scope.schemaProps={};
+  $scope.formProps=[];
+  
+  var healthcenterId=$stateParams.id||$stateParams.parentId||'';
+  if ( healthcenterId.length===24 ) {
+    
+    // console.log("there is a healthcenter id");
+    Healthcenter.findById({
+      id: healthcenterId
+    }, function(healthcenter) {
+      // console.log(healthcenter);
+      $scope.healthcenter = healthcenter;
+      // $scope.fetchApproval();
+      // $scope.fetchHealthcenters();
+      
+    }, function(err) {
+      $state.go('app.healthcenters.list');
+      console.log(err);
+    });
+
+    
+  } else {
+    
+    $scope.healthcenter = {};
+  }
+  
 
 //autocomplete fetch from bioportal
 $scope.bioportalAutocomplete = function(schema, options, search) {
@@ -26,8 +57,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   },function(err){console.log(err);});
   return $scope.autocompleteResults;  
 };
-
-
+  
   function capFirst(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
   var propname=function(str){
     return capFirst(str.split(CategorySplitter)[1]||" ");
@@ -35,18 +65,15 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   var catname=function(str){
     return capFirst(str.split(CategorySplitter)[0]||" ");
   };
+  $scope.cName=catname;
+  $scope.pName=propname;
   
-//retrieve healthcenter model
-  var curModel={};
-  $scope.healthcenter={}
-  $scope.requiredProps=[];
-  $scope.schemaProps={};
-  $scope.formProps=[];
-  
-  $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
-  Meta.getModelProperties(function(obj) {
+
+  function buildModel() {
     
-    curModel=obj.Healthcenter;
+    Meta.getModelProperties(function(obj) {
+    
+    var curModel=obj.Healthcenter;
     var propCategories=[];
     
         for(var key in curModel){
@@ -57,11 +84,16 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             //schema builder
             var keyObj={};
             angular.copy(curModel[key],keyObj);
-            
+            // if(keyObj.enum) {
+            //   keyObj.enum=keyObj.enum.map(function(item){
+            //   return item.toString();
+            //   });
+            // }
             keyObj.title=gettextCatalog.getString(propname(key));
             if(keyObj.required){$scope.requiredProps.push(key);}
             keyObj.type=(curModel[key].stringType==="objectid")?"string":curModel[key].stringType;
-            if($scope.uiselectArray.indexOf(key)>=0){
+            
+          if($scope.uiselectArray.indexOf(key)>=0){
               keyObj.format="uiselect";
               keyObj.items=[];
                 if(typeof $scope.healthcenter[key]==="string"){
@@ -84,6 +116,9 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
                   "title":keyObj.title,
                   "type":"string"
               };
+            } else {
+              // console.log('Other types: '+key);
+              // console.log(keyObj);
             }
             
             delete keyObj['required'];
@@ -100,14 +135,18 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             if(keyObj.format) {
               item={
                 "key":key,
+                "feedback":false,
                 "placeholder":"Add "+propname(key),
-                "feedback":true,
                 "options": {
                   "refreshDelay": 50,
                   "callback": $scope.bioportalAutocomplete
                 }
               };
-            } else {
+            } else if(keyObj.enum) {
+              //console.log(JSON.stringify(keyObj));
+              item=key;
+            }
+            else {
               item={
                 "key":key,
                 "placeholder":"Add "+propname(key),
@@ -126,112 +165,241 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             //   };
             // });
             
-            propCategories[category].items.push(item);
+            if(key==='release_deviation' && $stateParams.parentId ) {
+              propCategories[category].items.push(item);
+            } else if(key!=='release_deviation'){
+              propCategories[category].items.push(item);
+            }
             $scope.schemaProps[key]=keyObj;
           }
-        }  
+        }
         
-        
-    $scope.formProps.push(
-      {  
-      "type":"fieldset",
-      "title":"Health center",
-      "items":[{
-        "type": "tabs",
-        "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
-      }]
-    },
-    {  
-      "type":"actions",
-      "items":[  
-         {  
-            "type":"submit",
-            "style":"btn-info",
-            "title":"Submit"
-         },
-         {  
-            "type":"button",
-            "style":"btn-danger",
-            "title":"Cancel",
-            "onClick":"sayNo()"
-         }
-      ]
-   });
-   
-    
-    // console.log(JSON.stringify($scope.schema));
-    // console.log(JSON.stringify($scope.form));
-    console.log($scope.schemaProps);
-    console.log($scope.form);
-  });
-  
+        $scope.formProps.push({  
+          "type":"fieldset",
+          "title":"Clinical Healthcenter",
+          "items":[{
+            "type": "tabs",
+            "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
+          }]
+        });      
+            
+            
+        $scope.formProps.push({  
+          "type":"actions",
+          "items":[  
+             {  
+                "type":"submit",
+                "style":"btn-info",
+                "title":"Submit"
+             },
+             {  
+                "type":"button",
+                "style":"btn-danger",
+                "title":"Cancel",
+                "onClick":"sayNo()"
+             }
+          ]
+       });
+       
+      
+            //healthcenter view/edit
+            
+            
+          //create view tabs from formProps
+          // console.log($scope.schemaProps);
+          // console.log($scope.formProps);
+          $scope.tabs=$scope.formProps[0].items[0].tabs;
+          
+          $scope.modelLoaded=true;
+            
+      });
+      
+      }
+
   
   
 
     $scope.schema = {
       type: 'object',
-      title: 'Health center',
+      title: 'Product',
       properties: $scope.schemaProps,
       required: $scope.requiredProps
     };
   
     $scope.form = $scope.formProps;
-
+    
+    
+    $scope.toggleHealthcenterApproval=function(){
+      console.log($scope.protocolApproval);
+      if(!$scope.protocolApproval.id){
+          ProtocolApproval.create($scope.protocolApproval, function(res) {
+          $scope.protocolApproval=res;
+          updateDashboard();
+          $scope.fetchApproval();
+          CoreService.toastSuccess(gettextCatalog.getString('Healthcenter usage'),
+              gettextCatalog.getString('You are now using this healthcenter.'));
+              
+          });
+        } else {
+          ProtocolApproval.deleteById({"id":$scope.protocolApproval.id}, function(res) {
+          updateDashboard();
+          $scope.fetchApproval();
+          CoreService.toastWarning(gettextCatalog.getString('Healthcenter usage stopped'),
+              gettextCatalog.getString('You have stopped using this healthcenter.'));
+          });   
+  
+        }
+    }
 
     $scope.delete = function(id) {
       HealthcentersService.deleteHealthcenter(id, function() {
         updateDashboard();
-        $state.reload();
+        $state.go('app.healthcenters.list', {}, { reload: true });
       });
     };
 
-    var healthcenterId = $stateParams.id;
-
-    if (healthcenterId) {
-      $scope.healthcenter = Healthcenter.findById({
-        id: healthcenterId
-      }, function() {}, function(err) {
-        console.log(err);
-      });
-    } else {
-      $scope.healthcenter = {};
-    }
-
-
     
+    $scope.fetchApproval=function(protocolId){
+      var query={
+            filter: {
+              where:  {
+                "protocolId": protocolId,
+                "healthcenterId": $scope.healthcenter.id
+              }
+            }
+          };
+          
+       ProtocolApproval.find(query,function(usages) {
+         
+        // $scope.fetchUsers();
+         if(usages.length>0) {
+            $scope.protocolApproval=usages[0];
+         } else {
+           $scope.protocolApproval={
+            "protocolId":protocolId,
+            "healthcenterId":$scope.healthcenter.id
+          };
+         }
+        },function(err){  
+         console.log(err);
+        });
+      
+    };
+    
+    
+    $scope.fetchUsers=function(){
+       Healthcenter.usedBy({id:$scope.healthcenter.id},function(users) {
+           if(users.length>0) $scope.pusers=users;
+           else $scope.pusers=[{
+            "firstName":"Nobody"
+          }];
+        },function(err){  
+          console.log(err);
+        });
+    };
+    
+    $scope.fetchHealthcenters=function(){
+       Healthcenter.healthcenters({id:$scope.healthcenter.id},function(centers) {
+        // console.log(centers);
+         if(centers.length>0) $scope.pcenters=centers;
+         else  $scope.pcenters=[{
+            "name":"No Health centers"
+          }];
+          
+        },function(err){  
+          console.log(err);
+        });
+    };
+    
+
     $scope.onSubmit = function() {
-      if($scope.healthcenter.id){
-        Healthcenter.upsert($scope.healthcenter, function() {
-          CoreService.toastSuccess(gettextCatalog.getString('Health center saved'),
+      if($stateParams.parentId){
+          $scope.healthcenter.id=null;
+          delete $scope.healthcenter['id'];
+          $scope.healthcenter.parentId=$stateParams.parentId;
+          Healthcenter.create($scope.healthcenter, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Healthcenter created'),
             gettextCatalog.getString('Your healthcenter is safe with us!'));
             updateDashboard();
-          $state.go('app.healthcenters.list');
-        }, function(err) {
+
+          $state.go('app.healthcenters.list', {}, { reload: true });
+          }, function(err) {
           console.log(err);
-        });
+          });
+      
       } else {
-        Healthcenter.create($scope.healthcenter, function() {
-          CoreService.toastSuccess(gettextCatalog.getString('Health center created'),
+        if($scope.healthcenter.id){
+        Healthcenter.upsert($scope.healthcenter, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Healthcenter saved'),
             gettextCatalog.getString('Your healthcenter is safe with us!'));
             updateDashboard();
-          $state.go('app.healthcenters.list');
+
+          $state.go('app.healthcenters.list', {}, { reload: true });
         }, function(err) {
           console.log(err);
         });
+        } else {
+          Healthcenter.create($scope.healthcenter, function() {
+          CoreService.toastSuccess(gettextCatalog.getString('Healthcenter created'),
+            gettextCatalog.getString('Your healthcenter is safe with us!'));
+            updateDashboard();
+          $state.go('app.healthcenters.list', {}, { reload: true });
+          }, function(err) {
+          console.log(err);
+          });
+        }
       }
 
     };
     
-        
     function updateDashboard(){
-      Healthcenter.count(function(he){
-        $rootScope.dashboardBox=$rootScope.dashboardBox.map(function(obj){
-            if(obj.name==='Healthcenters') obj.quantity=he.count;
-            return obj;
-        });
+      Healthcenter.find(function(prs){
+        $rootScope.updateDashboardBox(prs.length,'allhealthcenters');
+        $rootScope.updateDashboardBox($rootScope.countOwn(prs,$scope.user.id),'ownhealthcenters');
+      });
+      ProtocolApproval.count({
+        where:{
+            "protocolId":protocolId
+          }
+      },function(num){
+        $rootScope.updateDashboardBox(num.count,'usedhealthcenters');
       });
     };
     
-       
+    //init
+    
+    
+  
+    buildModel();
+
+
+
 
   });
+  
+     
+   //SUPER SEARCH FILTERS!!!
+   
+  // $scope.availableSearchParams=[];
+  // var obj={};
+  // for (var key in $scope.schemaProps) {
+  //   obj=$scope.schemaProps[key];
+  //   if(
+  //     obj.type==="string" &&
+  //     key!=="release_url" &&
+  //     key!=="release_version" &&
+  //     key!=="release_date" &&
+  //     key!=="evidence_url" &&
+  //     key!=="evidence_date"
+  //   ) {
+  //     // console.log(key+" is inserted to filters");
+  //     $scope.availableSearchParams.push({"key":key,"name":catname(key)+" "+propname(key), "placeholder": propname(key)+"..."});
+  //   }
+  //   }
+
+  //   // console.log(JSON.stringify($scope.schema));
+  //   // console.log(JSON.stringify($scope.form));
+  //   console.log($scope.schema);
+  //   console.log($scope.form);
+  // });
+  

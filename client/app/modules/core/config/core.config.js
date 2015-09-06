@@ -14,7 +14,6 @@ app.run(function($rootScope, Setting, gettextCatalog,Permission,User,ProtocolsSe
               
               if(roles[0]) {
                   if(roles[0].name==='admin'){
-                    console.log('Admin asserted!');
                     $rootScope.isadmin=true;
                     deferred.resolve();
                   } else deferred.reject();

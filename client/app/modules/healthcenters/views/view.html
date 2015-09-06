@@ -3,7 +3,7 @@
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
   {{healthcenter.main_name}}
 
-  <span ng-show="item.ownerId==user.id||user.roles[0].name=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
+  <span ng-show="healthcenter.ownerId==user.id||isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: healthcenter.id})">
       <i class="fa fa-pencil"></i>
     </a>
@@ -14,4 +14,51 @@
 
 </h4>
 <hr>
-<pre>{{healthcenter | json}}</pre>
+
+<div class="row">
+    
+  <div class="col-md-6">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Health Center description</div>
+      <div class="panel-body">
+        
+      <tabset justified="true">
+        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+          <ul class="list-group">
+            <li ng-if="healthcenter[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{healthcenter[prop.key].toString()}}</li>
+          </ul>
+        </tab>
+      </tabset>
+      
+      
+      </div> 
+    </div>
+    
+  </div>
+  
+  <div class="col-md-6">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Social Information</div>
+      <div class="panel-body">
+      <tabset justified="true">
+        <tab heading="Available protocols">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="pr in availableProtocols">{{pr.release_title +' v'+ pr.release_version}}</li>
+          </ul>
+        </tab>
+        <tab heading="Endorsed protocols">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="pr in endorsedProtocols">{{pr.release_title +' v'+ pr.release_version}}</li>
+          </ul>
+        </tab>
+      </tabset>
+      </div>
+      </div>
+    
+  </div>
+  
+</div>
+<pre ng-show="isadmin">{{healthcenter}}</pre>
+  
