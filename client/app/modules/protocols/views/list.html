@@ -21,54 +21,49 @@
   </div>
 
 
-
-<div class="box" ng-repeat="item in protocols | filter:protocolSearch">
-  <div class="box-header">
-    <h3 class="box-title">
-      <a href="" ui-sref="^.view({id: item.id})">{{item.release_title}}</a>
-      <br/>
-    </h3>
-
-    <div class="box-tools pull-right">
-
-      <span ng-show="item.ownerId==user.id||isadmin" class="pull-right btn-group" style="margin-top: 7px;">
-        <a href="" class="btn btn-xs btn-default"
-           ui-sref="^.edit({id: item.id})">
-          <i class="fa fa-pencil"></i>
-        </a>
-        <a href="" class="btn btn-xs btn-default"
-           ng-click="delete({id: item.id})">
-          <i class="fa fa-trash-o"></i>
-        </a>
-      </span>
-
+<div class="container">
+  <div class="mansonry row">
+  
+    <div class="panel panel-default mansonryitem" ng-repeat="item in protocols | filter:protocolSearch">
+     	
+     	<div class="panel-heading">
+     		   <a href="" ui-sref="^.view({id: item.id})">{{item.release_title}}</a>
+     		   
+        <div class="box-tools pull-right">
+    
+          <span ng-show="item.ownerId==$parent.user.id||$parent.isadmin" class="pull-right btn-group">
+            <a href="" class="btn btn-xs btn-default"
+               ui-sref="^.edit({id: item.id})">
+              <i class="fa fa-pencil"></i>
+            </a>
+            <a href="" class="btn btn-xs btn-default"
+               ng-click="delete({id: item.id})">
+              <i class="fa fa-trash-o"></i>
+            </a>
+          </span>
+    
+        </div>
+        
+     	</div>
+     	
+     	<div class="panel-body">
+     	  {{item.release_description}}
+      </div>
+      
     </div>
-  </div>
-  <div class="box-body">
-    <div class="row">
-      <div class="col-sm-9" style="white-space: pre;">{{item.content}}</div>
-      <div class="col-sm-3">
-        <img ng-if="item.image" ng-src="{{item.image}}?id={{item.id}}"/>
+     
+    
+    <div class="box" ng-show="!protocols.length">
+      <div class="box-header">
+        <h3 class="box-title">
+          There are no protocols 
+        </h3>
+      </div>
+      <div class="box-body" ng-show="$parent.filtered==='all'">
+        <p class="list-group-item-text" translate>Click <a href="" ui-sref="^.add">here</a>
+          to add a protocol!</p>
       </div>
     </div>
   </div>
-
-  <div class="box-footer">
-    <span class="text-muted">
-      {{item.modified | date:'medium'}}
-    </span>
-  </div>
 </div>
 
-
-<div class="box" ng-show="!protocols.length">
-  <div class="box-header">
-    <h3 class="box-title">
-      There are no protocols 
-    </h3>
-  </div>
-  <div class="box-body" ng-show="$parent.filtered==='all'">
-    <p class="list-group-item-text" translate>Click <a href="" ui-sref="^.add">here</a>
-      to add a protocol!</p>
-  </div>
-</div>

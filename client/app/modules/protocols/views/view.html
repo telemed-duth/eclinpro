@@ -4,7 +4,10 @@
   {{protocol.release_title}} 
   <div ng-show="isadmin">{{protocol.id}}</div>
 
-  <span ng-show="protocol.ownerId==user.id||user.roles[0]=='admin'"  class="pull-right btn-group" style="margin-top: 7px;">
+
+</h3>
+
+  <span ng-show="protocol.ownerId==$parent.user.id||$parent.isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: protocol.id})">
       <i class="fa fa-pencil"></i>
     </a>
@@ -12,8 +15,6 @@
       <i class="fa fa-trash-o"></i>
     </a>
   </span>
-
-</h3>
 
 <hr>
 
