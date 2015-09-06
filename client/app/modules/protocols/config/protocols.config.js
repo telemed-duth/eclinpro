@@ -2,12 +2,12 @@
 angular.module('com.module.protocols')
   .run(function($rootScope, Protocol, gettextCatalog,ProtocolUsage,LoopBackAuth) {
     $rootScope.addMenu(gettextCatalog.getString('Protocols'), 'app.protocols.list',
-      'fa-edit');
+      'ion ion-document-text');
     var userId=LoopBackAuth.currentUserId;
     console.log(userId);
     Protocol.find(function(protocols) {
-      $rootScope.addDashboardBox('All Protocols','bg-yellow', 'ion-document-text', protocols.length, 'app.protocols.list');
-      $rootScope.addDashboardBox('Protocols I own','bg-green', 'ion-document-text', countOwn(protocols), 'app.protocols.list({filtered:"own"})');
+      $rootScope.addDashboardBox('All Protocols','bg-yellow', 'ion ion-document-text', protocols.length, 'app.protocols.list');
+      $rootScope.addDashboardBox('Protocols I own','bg-green', 'ion ion-document-text', countOwn(protocols), 'app.protocols.list({filtered:"own"})');
     });
     
     function countOwn(protocols){
@@ -24,7 +24,7 @@ angular.module('com.module.protocols')
         }
     },function(num){
       console.log(num);
-        $rootScope.addDashboardBox('Protocols I use','bg-blue', 'ion-document-text', num.count, 'app.protocols.list({filtered:\'used\'})');
+        $rootScope.addDashboardBox('Protocols I use','bg-blue', 'ion ion-document-text', num.count, 'app.protocols.list({filtered:\'used\'})');
     });
 
   });

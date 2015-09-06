@@ -25,10 +25,10 @@
       <div class="panel-body">
         
         <div>
-          <ul>
-          <li><a ui-sref="^.deviate({parentId: protocol.id})">Create a deviation</a></li>
-          <li ng-show="!protocolUsage.id"><a  href="" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol</a></li>
-          <li ng-show="protocolUsage.id"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Stop using this protocol</a></li>
+          <ul class="list-group">
+          <li class="list-group-item"><a ui-sref="^.deviate({parentId: protocol.id})">Create a deviation <i class="ion-fork-repo"></i></a></li>
+          <li ng-show="!protocolUsage.id" class="list-group-item"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol <i class="ion-checkmark"></i></a></li>
+          <li ng-show="protocolUsage.id" class="list-group-item"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Stop using it! <i class="ion-close"></i></a></li>
           </ul>
           
         </div>

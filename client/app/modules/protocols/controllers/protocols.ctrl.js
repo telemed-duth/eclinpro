@@ -157,7 +157,11 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             //   };
             // });
             
-            propCategories[category].items.push(item);
+            if(key==='release_deviation' && $scope.protocol.parentId ) {
+              propCategories[category].items.push(item);
+            } else if(key!=='release_deviation'){
+              propCategories[category].items.push(item);
+            }
             $scope.schemaProps[key]=keyObj;
           }
         }
@@ -232,7 +236,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
           ProtocolUsage.deleteById({"id":$scope.protocolUsage.id}, function(res) {
           updateDashboard();
           $scope.fetchUsage();
-          CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
+          CoreService.toastWarning(gettextCatalog.getString('Protocol usage stopped'),
               gettextCatalog.getString('You have stopped using this protocol.'));
           });   
   
