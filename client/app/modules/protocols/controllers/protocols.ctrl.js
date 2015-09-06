@@ -8,7 +8,6 @@ $scope.user=LoopBackAuth.currentUserData;
 $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
 $scope.protocolUsage={};
-$scope.modelLoaded=false;
 
 var BioportalSplitter=".";
 var CategorySplitter="_";
@@ -166,7 +165,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             //   };
             // });
             
-            if(key==='release_deviation' && $scope.protocol.parentId ) {
+            if(key==='release_deviation' && $stateParams.parentId ) {
               propCategories[category].items.push(item);
             } else if(key!=='release_deviation'){
               propCategories[category].items.push(item);
@@ -368,7 +367,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
     
   
-    if(!$scope.modelLoaded) buildModel();
+    buildModel();
 
 
 
