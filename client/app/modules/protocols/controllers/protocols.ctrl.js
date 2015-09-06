@@ -24,11 +24,11 @@ $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infas
   var protocolId=$stateParams.id||$stateParams.parentId||'';
   if ( protocolId.length===24 ) {
     
-    console.log("there is a protocol id");
+    // console.log("there is a protocol id");
     Protocol.findById({
       id: protocolId
     }, function(protocol) {
-      console.log(protocol);
+      // console.log(protocol);
       $scope.protocol = protocol;
       $scope.fetchUsage();
       $scope.fetchHealthcenters();
@@ -85,7 +85,11 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
             //schema builder
             var keyObj={};
             angular.copy(curModel[key],keyObj);
-            
+            // if(keyObj.enum) {
+            //   keyObj.enum=keyObj.enum.map(function(item){
+            //   return item.toString();
+            //   });
+            // }
             keyObj.title=gettextCatalog.getString(propname(key));
             if(keyObj.required){$scope.requiredProps.push(key);}
             keyObj.type=(curModel[key].stringType==="objectid")?"string":curModel[key].stringType;
@@ -114,7 +118,8 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
                   "type":"string"
               };
             } else {
-              
+              // console.log('Other types: '+key);
+              // console.log(keyObj);
             }
             
             delete keyObj['required'];
@@ -138,7 +143,11 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
                   "callback": $scope.bioportalAutocomplete
                 }
               };
-            } else {
+            } else if(keyObj.enum) {
+              //console.log(JSON.stringify(keyObj));
+              item=key;
+            }
+            else {
               item={
                 "key":key,
                 "placeholder":"Add "+propname(key),
@@ -292,7 +301,7 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
     $scope.fetchHealthcenters=function(){
        Protocol.healthcenters({id:$scope.protocol.id},function(centers) {
-         console.log(centers);
+        // console.log(centers);
          if(centers.length>0) $scope.pcenters=centers;
          else  $scope.pcenters=[{
             "name":"No Health centers"
