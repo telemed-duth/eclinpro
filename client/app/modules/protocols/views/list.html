@@ -11,9 +11,9 @@
       </div>
       <div class="col-sm-3">
         <div class="btn-group">
-            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'all'})" ng-model="$parent.filtered" btn-radio="'all'">All</a>
-            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'own'})" ng-model="$parent.filtered" btn-radio="'own'">Own</a>
-            <a class="btn btn-primary" ui-sref="app.protocols.list({filtered:'used'})" ng-model="$parent.filtered" btn-radio="'used'">Used</a>
+            <a ng-class="{'btn btn-default':$parent.filtered!=='all','btn btn-primary':$parent.filtered=='all'}" ui-sref="app.protocols.list({filtered:'all'})" ng-model="$parent.filtered" btn-radio="'all'">All</a>
+            <a ng-class="{'btn btn-default':$parent.filtered!=='own','btn btn-primary':$parent.filtered=='own'}" ui-sref="app.protocols.list({filtered:'own'})" ng-model="$parent.filtered" btn-radio="'own'">Own</a>
+            <a ng-class="{'btn btn-default':$parent.filtered!=='used','btn btn-primary':$parent.filtered=='used'}" ui-sref="app.protocols.list({filtered:'used'})" ng-model="$parent.filtered" btn-radio="'used'">Used</a>
         </div>
       </div>
     </div>

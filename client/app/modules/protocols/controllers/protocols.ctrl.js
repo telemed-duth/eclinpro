@@ -353,15 +353,18 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     };
     
     function updateDashboard(){
-      Protocol.count(function(pr){
-        $rootScope.dashboardBox=$rootScope.dashboardBox.map(function(obj){
-            if(obj.name==='Protocols') obj.quantity=pr.count;
-            return obj;
-        });
+      Protocol.find(function(prs){
+        $rootScope.updateDashboardBox(prs.length,'allprotocols');
+        $rootScope.updateDashboardBox($rootScope.countOwn(prs,$scope.user.id),'ownprotocols');
+      });
+      ProtocolUsage.count({
+        where:{
+            "userId":$scope.user.id
+          }
+      },function(num){
+        $rootScope.updateDashboardBox(num.count,'usedprotocols');
       });
     };
-    
-    
     
     //init
     

@@ -91,16 +91,36 @@ app.run(function($rootScope, Setting, gettextCatalog,Permission,User,ProtocolsSe
   $rootScope.dashboardBox = [];
 
   // Add Dashboard Box
-  $rootScope.addDashboardBox = function(name, color, icon, quantity, href) {
+  $rootScope.addDashboardBox = function(name, color, icon, quantity, href, id) {
     $rootScope.dashboardBox.push({
       name: name,
       color: color,
       icon: icon,
       quantity: quantity,
-      href: href
+      href: href,
+      id: id
     });
   };
-
+  
+  // update Dashboard Box
+  $rootScope.updateDashboardBox = function(quantity,id) {
+   for (var i = 0; i < $rootScope.dashboardBox.length; i++) {
+     if($rootScope.dashboardBox[i].id===id){
+       $rootScope.dashboardBox[i].quantity=quantity;
+     }
+   }
+  };
+  
+      
+  $rootScope.countOwn=function(protocols,userId){
+    var count=0;
+    protocols.forEach(function(obj) {
+      if (obj.ownerId===userId) count++;
+    });
+    return count;
+  };
+    
+  
   // Get Settings for Database
   $rootScope.setSetting = function(key, value) {
 

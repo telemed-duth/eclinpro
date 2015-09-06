@@ -17,6 +17,9 @@
         "release_title": {
             "type": "string"
         },
+        "release_description": {
+            "type": "string"
+        },
         "release_url": {
             "type": "string"
         },
