@@ -81,7 +81,7 @@ angular.module('com.module.users')
           type: 'password',
           attr: {
             confirmPassword: 'user.password',
-            required: true,
+            required: false,
             ngMinlength: 6
           },
           msgs: {
@@ -124,7 +124,7 @@ angular.module('com.module.users')
               CoreService.toastSuccess(gettextCatalog.getString(
                 'Registered'), gettextCatalog.getString(
                 'You are registered!'));
-              $location.path('/');
+              window.location.assign('/');
             },
             function(res) {
               CoreService.toastWarning(gettextCatalog.getString(

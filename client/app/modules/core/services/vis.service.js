@@ -2,7 +2,27 @@
 var app = angular.module('com.module.core');
 
 app.service('Vis', function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter) {
-  
+
+var matchArray=function(a,b){
+  //returns true if all elements of array a exist on array b
+  if(!a||!b) return false;
+  for( var i = 0, l = a.length ; i < l; i++ ) {
+    if(b.indexOf(a[i]) === -1) return false;
+  }
+  return true;
+};
+var matchProtocol=function(pr,hc,propArray){
+  if(!propArray) propArray=["resources_human","resources_infastructure","resources_pharmaceutical"];
+  for( var i = 0, l = propArray.length ; i < l; i++ ) {
+    var prop=propArray[i];
+    if(!matchArray(pr[prop],hc[prop])) {
+      // console.log(pr[prop]);
+      // console.log(hc[prop]);
+      return false;
+    }
+  }
+  return true;
+};
 
 var getData=function(results){
   
@@ -13,62 +33,24 @@ var getData=function(results){
   var users=results[2];
   var protocolusage=results[3];
   var protocolapproval=results[4];
-  var hcHuman=[];
-  var hcInfastructure=[];
-  var hcPharmaceutical=[];
   
-  healthcenters.forEach(function(node){
-    visnodes.push({id: node.id, "label": node.main_name, "group": 3});
-    
-    //infer 
-    hcHuman[node.id+'_'+node.main_name]=node.resources_human;
-    hcInfastructure[node.id+'_'+node.main_name]=node.resources_infastructure;
-    hcPharmaceutical[node.id+'_'+node.main_name]=node.resources_pharmaceutical;
+  healthcenters.forEach(function(hc){
+    visnodes.push({id: hc.id, "label": hc.main_name, "group": 3});
   });
   
   for (var i = 0; i < protocols.length; i++) {
     var node=node=protocols[i];
-      visnodes.push({id: node.id, "label": node.release_title, "group": 1});
-      if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.release_deviation, font: {align: 'middle'}});
-      var breakCheck1=false;
+    visnodes.push({id: node.id, "label": node.release_title, "group": 1});
+    if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.release_deviation, font: {align: 'middle'}});
       
-      // for (var hch in hcHuman){
-      //   for (var j = 0; j < hcHuman[hch].length; j++) {
-      //     if(resources_human.indexOf(hcHuman[hch][j])<0) {
-      //       breakCheck1=true;
-      //       break;
-      //     }
-      //   }
-      //   if (breakCheck1) {break;}
-      // }
       
-      // if(!breakCheck1) {
-      //   for (var hch in hcInfastructure){
-      //     for (var j = 0; j < hcInfastructure[hch].length; j++) {
-      //       if(resources_infastructure.indexOf(hcInfastructure[hch][j])<0) {
-      //         breakCheck1=true;
-      //         break;
-      //       }
-      //     }
-      //     if (breakCheck1) {break;}
-      //   }
-      // }
-      
-      // if(!breakCheck1) {
-      //   for (var hch in hcPharmaceutical){
-      //     for (var j = 0; j < hcPharmaceutical[hch].length; j++) {
-      //       if(resources_pharmaceutical.indexOf(hcPharmaceutical[hch][j])<0) {
-      //         breakCheck1=true;
-      //         break;
-      //       }
-      //     }
-      //     if (breakCheck1) {break;}
-      //   }
-      // }
-      
-      // if(!breakCheck1) visedges.push({"from": node.parentId, "to": node.id, label: node.release_deviation, font: {align: 'middle'}});
-    
+    healthcenters.forEach(function(hc){
+      if(matchProtocol(node,hc)){
+        visedges.push({"from": hc.id, "to": node.id, label: "can endorse", font: {align: 'middle'},dashes:true});
+      }
+    });
   }
+  
   
   users.forEach(function(node){
     visnodes.push({id: node.id, "label": node.firstName+' '+node.lastName, "group": 2});

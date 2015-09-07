@@ -111,12 +111,14 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
                   });
                 }
               
-            } else if (keyObj.type==="array"){
+            } 
+            else if (keyObj.type==="array"){
               keyObj.items={
                   "title":keyObj.title,
                   "type":"string"
               };
-            } else {
+            } 
+            else {
               // console.log('Other types: '+key);
               // console.log(keyObj);
             }
