@@ -33,27 +33,26 @@ var getData=function(results){
   var users=results[2];
   var protocolusage=results[3];
   var protocolapproval=results[4];
-  
-  healthcenters.forEach(function(hc){
-    visnodes.push({id: hc.id, "label": hc.main_name, "group": 3});
-  });
+  var runFirstTime=true;
   
   for (var i = 0; i < protocols.length; i++) {
     var node=node=protocols[i];
-    visnodes.push({id: node.id, "label": node.release_title, "group": 1});
+    visnodes.push({id: node.id, "label": node.release_title, "group": 1,"color":"#F39C12"});
     if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.release_deviation, font: {align: 'middle'}});
       
       
     healthcenters.forEach(function(hc){
+      if(runFirstTime) visnodes.push({id: hc.id, "label": hc.main_name, "group": 3,"color":"#F56954"});
       if(matchProtocol(node,hc)){
         visedges.push({"from": hc.id, "to": node.id, label: "can endorse", font: {align: 'middle'},dashes:true});
       }
     });
+    runFirstTime=false;
   }
   
   
   users.forEach(function(node){
-    visnodes.push({id: node.id, "label": node.firstName+' '+node.lastName, "group": 2});
+    visnodes.push({id: node.id, "label": node.firstName+' '+node.lastName, "group": 2,"color":"#3C8DBC"});
   });
   
   protocolusage.forEach(function(node){
