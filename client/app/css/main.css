@@ -51,8 +51,6 @@
 }
 
 
-
-
 /* Card List */
 
 *, *:before, *:after {box-sizing:  border-box !important;}
@@ -100,3 +98,5 @@ a>i.fa{
     opacity: 1;
     max-height: 70px;
 }
+
+
