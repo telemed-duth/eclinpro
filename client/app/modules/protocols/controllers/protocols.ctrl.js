@@ -67,7 +67,18 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   };
   $scope.cName=catname;
   $scope.pName=propname;
-  
+  var bName=function(str){
+    if(str){
+      if(str.indexOf(BioportalSplitter)) return str.split(BioportalSplitter)[1]; else return str;
+    } else return "";
+  };
+  $scope.arrayNames=function(arr){
+    console.log(arr);
+    if(arr instanceof Array) return arr.map(function(val){
+      return bName(val);
+    }).join(", ");
+    else return bName(arr);
+  }
 
   function buildModel() {
     

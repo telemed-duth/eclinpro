@@ -49,7 +49,7 @@
       <tabset justified="true">
         <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
           <ul class="list-group">
-            <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{protocol[prop.key].toString()}}</li>
+            <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{arrayNames(protocol[prop.key])}}</li>
           </ul>
         </tab>
       </tabset>
