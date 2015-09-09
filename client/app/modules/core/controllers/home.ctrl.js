@@ -94,9 +94,9 @@ angular.module('com.module.core')
             },
             physics: {
                 forceAtlas2Based: {
-                    gravitationalConstant: -26,
+                    gravitationalConstant: -30,
                     centralGravity: 0.005,
-                    springLength: 300,
+                    springLength: 200,
                     springConstant: 0.5
                 },
                 maxVelocity: 146,
