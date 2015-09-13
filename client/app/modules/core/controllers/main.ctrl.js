@@ -19,14 +19,6 @@ angular.module('com.module.core')
     $scope.currentUser = $rootScope.currentUser;
     $scope.isadmin = $rootScope.isadmin;
     
-              
-    //handle permissions on menu
-    $scope.menuoptions = $rootScope.menu.filter(function(obj){
-      if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
-        return $scope.isadmin;
-      }
-      return true;
-    });
     
     User.getCurrent(function(result) {
       
@@ -45,7 +37,7 @@ angular.module('com.module.core')
           
       //handle permissions on menu
       $scope.menuoptions = $rootScope.menu.filter(function(obj){
-        if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'||obj.sref==='app.sandbox.index'){
+        if(obj.sref==='app.users.list'||obj.sref==='app.settings.list'){
           return $scope.isadmin;
         }
         return true;

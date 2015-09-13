@@ -7,20 +7,17 @@ app.service('Bioportal', function($q, $http, ENV) {
   var apiurl = ENV.BIOPORTAL_API_URL ||'http://data.bioontology.org/search';
 
   //autocomplete fetch from bioportal
-  this.autocomplete = function(schema, options, search) {
+  this.autocomplete = function(search,options) {
     return $q(function(res, err) {
-      if(search.length>(options.minlength||2)) {
-        
         $http.get(
-          
         apiurl
-        
         +'?include=cui,prefLabel'
         +'&suggest=true'
         +'&display_context=false'
         +'&display_links=false'
         
         +'&pagesize='+(!!options.pagesize?options.pagesize:'20')
+        +(options.semantic_types?'&semantic_types='+options.semantic_types:'')
         +(options.cui?'&cui='+options.cui:'')
         +(options.subtree?'&ontology='+options.subtree:'')
         +(options.ontologies?'&ontologies='+options.ontologies:'&ontologies=ICD10,SNOMEDCT')
@@ -28,7 +25,6 @@ app.service('Bioportal', function($q, $http, ENV) {
         +'&apikey='+apikey
         
         ).then(res,err);
-     } else return false;
     });
   };
   

@@ -3,64 +3,49 @@
     "plural": "protocols",
     "base": "AppModel",
     "properties": {
-        "release_deviation": {
+        "general_name": {
             "type": "string",
-            "enum": [
-                "update",
-                "variation",
-                "conformity",
-                "regularity",
-                "uniformity"
-            ],
-            "required": false
         },
-        "release_title": {
+        "general_desc": {
             "type": "string"
         },
-        "release_description": {
+        "general_type": {
             "type": "string"
         },
-        "release_url": {
-            "type": "string"
-        },
-        "release_author": {
-            "type": "string"
-        },
-        "release_institute": {
-            "type": "string"
-        },
-        "release_active": {
+        "general_active": {
             "type": "boolean"
         },
-        "release_version": {
+        "technical_type": {
             "type": "string"
         },
-        "release_date": {
+        "technical_institute": {
             "type": "string"
         },
-        "goal_type": {
-            "type": "string",
-            "enum": [
-                "prevention",
-                "diagnosis",
-                "management",
-                "therapeutic"
-            ]
-        },
-        "goal_disease": {
+        "technical_license_type": {
             "type": "string"
         },
-        "goal_outcomes": {
+        "evidences": {
             "type": "array"
         },
-        "evidence_url": {
+        "intention_type": {
             "type": "string"
         },
-        "evidence_author": {
+        "intention_disease": {
             "type": "string"
         },
-        "evidence_date": {
-            "type": "string"
+        "outcomes":[{
+            "outcome_type": {
+                "type": "string"
+            },
+            "outcome_disease": {
+                "type": "string"
+            }
+        }],
+        "initial_expression": {
+            "type": "string",
+        },
+        "resources_human": {
+            "type": "array"
         },
         "resources_infastructure": {
             "type": "array"
@@ -68,46 +53,8 @@
         "resources_pharmaceutical": {
             "type": "array"
         },
-        "resources_human": {
-            "type": "array"
-        },
-        "demographics_gender": {
-            "type": "string",
-            "enum": [
-                "male",
-                "female",
-                "both"
-            ]
-        },
-        "demographics_occupation": {
-            "type": "string"
-        },
-        "demographics_insurance": {
-            "type": "string"
-        },
-        "demographics_agegroup": {
-            "type": "string"
-        },
-        "demographics_nationality": {
-            "type": "string"
-        },
-        "cohort_exposure": {
-            "type": "array"
-        },
-        "cohort_comorbidities": {
-            "type": "array"
-        },
-        "cohort_riskfactors": {
-            "type": "array"
-        },
-        "cohort_symptoms": {
-            "type": "array"
-        },
-        "cohort_contraindications": {
-            "type": "array"
-        },
-        "cohort_medicalhistory": {
-            "type": "array"
+        "divergion_type":{
+            "type":"string"
         }
     },
     "validations": [],

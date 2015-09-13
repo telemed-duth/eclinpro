@@ -12,15 +12,15 @@
   },
   "accessToken": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "userCredential": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "userIdentity": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "ACL": {
     "dataSource": "db",
@@ -28,11 +28,11 @@
   },
   "RoleMapping": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "Role": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "AppModel": {
     "dataSource": "db",
@@ -56,14 +56,14 @@
   },
   "Setting": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "AuthProvider": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "user": {
     "dataSource": "db",
-    "public": false
+    "public": true
   }
 }

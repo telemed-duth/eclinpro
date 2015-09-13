@@ -1,7 +1,7 @@
 'use strict';
 angular.module('com.module.healthcenters')
   .controller('HealthcentersCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Healthcenter, HealthcentersService,Meta, $rootScope,Bioportal,ProtocolApproval,LoopBackAuth) {
+    FormHelper, gettextCatalog, Healthcenter, HealthcentersService, $rootScope,Bioportal,ProtocolApproval,LoopBackAuth) {
 
 
 $scope.user=LoopBackAuth.currentUserData;

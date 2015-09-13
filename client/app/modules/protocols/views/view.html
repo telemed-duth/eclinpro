@@ -18,7 +18,28 @@
 <hr>
 
 <div class="row">
-  <div class="col-md-2">
+  <div class="col-lg-7 col-md-12">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">Protocol Description</div>
+      <div class="panel-body">
+        
+      <tabset justified="true">
+        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+          <ul class="list-group">
+            <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{arrayNames(protocol[prop.key])}}</li>
+          </ul>
+        </tab>
+      </tabset>
+      
+      
+      </div> 
+    </div>
+    
+  </div>
+  
+  
+  <div class="col-lg-2 col-md-6">
     
     <div class="panel panel-default">
       <div class="panel-heading">Actions</div>
@@ -39,28 +60,10 @@
       
       </div> 
   </div>
-    
-  <div class="col-md-7">
-    
-    <div class="panel panel-default">
-      <div class="panel-heading">Protocol Description</div>
-      <div class="panel-body">
-        
-      <tabset justified="true">
-        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
-          <ul class="list-group">
-            <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{arrayNames(protocol[prop.key])}}</li>
-          </ul>
-        </tab>
-      </tabset>
-      
-      
-      </div> 
-    </div>
-    
-  </div>
   
-  <div class="col-md-3">
+  
+  
+  <div class="col-lg-3 col-md-6">
     
     <div class="panel panel-default">
       <div class="panel-heading">Social Information</div>
@@ -83,6 +86,7 @@
       </div>
     
   </div>
+    
   
 </div>
 <pre ng-show="isadmin">{{protocol}}</pre>

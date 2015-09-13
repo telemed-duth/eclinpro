@@ -158,30 +158,180 @@ app.run(function($rootScope, Setting, gettextCatalog,Permission,User,ProtocolsSe
 
 });
 
-app.config(function(formlyConfigProvider) {
-  var templates = 'modules/core/views/elements/fields/';
-  var formly = templates + 'formly-field-';
-  var fields = [
-    'checkbox',
-    'email',
-    'hidden',
-    'number',
-    'password',
-    'radio',
-    'select',
-    'text',
-    'textarea'
-  ];
-
-  angular.forEach(fields, function(val) {
-    formlyConfigProvider.setTemplateUrl(val, formly + val + '.html');
-  });
-
-  formlyConfigProvider.setTemplateUrl('date', templates + 'date.html');
-  formlyConfigProvider.setTemplateUrl('time', templates + 'time.html');
-
-});
-
+/*Loading Bar*/
 app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
   cfpLoadingBarProvider.includeSpinner = false;
 }]);
+
+
+/*Form templates config*/
+app.run(function(formlyConfig,CoreService,$http) {
+  // NOTE: This next line is highly recommended. Otherwise Chrome's autocomplete will appear over your options!
+  formlyConfig.extras.removeChromeAutoComplete = true;
+  formlyConfig.setType({
+    name: 'async-ui-select',
+    extends: 'select',
+    templateUrl: 'async-ui-select.html'
+  });
+  formlyConfig.setType({
+    name: 'async-ui-select-multiple',
+    extends: 'select',
+    templateUrl: 'async-ui-select-multiple.html'
+  });
+  var unique = 1;
+  formlyConfig.setType({
+    name: 'repeatSection',
+    templateUrl: 'repeatSection.html',
+    controller: function($scope) {
+      $scope.formOptions = {formState: $scope.formState};
+      
+      
+      $scope.copyFields = function(fields) {
+        fields = angular.copy(fields);
+        addRandomIds(fields);
+        return fields;
+      }
+      $scope.addNew = function(){
+        $scope.model[$scope.options.key] = $scope.model[$scope.options.key] || [];
+        var repeatsection = $scope.model[$scope.options.key];
+        var lastSection = repeatsection[repeatsection.length - 1];
+        var newsection = {};
+        // if (lastSection) {
+        //   newsection = angular.copy(lastSection);
+        // }
+        repeatsection.push(newsection);
+      }
+      
+      function addRandomIds(fields) {
+        unique++;
+        angular.forEach(fields, function(field, index) {
+          if (field.fieldGroup) {
+            addRandomIds(field.fieldGroup);
+            return; // fieldGroups don't need an ID
+          }
+          
+          if (field.templateOptions && field.templateOptions.fields) {
+            addRandomIds(field.templateOptions.fields);
+          }
+          
+          field.id = field.id || (field.key + '_' + index + '_' + unique + getRandomInt(0, 9999));
+        });
+      }
+      
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+      
+      
+      //init
+      if(!$scope.model[$scope.options.key]){
+        $scope.addNew();
+      }
+      
+    }
+  });
+  formlyConfig.setType({
+    name: 'fileUpload',
+    templateUrl: 'fileUpload.html',
+    controller: function($scope, FileUploader, CoreService) {
+
+  // create a uploader with options
+  var uploader = $scope.uploader = new FileUploader({
+    scope: $scope, // to automatically update the html. Default: $rootScope
+    url: CoreService.env.apiUrl + '/containers/files/upload',
+    formData: [{
+      key: 'value'
+    }]
+  });
+  
+  if($scope.model.technical_file) {
+    console.log('loaded initial file');
+    uploader.queue.push($scope.model.technical_file);
+  }
+  // console.log('Add filters and callbacks to the uploader object:', uploader);
+
+  // FILTERS AND CALLBACKS
+
+  //uploader.filters.push({
+  //  name: 'customFilter',
+  //  fn: function () {
+  //    return this.queue.length < 10;
+  //  }
+  //});
+
+  // CALLBACKS
+
+  //uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
+  //  console.info('onWhenAddingFileFailed', item, filter, options);
+  //};
+  uploader.onAfterAddingFile = function (fileItem) {
+    if(!fileItem.isReady && !fileItem.isUploading && !fileItem.isSuccess) fileItem.upload();
+  };
+  //uploader.onAfterAddingAll = function (addedFileItems) {
+  //  console.info('onAfterAddingAll', addedFileItems);
+  //};
+  //uploader.onBeforeUploadItem = function (item) {
+  //  console.info('onBeforeUploadItem', item);
+  //};
+  //uploader.onProgressItem = function (fileItem, progress) {
+  //  console.info('onProgressItem', fileItem, progress);
+  //};
+  //uploader.onProgressAll = function (progress) {
+  //  console.info('onProgressAll', progress);
+  //};
+  //uploader.onSuccessItem = function (fileItem, response, status, headers) {
+  //  console.info('onSuccessItem', fileItem, response, status, headers);
+  //};
+  //uploader.onErrorItem = function (fileItem, response, status, headers) {
+  //  console.info('onErrorItem', fileItem, response, status, headers);
+  //};
+  //uploader.onCancelItem = function (fileItem, response, status, headers) {
+  //  console.info('onCancelItem', fileItem, response, status, headers);
+  //};
+  uploader.onCompleteItem = function (fileItem, response, status, headers) {
+    $scope.model.technical_file={
+      file:fileItem.file,
+      isCancel: false,
+      isError: false,
+      isReady: false,
+      isSuccess: true,
+      isUploaded: true,
+      isUploading: false,
+      progress: 100,
+      removeAfterUpload: false,
+      url: "/api//containers/files/upload"
+    };
+    console.info('onAfterAddingFile', fileItem);
+    console.log('Current queue',uploader.queue);
+  };
+  
+  $scope.delete = function(item) {
+  CoreService.confirm('Are you sure?','Deleting this cannot be undone',
+    function() {
+      $http.delete(CoreService.env.apiUrl +
+        '/containers/files/files/' + encodeURIComponent(item.file.name)).success(
+        function(data, status, headers) {
+          console.log(data);
+          console.log(status);
+          console.log(headers);
+          
+          $scope.model.technical_file={};
+          item.remove();
+          CoreService.toastSuccess('File deleted', 'Your file is deleted!');
+        });
+    },
+    function() {
+      return false;
+    });
+};
+  //uploader.onCompleteAll = function () {
+  //  console.info('onCompleteAll');
+  //};
+
+  }
+  
+  });
+
+  
+  
+});
