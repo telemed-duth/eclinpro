@@ -13,8 +13,6 @@ $scope.evidence={};
 var BioportalSplitter=".";
 var CategorySplitter="_";
 var SpaceSplitter="0";
-$scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
-  
   
 //retrieve protocol model
 $scope.requiredProps=[];
@@ -147,6 +145,7 @@ if ( protocolId.length===24 ) {
     $scope.protocol = protocol;
     $scope.fetchUsage();
     $scope.fetchHealthcenters();
+    loadForm();
     
   }, function(err) {
     $state.go('app.protocols.list');
@@ -155,6 +154,7 @@ if ( protocolId.length===24 ) {
   
 } else {
   $scope.protocol = {};
+  loadForm();
 }
 
 
@@ -299,7 +299,7 @@ function updateDashboard(){
 
 
 
-
+function loadForm(){
 
 $scope.tabs = 
 [{
@@ -625,7 +625,7 @@ $scope.tabs =
 }];
 
 
-    
+};
 
 
 

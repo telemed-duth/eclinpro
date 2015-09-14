@@ -29,6 +29,7 @@ $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infas
     }, function(healthcenter) {
       // console.log(healthcenter);
       $scope.healthcenter = healthcenter;
+      loadForm();
       // $scope.fetchApproval();
       // $scope.fetchHealthcenters();
       
@@ -41,6 +42,7 @@ $scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infas
   } else {
     
     $scope.healthcenter = {};
+    loadForm();
   }
   
 
@@ -67,168 +69,11 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
   };
   $scope.cName=catname;
   $scope.pName=propname;
-  
 
-  function buildModel() {
-    
-    Meta.getModelProperties(function(obj) {
-    
-    var curModel=obj.Healthcenter;
-    var propCategories=[];
-    
-        for(var key in curModel){
-          
-          if( key.indexOf(CategorySplitter)>0 ){ //&& key.indexOf("Id")===-1 && key!=='id' && curModel.hasOwnProperty(key)){
-            
-            
-            //schema builder
-            var keyObj={};
-            angular.copy(curModel[key],keyObj);
-            // if(keyObj.enum) {
-            //   keyObj.enum=keyObj.enum.map(function(item){
-            //   return item.toString();
-            //   });
-            // }
-            keyObj.title=gettextCatalog.getString(propname(key));
-            if(keyObj.required){$scope.requiredProps.push(key);}
-            keyObj.type=(curModel[key].stringType==="objectid")?"string":curModel[key].stringType;
-            
-          if($scope.uiselectArray.indexOf(key)>=0){
-              keyObj.format="uiselect";
-              keyObj.items=[];
-                if(typeof $scope.healthcenter[key]==="string"){
-                  keyObj.items=[{
-                      "label":$scope.healthcenter[key].split(BioportalSplitter)[1],
-                      "value":$scope.healthcenter[key]
-                    }];
-                } else if($scope.healthcenter[key] instanceof Array){
-                  //map the string into object for the autocomplete
-                  keyObj.items=$scope.healthcenter[key].map(function(str){
-                    return {
-                      "label":str.split(BioportalSplitter)[1],
-                      "value":str
-                    };
-                  });
-                }
-              
-            } else if (keyObj.type==="array"){
-              keyObj.items={
-                  "title":keyObj.title,
-                  "type":"string"
-              };
-            } else {
-              // console.log('Other types: '+key);
-              // console.log(keyObj);
-            }
-            
-            delete keyObj['required'];
-            delete keyObj['stringType'];
-            
-            //form builder
-            var category=catname(key);
-            var item={};
-            propCategories[category]=propCategories[category] || {
-              "title":category,
-              "items":[]
-            }
-            
-            if(keyObj.format) {
-              item={
-                "key":key,
-                "feedback":false,
-                "placeholder":"Add "+propname(key),
-                "options": {
-                  "refreshDelay": 50,
-                  "callback": $scope.bioportalAutocomplete
-                }
-              };
-            } else if(keyObj.enum) {
-              //console.log(JSON.stringify(keyObj));
-              item=key;
-            }
-            else {
-              item={
-                "key":key,
-                "placeholder":"Add "+propname(key),
-                "feedback":true,
-              };
-            }
-            
-            //do foreign key stuff
-            // var foreignModel=key.toString().split('Id')[0];
-            // console.log(foreignModel);
-            // keyObj.format="uiselect";
-            // keyObj.items=categories.map(function(category) {
-            //   return {
-            //     value: category.id,
-            //     label: category.name
-            //   };
-            // });
-            
-            if(key==='release_deviation' && $stateParams.parentId ) {
-              propCategories[category].items.push(item);
-            } else if(key!=='release_deviation'){
-              propCategories[category].items.push(item);
-            }
-            $scope.schemaProps[key]=keyObj;
-          }
-        }
-        
-        $scope.formProps.push({  
-          "type":"fieldset",
-          "title":"Clinical Healthcenter",
-          "items":[{
-            "type": "tabs",
-            "tabs": Object.keys(propCategories).map(function (key) {return propCategories[key]})
-          }]
-        });      
-            
-            
-        $scope.formProps.push({  
-          "type":"actions",
-          "items":[  
-             {  
-                "type":"submit",
-                "style":"btn-info",
-                "title":"Submit"
-             },
-             {  
-                "type":"button",
-                "style":"btn-danger",
-                "title":"Cancel",
-                "onClick":"sayNo()"
-             }
-          ]
-       });
-       
-      
-            //healthcenter view/edit
-            
-            
-          //create view tabs from formProps
-          // console.log($scope.schemaProps);
-          // console.log($scope.formProps);
-          $scope.tabs=$scope.formProps[0].items[0].tabs;
-          
-          $scope.modelLoaded=true;
-            
-      });
-      
-      }
 
-  
-  
+    
+/*LOGIC FUNCTIONS */    
 
-    $scope.schema = {
-      type: 'object',
-      title: 'Product',
-      properties: $scope.schemaProps,
-      required: $scope.requiredProps
-    };
-  
-    $scope.form = $scope.formProps;
-    
-    
     $scope.toggleHealthcenterApproval=function(){
       console.log($scope.protocolApproval);
       if(!$scope.protocolApproval.id){
@@ -370,7 +215,338 @@ $scope.bioportalAutocomplete = function(schema, options, search) {
     
     
   
-    buildModel();
+    
+
+
+function loadForm(){
+
+$scope.tabs = 
+[{
+    title: 'General',
+    active: true,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            key: 'general_name',
+            type: 'input',
+            templateOptions: {
+                label: 'Protocol name',
+                placeholder: 'Protocol name..',
+                required: true
+            }
+        }, {
+            key: 'general_desc',
+            type: 'input',
+            templateOptions: {
+                label: 'Protocol description',
+                placeholder: 'Protocol description..',
+                required: false
+            }
+        }, {
+            "key": "general_type",
+            "type": "select",
+            "defaultValue": "protocol",
+            "templateOptions": {
+                "label": "Document Type",
+                "options": [{
+                    "name": "Protocol",
+                    "value": "protocol"
+                }, {
+                    "name": "Guideline",
+                    "value": "guideline"
+                }, {
+                    "name": "Pathway",
+                    "value": "pathway"
+                }]
+            }
+        }, {
+            key: 'general_active',
+            type: 'checkbox',
+            templateOptions: {
+                label: 'Protocol active?'
+            }
+        }]
+    }
+}, {
+    title: 'Technical',
+    active: false,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            type: 'repeatSection',
+            key: 'technical_sources',
+            templateOptions: {
+                btnText: 'Add new source',
+                fields: [{
+                        className: '',
+                        fieldGroup: [{
+                            "className": "col-xs-4",
+                            "key": "technical_type",
+                            "type": "select",
+                            "defaultValue": "url",
+                            "templateOptions": {
+                                "label": "Type",
+                                "options": [{
+                                    "name": "PDF",
+                                    "value": "pdf"
+                                }, {
+                                    "name": "GLIF/xml",
+                                    "value": "glif_xml"
+                                }, {
+                                    "name": "Document",
+                                    "value": "doc"
+                                }, {
+                                    "name": "Image",
+                                    "value": "img"
+                                }, {
+                                    "name": "Url",
+                                    "value": "url"
+                                }]
+                            }
+                        }, {
+                            "className": "col-xs-4",
+                            key: 'technical_institute',
+                            type: 'input',
+                            templateOptions: {
+                                label: 'Institute',
+                                placeholder: 'Institute',
+                                required: false
+                            }
+                        }, {
+                            "className": "col-xs-4",
+                            "key": "technical_license_type",
+                            "type": "select",
+                            "defaultValue": "http://purl.org/meducator/licenses#Attribution-Share-Alike",
+                            "templateOptions": {
+                                "label": "License",
+                                "options": [{
+                                    "name": "Attribution",
+                                    "value": "http://purl.org/meducator/licenses#Attribution"
+                                },{
+                                    "name": "Attribution Share Alike",
+                                    "value": "http://purl.org/meducator/licenses#Attribution-Share-Alike"
+                                },{
+                                    "name": "Attribution No Derivatives",
+                                    "value": "http://purl.org/meducator/licenses#Attribution-No-Derivatives"
+                                },{
+                                    "name": "Attribution Non Commercial",
+                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial"
+                                },{
+                                    "name": "Attribution Non Commercial Share Alike",
+                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial-Share-Alike"
+                                },{
+                                    "name": "Attribution Non Commercial No Derivatives",
+                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial-No-Derivatives"
+                                }
+                                ]
+                            }
+                        }
+                        ]
+                    }, 
+                    {
+                        className: '',
+                        fieldGroup: [
+                          {
+                      "className": "col-xs-12",
+                        key: 'technical_file',
+                        type: 'fileUpload',
+                        templateOptions: {
+                            label: 'File upload'
+                        },
+                        hideExpression: 'model.technical_type==="url"'
+                    }, {
+                     "className": "col-xs-12",
+                        key: 'technical_url',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'URL source',
+                            placeholder: 'e.g www.google.com or http://www.google.com'
+                        },
+                        hideExpression: 'model.technical_type!=="url"'
+                    }
+                    ]
+                  }
+
+                ]
+            }
+        }]
+    }
+}, {
+    title: 'Evidence',
+    active: false,
+    evidence: true
+}, {
+    title: 'Intention',
+    active: false,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            "key": "intention_type",
+            "type": "select",
+            "defaultValue": 'diagnostic',
+            "templateOptions": {
+                "label": "Intention type",
+                "options": [{
+                    "name": "Diagnostic",
+                    "value": "diagnostic"
+                }, {
+                    "name": "Therapeutic",
+                    "value": "therapeutic"
+                }, {
+                    "name": "Management",
+                    "value": "management"
+                }, {
+                    "name": "Preventative",
+                    "value": "preventative"
+                }]
+            }
+        }, {
+            key: 'intention_disease',
+            type: 'async-ui-select',
+            templateOptions: {
+                label: 'Intention disease',
+                placeholder: 'Intention disease..',
+                bioportal: {
+                    ontologies: 'ICD10',
+                    semantic_types: 'T047'
+                },
+                onselect: function(item) {
+                    $scope.protocol.intention_disease = item;
+                },
+                valueProp: 'id',
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }]
+    }
+}, {
+    title: 'Outcomes',
+    active: false,
+    outcome: true
+}, {
+    title: 'Initial Conditions',
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            key: 'initial_expression',
+            type: 'input',
+            templateOptions: {
+                label: 'Initial Conditions',
+                placeholder: 'Initial Conditions..'
+            }
+        }]
+    }
+}, {
+    title: 'Resources',
+    onselect: function() {
+        $timeout(function() {
+            $scope.$broadcast('ResourcesTabSelected');
+        }, 100)
+    },
+    form: {
+        options: {},
+        model: $scope.protocol,
+        active: false,
+        fields: [{
+            key: 'resources_human',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Required Staff',
+                placeholder: 'e.g Cardiologist..',
+                bioportal: {
+                    semantic_types: 'T090,T097'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: 'resources_infastructure',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Special equipment required',
+                placeholder: 'e.g magnetic tomography scanner..',
+                bioportal: {
+                    semantic_types: 'T074,T073'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: 'resources_pharmaceutical',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Special drug requirements',
+                placeholder: 'e.g Erythromycin..',
+                bioportal: {
+                    semantic_types: 'T200'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }]
+    }
+}, {
+    title: 'Divergion',
+    active: false,
+    hide: true,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [
+
+            {
+                "key": "divergion_type",
+                "type": "select",
+                "templateOptions": {
+                    "label": "Type",
+                    "options": [{
+                        "name": "Deviation",
+                        "value": "deviation"
+                    }, {
+                        "name": "Variation",
+                        "value": "variation"
+                    }, {
+                        "name": "Update",
+                        "value": "update"
+                    }, {
+                        "name": "Regulatory compliance",
+                        "value": "regulatory"
+                    }, {
+                        "name": "Uniformity",
+                        "value": "uniformity"
+                    }, {
+                        "name": "Other",
+                        "value": "other"
+                    }]
+                }
+            }, {
+                key: 'divergion_other',
+                type: 'input',
+                templateOptions: {
+                    label: 'Diverging reason',
+                    placeholder: 'Reason'
+                }
+            },
+        ]
+    }
+}];
+
+
+};
+
+
 
 
 

@@ -4,7 +4,7 @@
     "base": "AppModel",
     "properties": {
         "general_name": {
-            "type": "string",
+            "type": "string"
         },
         "general_desc": {
             "type": "string"
@@ -15,46 +15,64 @@
         "general_active": {
             "type": "boolean"
         },
-        "technical_type": {
-            "type": "string"
-        },
-        "technical_institute": {
-            "type": "string"
-        },
-        "technical_license_type": {
-            "type": "string"
-        },
+        "technical_sources": [
+            {
+                "technical_type": {
+                    "type": "string"
+                },
+                "technical_institute": {
+                    "type": "string"
+                },
+                "technical_file": {
+                    "type": "object"
+                },
+                "technical_url": {
+                    "type": "string"
+                },
+                "technical_license_type": {
+                    "type": "string"
+                }
+            }
+        ],
         "evidences": {
-            "type": "array"
+            "type": [
+                "object"
+            ]
         },
         "intention_type": {
             "type": "string"
         },
         "intention_disease": {
+            "type": "object"
+        },
+        "outcomes": {
+            "type": [
+                "object"
+            ]
+        },
+        "initial_expression": {
             "type": "string"
         },
-        "outcomes":[{
-            "outcome_type": {
-                "type": "string"
-            },
-            "outcome_disease": {
-                "type": "string"
-            }
-        }],
-        "initial_expression": {
-            "type": "string",
-        },
         "resources_human": {
-            "type": "array"
+            "type": [
+                "object"
+            ]
         },
         "resources_infastructure": {
-            "type": "array"
+            "type": [
+                "object"
+            ]
         },
         "resources_pharmaceutical": {
-            "type": "array"
+            "type": [
+                "object"
+            ]
         },
-        "divergion_type":{
-            "type":"string"
+        "divergion_type": {
+            "type": "string"
+        },
+        "divergion_other": {
+            "type": "string"
         }
     },
     "validations": [],
@@ -65,29 +83,31 @@
             "foreignKey": "parentId"
         },
         "healthcenters": {
-          "type": "hasMany",
-          "model": "Healthcenter",
-          "foreignKey": "protocolId",
-          "through": "ProtocolApproval"
+            "type": "hasMany",
+            "model": "Healthcenter",
+            "foreignKey": "protocolId",
+            "through": "ProtocolApproval"
         },
         "usedBy": {
-          "type": "hasMany",
-          "model": "user",
-          "foreignKey": "protocolId",
-          "through": "ProtocolUsage"
+            "type": "hasMany",
+            "model": "user",
+            "foreignKey": "protocolId",
+            "through": "ProtocolUsage"
         },
-        "createdBy":{
-            "type":"belongsTo",
-            "model":"user",
-            "foreignKey":"ownerId"
+        "createdBy": {
+            "type": "belongsTo",
+            "model": "user",
+            "foreignKey": "ownerId"
         }
     },
-      "acls": [  {
-    "accessType": "EXECUTE",
-    "principalType": "ROLE",
-    "principalId": "$authenticated",
-    "permission": "ALLOW",
-    "property": "create"
-  }],
+    "acls": [
+        {
+            "accessType": "EXECUTE",
+            "principalType": "ROLE",
+            "principalId": "$authenticated",
+            "permission": "ALLOW",
+            "property": "create"
+        }
+    ],
     "methods": []
 }

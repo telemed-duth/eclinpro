@@ -12,11 +12,123 @@
                 <h3 class="box-title"></h3>
             </div>
             <div class="box-body">
-                <form id="healthcenterForm"
-                      sf-schema="schema"
-                      sf-form="form"
-                      sf-model="healthcenter"
-                      ng-submit="onSubmit(healthcenterForm)">
+                <form ng-submit="onSubmit(form)" name="form" novalidate>
+                    <tabset justified="true">
+                        <tab ng-repeat="tab in tabs"
+                           heading="{{tab.title}}"
+                           active="tab.active"
+                           disable="tab.disabled"
+                           ng-hide="tab.hide"
+                           select="tab.onselect()"
+                           class="healthcenterform"> <br>
+                    <div class="container">
+                        
+                    <div ng-if="tab.outcome">
+                    <br>
+                    <div class="row" >
+
+                        <div class="col-sm-2">
+                           <label for="outcome_type" class="control-label">Outcome type</label>
+                            <select name="outcome_type" class="form-control" ng-model="outcome.selectedType" ng-init="outcome.selectedType=outcome.types[0]">
+                                 <option ng-repeat="option in outcome.types" value="{{option}}">{{option | ucfirst}}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-10">
+                        <label for="outcome_uiselect" class="control-label">Select condition to add</label>
+                        <ui-select name="outcome_uiselect" search-enabled="true" ng-disabled="!outcome.selectedType"
+                            on-select="addOutcome($item, $model)" 
+                            ng-model="outcome.selected" theme="bootstrap">
+                            <ui-select-match placeholder="Search for disease...">{{$select.selected.label}}</ui-select-match>
+                            <ui-select-choices 
+                                repeat="outcome in autocompleteResults track by $index" 
+                                refresh="bioportalAutocomplete($select.search,{templateOptions:{bioportal:{ontologies:'ICD10',semantic_types:'T047'}}})" 
+                                refresh-delay="0">
+                                <div ng-bind-html="outcome.label | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="protocol.outcomes.length>0"><hr></div>
+                    <div class="row">
+                        
+                       <ul>
+                          <li ng-repeat="outcome in protocol.outcomes track by $index">
+                              
+<b>{{outcome.type|ucfirst}}</b> outcome :  
+                            <a ng-href="http://bioportal.bioontology.org/ontologies/ICD10?p=classes&conceptid={{outcome.link}}" target="_blank" >
+                               <b>{{outcome.label}}</b>
+                            </a>
+                                <span>
+                                <a href="" class="btn btn-xs btn-default" ng-click="removeOutcome($index)">
+                                <span class="ion-close-round"></span></a>
+                                </span>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+                          
+                        
+                    <div ng-if="tab.evidence">
+                    <br>
+                    <div class="row" >
+
+                        <div class="col-sm-11">
+                        <label for="evidence_uiselect" class="control-label">Select article to add as evidence</label>
+                        <ui-select name="evidence_uiselect" search-enabled="true" reset-search-input="true"
+                            on-select="addPubmedArticle($item, $model)" 
+                            ng-model="evidence.selected" theme="bootstrap">
+                            <ui-select-match allow-clear="true" placeholder="Search in pubmed...">{{$select.selected.title}}</ui-select-match>
+                            <ui-select-choices 
+                                repeat="article in pubmedResults track by $index" 
+                                refresh="searchPubmed($select.search)" 
+                                refresh-delay="800">
+                                <div ng-bind-html="article.title | highlight: $select.search"></div>
+                                <small ng-bind="article.authorString"></small> <cite><b ng-bind="article.pubYear"></b></cite>
+                            </ui-select-choices>
+                            </ui-select>
+                            </label>
+                            
+                        </div>
+                        <div class="col-sm-1">
+                        <br>
+                        <br>
+                        <label class="control-label"><input type="checkbox" ng-model="evidence.exactPubMedSearch">Exact</label>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="protocol.evidences.length>0"><hr></div>
+                    <div class="row">
+                        
+                       <ol>
+                          <li ng-repeat="article in protocol.evidences track by $index">
+
+                            <a ng-href="http://www.ncbi.nlm.nih.gov/pubmed/{{article.pmid}}" target="_blank" class="list-group-item-heading" ng-bind-html="article.title"></a>
+                                
+                                <span>
+                                <a href="" class="btn btn-xs btn-default" ng-click="removePubmedArticle($index)">
+                                <span class="ion-close-round"></span></a>
+                                </span>
+                                
+                            <p>
+                                <b>PMID</b> : {{article.pmid}} 
+                                <br>
+                                <b>Authors</b> : {{article.authorString}} &copy;{{article.pubYear}}
+                            </p>
+                          </li>
+                        </ol>
+                    </div>
+                </div>
+                          
+                          
+                        <formly-form model="tab.form.model" fields="tab.form.fields" form="form" options="tab.form.options">
+                        </formly-form>
+                        
+                        
+                        </div>
+                      </tab>
+                      
+                            
+                    </tabset>
+                    <button type="submit" class="btn btn-primary submit-button" ng-disabled="form.$invalid">Submit</button>
                 </form>
             </div>
         </div>
