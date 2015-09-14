@@ -9,57 +9,60 @@ $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
 $scope.protocolApproval={};
 
-var BioportalSplitter=".";
-var CategorySplitter="_";
-var SpaceSplitter="0";
-$scope.uiselectArray=["resources_pharmaceutical","goal_disease","resources_infastructure","resources_human","cohort_exposure","cohort_comorbidities","cohort_riskfactors","cohort_contraindications","cohort_medicalhistory","cohort_symptoms"];
   
-  
-//retrieve healthcenter model
-  $scope.requiredProps=[];
-  $scope.schemaProps={};
-  $scope.formProps=[];
-  
-  var healthcenterId=$stateParams.id||$stateParams.parentId||'';
-  if ( healthcenterId.length===24 ) {
-    
-    // console.log("there is a healthcenter id");
-    Healthcenter.findById({
-      id: healthcenterId
-    }, function(healthcenter) {
-      // console.log(healthcenter);
-      $scope.healthcenter = healthcenter;
-      loadForm();
-      // $scope.fetchApproval();
-      // $scope.fetchHealthcenters();
-      
-    }, function(err) {
-      $state.go('app.healthcenters.list');
-      console.log(err);
-    });
+var healthcenterId=$stateParams.id||$stateParams.parentId||'';
+if ( healthcenterId.length===24 ) {
 
-    
-  } else {
-    
-    $scope.healthcenter = {};
-    loadForm();
-  }
+// console.log("there is a healthcenter id");
+Healthcenter.findById({
+  id: healthcenterId
+}, function(healthcenter) {
+  // console.log(healthcenter);
+  $scope.healthcenter = healthcenter;
+  loadForm();
+  // $scope.fetchApproval();
+  // $scope.fetchHealthcenters();
   
+}, function(err) {
+  $state.go('app.healthcenters.list');
+  console.log(err);
+});
+
+
+} else {
+
+$scope.healthcenter = {};
+loadForm();
+}
+
 
 //autocomplete fetch from bioportal
-$scope.bioportalAutocomplete = function(schema, options, search) {
-  Bioportal.autocomplete(schema, options, search)
+$scope.bioportalAutocomplete = function(search,field) {
+  if(search.length>2){
+  Bioportal.autocomplete(search,field.templateOptions.bioportal)
   .then(function(res){
-    $scope.autocompleteResults=res.data.collection.map(function(obj){
-      if(obj){
-        var id=!!obj['cui']?obj['cui'][0]:(obj['id']||obj['@id']); 
-        return { "label": obj.prefLabel, "value": id+BioportalSplitter+obj.prefLabel  };
-      }
+    var list=res.data.collection;
+    if(list.length<1) {
+      list.push({
+        cui:[-1,0],
+        prefLabel:'No Results'
+      });
+    }    
+    $scope.autocompleteResults=field.templateOptions.options=list.map(function(obj){
+
+        var id=obj['cui'][0]; 
+        var link=(obj['id']||obj['@id']); 
+        return { 
+          "label": obj.prefLabel, 
+          "id": id,
+          "link":link
+        };
     });
   },function(err){console.log(err);});
-  return $scope.autocompleteResults;  
+  }
 };
-  
+
+
   function capFirst(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
   var propname=function(str){
     return capFirst(str.split(CategorySplitter)[1]||" ");
@@ -226,219 +229,47 @@ $scope.tabs =
     active: true,
     form: {
         options: {},
-        model: $scope.protocol,
+        model: $scope.healthcenter,
         fields: [{
             key: 'general_name',
             type: 'input',
             templateOptions: {
-                label: 'Protocol name',
-                placeholder: 'Protocol name..',
+                label: 'Health center name',
+                placeholder: 'Health center name..',
                 required: true
             }
         }, {
             key: 'general_desc',
+            type: 'textarea',
+            templateOptions: {
+                label: 'Health center description',
+                placeholder: 'Health center description..',
+                required: false
+            }
+        }, {
+            key: 'general_location',
             type: 'input',
             templateOptions: {
-                label: 'Protocol description',
-                placeholder: 'Protocol description..',
+                label: 'Location',
+                placeholder: 'e.g address,city,country, postal code..',
                 required: false
             }
         }, {
             "key": "general_type",
             "type": "select",
-            "defaultValue": "protocol",
+            "defaultValue": "hospital",
             "templateOptions": {
-                "label": "Document Type",
+                "label": "Organization Type",
                 "options": [{
-                    "name": "Protocol",
-                    "value": "protocol"
+                    "name": "Hospital",
+                    "value": "hospital"
                 }, {
-                    "name": "Guideline",
-                    "value": "guideline"
+                    "name": "Institution",
+                    "value": "institution"
                 }, {
-                    "name": "Pathway",
-                    "value": "pathway"
+                    "name": "Authoritative institution",
+                    "value": "authoritative_institution"
                 }]
-            }
-        }, {
-            key: 'general_active',
-            type: 'checkbox',
-            templateOptions: {
-                label: 'Protocol active?'
-            }
-        }]
-    }
-}, {
-    title: 'Technical',
-    active: false,
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [{
-            type: 'repeatSection',
-            key: 'technical_sources',
-            templateOptions: {
-                btnText: 'Add new source',
-                fields: [{
-                        className: '',
-                        fieldGroup: [{
-                            "className": "col-xs-4",
-                            "key": "technical_type",
-                            "type": "select",
-                            "defaultValue": "url",
-                            "templateOptions": {
-                                "label": "Type",
-                                "options": [{
-                                    "name": "PDF",
-                                    "value": "pdf"
-                                }, {
-                                    "name": "GLIF/xml",
-                                    "value": "glif_xml"
-                                }, {
-                                    "name": "Document",
-                                    "value": "doc"
-                                }, {
-                                    "name": "Image",
-                                    "value": "img"
-                                }, {
-                                    "name": "Url",
-                                    "value": "url"
-                                }]
-                            }
-                        }, {
-                            "className": "col-xs-4",
-                            key: 'technical_institute',
-                            type: 'input',
-                            templateOptions: {
-                                label: 'Institute',
-                                placeholder: 'Institute',
-                                required: false
-                            }
-                        }, {
-                            "className": "col-xs-4",
-                            "key": "technical_license_type",
-                            "type": "select",
-                            "defaultValue": "http://purl.org/meducator/licenses#Attribution-Share-Alike",
-                            "templateOptions": {
-                                "label": "License",
-                                "options": [{
-                                    "name": "Attribution",
-                                    "value": "http://purl.org/meducator/licenses#Attribution"
-                                },{
-                                    "name": "Attribution Share Alike",
-                                    "value": "http://purl.org/meducator/licenses#Attribution-Share-Alike"
-                                },{
-                                    "name": "Attribution No Derivatives",
-                                    "value": "http://purl.org/meducator/licenses#Attribution-No-Derivatives"
-                                },{
-                                    "name": "Attribution Non Commercial",
-                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial"
-                                },{
-                                    "name": "Attribution Non Commercial Share Alike",
-                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial-Share-Alike"
-                                },{
-                                    "name": "Attribution Non Commercial No Derivatives",
-                                    "value": "http://purl.org/meducator/licenses#Attribution-Non-Commercial-No-Derivatives"
-                                }
-                                ]
-                            }
-                        }
-                        ]
-                    }, 
-                    {
-                        className: '',
-                        fieldGroup: [
-                          {
-                      "className": "col-xs-12",
-                        key: 'technical_file',
-                        type: 'fileUpload',
-                        templateOptions: {
-                            label: 'File upload'
-                        },
-                        hideExpression: 'model.technical_type==="url"'
-                    }, {
-                     "className": "col-xs-12",
-                        key: 'technical_url',
-                        type: 'input',
-                        templateOptions: {
-                            label: 'URL source',
-                            placeholder: 'e.g www.google.com or http://www.google.com'
-                        },
-                        hideExpression: 'model.technical_type!=="url"'
-                    }
-                    ]
-                  }
-
-                ]
-            }
-        }]
-    }
-}, {
-    title: 'Evidence',
-    active: false,
-    evidence: true
-}, {
-    title: 'Intention',
-    active: false,
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [{
-            "key": "intention_type",
-            "type": "select",
-            "defaultValue": 'diagnostic',
-            "templateOptions": {
-                "label": "Intention type",
-                "options": [{
-                    "name": "Diagnostic",
-                    "value": "diagnostic"
-                }, {
-                    "name": "Therapeutic",
-                    "value": "therapeutic"
-                }, {
-                    "name": "Management",
-                    "value": "management"
-                }, {
-                    "name": "Preventative",
-                    "value": "preventative"
-                }]
-            }
-        }, {
-            key: 'intention_disease',
-            type: 'async-ui-select',
-            templateOptions: {
-                label: 'Intention disease',
-                placeholder: 'Intention disease..',
-                bioportal: {
-                    ontologies: 'ICD10',
-                    semantic_types: 'T047'
-                },
-                onselect: function(item) {
-                    $scope.protocol.intention_disease = item;
-                },
-                valueProp: 'id',
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }]
-    }
-}, {
-    title: 'Outcomes',
-    active: false,
-    outcome: true
-}, {
-    title: 'Initial Conditions',
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [{
-            key: 'initial_expression',
-            type: 'input',
-            templateOptions: {
-                label: 'Initial Conditions',
-                placeholder: 'Initial Conditions..'
             }
         }]
     }
@@ -451,7 +282,7 @@ $scope.tabs =
     },
     form: {
         options: {},
-        model: $scope.protocol,
+        model: $scope.healthcenter,
         active: false,
         fields: [{
             key: 'resources_human',
@@ -497,50 +328,7 @@ $scope.tabs =
             }
         }]
     }
-}, {
-    title: 'Divergion',
-    active: false,
-    hide: true,
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [
 
-            {
-                "key": "divergion_type",
-                "type": "select",
-                "templateOptions": {
-                    "label": "Type",
-                    "options": [{
-                        "name": "Deviation",
-                        "value": "deviation"
-                    }, {
-                        "name": "Variation",
-                        "value": "variation"
-                    }, {
-                        "name": "Update",
-                        "value": "update"
-                    }, {
-                        "name": "Regulatory compliance",
-                        "value": "regulatory"
-                    }, {
-                        "name": "Uniformity",
-                        "value": "uniformity"
-                    }, {
-                        "name": "Other",
-                        "value": "other"
-                    }]
-                }
-            }, {
-                key: 'divergion_other',
-                type: 'input',
-                templateOptions: {
-                    label: 'Diverging reason',
-                    placeholder: 'Reason'
-                }
-            },
-        ]
-    }
 }];
 
 

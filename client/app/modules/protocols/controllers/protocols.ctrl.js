@@ -318,7 +318,7 @@ $scope.tabs =
             }
         }, {
             key: 'general_desc',
-            type: 'input',
+            type: 'textarea',
             templateOptions: {
                 label: 'Protocol description',
                 placeholder: 'Protocol description..',
@@ -581,7 +581,7 @@ $scope.tabs =
 }, {
     title: 'Divergion',
     active: false,
-    hide: true,
+    hide: !$stateParams.parentId,
     form: {
         options: {},
         model: $scope.protocol,
@@ -590,6 +590,7 @@ $scope.tabs =
             {
                 "key": "divergion_type",
                 "type": "select",
+                "defaultValue":"update",
                 "templateOptions": {
                     "label": "Type",
                     "options": [{
@@ -618,7 +619,8 @@ $scope.tabs =
                 templateOptions: {
                     label: 'Diverging reason',
                     placeholder: 'Reason'
-                }
+                },
+                hideExpression:"model.divergion_type!=='other'"
             },
         ]
     }

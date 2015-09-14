@@ -41,7 +41,7 @@
                             <ui-select-match placeholder="Search for disease...">{{$select.selected.label}}</ui-select-match>
                             <ui-select-choices 
                                 repeat="outcome in autocompleteResults track by $index" 
-                                refresh="bioportalAutocomplete($select.search,{templateOptions:{bioportal:{ontologies:'ICD10',semantic_types:'T047'}}})" 
+                                refresh="bioportalAutocomplete($select.search,{templateOptions:{bioportal:{}}})" 
                                 refresh-delay="0">
                                 <div ng-bind-html="outcome.label | highlight: $select.search"></div>
                             </ui-select-choices>

@@ -3,20 +3,32 @@
   "plural": "healthcenters",
   "base": "AppModel",
   "properties": {
-    "main_name": {
+    "general_name": {
       "type": "string"
     },
-    "main_location": {
+    "general_desc": {
       "type": "string"
+    },
+    "general_type": {
+      "type": "string"
+    },
+    "general_location": {
+      "type": "object"
     },        
     "resources_infastructure": {
-      "type": "array"
+      "type": [
+          "object"
+      ]
     },
     "resources_pharmaceutical": {
-        "type": "array"
+      "type": [
+          "object"
+      ]
     },
     "resources_human": {
-        "type": "array"
+      "type": [
+          "object"
+      ]
     }
   },
   "validations": [],
