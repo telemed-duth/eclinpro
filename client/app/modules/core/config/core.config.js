@@ -301,6 +301,8 @@ app.run(function(formlyConfig,CoreService,$http) {
       removeAfterUpload: false,
       url: "/api//containers/files/upload"
     };
+    
+    $scope.model.technical_url=CoreService.env.apiUrl+"/containers/files/download/"+fileItem.file.name;
     console.info('onAfterAddingFile', fileItem);
     console.log('Current queue',uploader.queue);
   };

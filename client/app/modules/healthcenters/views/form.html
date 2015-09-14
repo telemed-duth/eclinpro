@@ -14,7 +14,8 @@
             <div class="box-body">
                 <form ng-submit="onSubmit(form)" name="form" novalidate>
                     <tabset justified="true">
-                        <tab ng-repeat="tab in tabs"
+                    
+                    <tab ng-repeat="tab in tabs"
                            heading="{{tab.title}}"
                            active="tab.active"
                            disable="tab.disabled"
@@ -22,14 +23,11 @@
                            select="tab.onselect()"
                            class="healthcenterform"> <br>
                     <div class="container">
-                          
                         <formly-form model="tab.form.model" fields="tab.form.fields" form="form" options="tab.form.options">
                         </formly-form>
-                        
-                        
-                        </div>
-                      </tab>
-                      
+                    </div>
+                    
+                    </tab>
                             
                     </tabset>
                     <button type="submit" class="btn btn-primary submit-button" ng-disabled="form.$invalid">Submit</button>
