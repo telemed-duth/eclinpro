@@ -68,7 +68,7 @@ angular.module('com.module.core')
             }
         });
         data.edges=visdata.edges.filter(function(edge){
-           if(exclude.indexOf(edge.from)>0||exclude.indexOf(edge.to)>0){
+           if(exclude.indexOf(edge.from)>-1||exclude.indexOf(edge.to)>-1){
                return false;
            } else return true;
         });
