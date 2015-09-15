@@ -47,8 +47,8 @@ $scope.bioportalAutocomplete = function(search,field) {
     var list=res.data.collection;
     if(list.length<1) {
       list.push({
-        cui:[-1,0],
-        prefLabel:'No Results'
+        cui:[Math.random()*1000,0],
+        prefLabel:search
       });
     }    
     $scope.autocompleteResults=field.templateOptions.options=list.map(function(obj){
@@ -537,6 +537,7 @@ $scope.tabs =
             key: 'initial_expression',
             type: 'input',
             templateOptions: {
+                disabled:true,
                 label: 'Initial Conditions',
                 placeholder: 'Initial Conditions..'
             }

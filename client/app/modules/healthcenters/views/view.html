@@ -1,8 +1,7 @@
 
 <h4>
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-  {{healthcenter.main_name}}
-
+  {{healthcenter.general_name}}
   <span ng-show="healthcenter.ownerId==user.id||isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
     <a href="" class="btn btn-sm btn-default" ui-sref="^.edit({id: healthcenter.id})">
       <i class="fa fa-pencil"></i>
@@ -11,53 +10,82 @@
       <i class="fa fa-trash-o"></i>
     </a>
   </span>
+  
 
 </h4>
 <hr>
 
 <div class="row">
     
-  <div class="col-md-6">
-    
     <div class="panel panel-default">
-      <div class="panel-heading">Health Center description</div>
+      <div class="panel-heading"><h3>{{healthcenter.general_name}}</h3></div>
       <div class="panel-body">
+              <div class="col-sm-6">
+                <h4>Information</h4>
+                <hr>
+                <p>Type : {{healthcenter.general_type}}</p> 
+                <p>Location : {{healthcenter.general_location}}</p> 
+                <p>{{healthcenter.general_desc}}</p> 
+              </div>
+              <div class="col-sm-6">
+                <h4>Resources</h4>
+                  <hr>
+                  <div ng-if="healthcenter.resources_infastructure && healthcenter.resources_infastructure.length>0">
+                  <h5>Available Equipment</h5>
+                  <ul>
+                    <li ng-repeat="res in healthcenter.resources_infastructure track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+                  </div>
+                  <div ng-if="healthcenter.resources_human && healthcenter.resources_human.length>0">
+                    <h5>Available Medical specialties</h5>
+                    <ul>
+                    <li ng-repeat="res in healthcenter.resources_human track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+                  </div>
+                  <div ng-if="healthcenter.resources_pharmaceutical && healthcenter.resources_pharmaceutical.length>0">
+                    <h5>Available drugs</h5>
+                    <ul>
+                    <li ng-repeat="res in healthcenter.resources_pharmaceutical track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+                  </div>
+              
+              </div>
         
-      <tabset justified="true">
-        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
-          <ul class="list-group">
-            <li ng-if="healthcenter[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{healthcenter[prop.key].toString()}}</li>
-          </ul>
-        </tab>
-      </tabset>
-      
-      
-      </div> 
-    </div>
-    
-  </div>
+              
+              
+            </div>
+      </div>
   
-  <div class="col-md-6">
+  <!--<div class="col-md-6">-->
     
-    <div class="panel panel-default">
-      <div class="panel-heading">Social Information</div>
-      <div class="panel-body">
-      <tabset justified="true">
-        <tab heading="Available protocols">
-          <ul class="list-group">
-            <li class="list-group-item" ng-repeat="pr in availableProtocols">{{pr.release_title +' v'+ pr.release_version}}</li>
-          </ul>
-        </tab>
-        <tab heading="Endorsed protocols">
-          <ul class="list-group">
-            <li class="list-group-item" ng-repeat="pr in endorsedProtocols">{{pr.release_title +' v'+ pr.release_version}}</li>
-          </ul>
-        </tab>
-      </tabset>
-      </div>
-      </div>
+  <!--  <div class="panel panel-default">-->
+  <!--    <div class="panel-heading">Social Information</div>-->
+  <!--    <div class="panel-body">-->
+  <!--    <tabset justified="true">-->
+  <!--      <tab heading="Available healthcenters">-->
+  <!--        <ul class="list-group">-->
+  <!--          <li class="list-group-item" ng-repeat="pr in availableHealthcenters">{{pr.release_title +' v'+ pr.release_version}}</li>-->
+  <!--        </ul>-->
+  <!--      </tab>-->
+  <!--      <tab heading="Endorsed healthcenters">-->
+  <!--        <ul class="list-group">-->
+  <!--          <li class="list-group-item" ng-repeat="pr in endorsedHealthcenters">{{pr.release_title +' v'+ pr.release_version}}</li>-->
+  <!--        </ul>-->
+  <!--      </tab>-->
+  <!--    </tabset>-->
+  <!--    </div>-->
+  <!--    </div>-->
     
-  </div>
+  <!--</div>-->
   
 </div>
 <pre ng-show="isadmin">{{healthcenter}}</pre>

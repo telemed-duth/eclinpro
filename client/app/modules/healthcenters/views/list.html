@@ -5,8 +5,8 @@
     <div class="panel panel-default mansonryitem" ng-repeat="item in healthcenters">
      	
      	<div class="panel-heading">
-     		   <!--<a href="" ui-sref="^.view({id: item.id})">{{item.general_name}}</a>-->
-     		<strong>{{item.general_name}}</strong>  
+     		   <a href="" ui-sref="^.view({id: item.id})">{{item.general_name}}</a>
+     		<!--<strong>{{item.general_name}}</strong>  -->
         <div class="box-tools pull-right">
     
           <span ng-show="item.ownerId==$parent.user.id||$parent.isadmin" class="pull-right btn-group">

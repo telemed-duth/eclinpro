@@ -15,14 +15,12 @@ function objExist(obj, list,prop) {
 var matchArray=function(a,b,prop){
   //returns true if all elements of array a exist on array b
   //if prop assume is object array and match on property 
-  if(!b) return false;
-  if(!a) return true;
   var l=a.length;
   if(l<1) return true;
   for( var i = 0; i < l; i++ ) {
     if(prop) {
       if(b instanceof Array &&!objExist(a[i],b,prop)) {
-        console.log('obj not exist');
+        // console.log('obj not exist');
         return false;
       }
     } else {
@@ -33,7 +31,6 @@ var matchArray=function(a,b,prop){
   // console.log(a,' match with ',b);
   return true;
 };
-
 var matchProtocol=function(pr,hc,propArray){
   if(!propArray) propArray=["resources_human","resources_infastructure","resources_pharmaceutical"];
   for( var i = 0, l = propArray.length ; i < l; i++ ) {

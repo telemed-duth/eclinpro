@@ -103,7 +103,7 @@
                   </ul>
                 
                   <hr>
-                
+                  <div ng-if="protocol.resources_infastructure && protocol.resources_infastructure.length>0">
                   <h4>Equipment requirements</h4>
                   <ul>
                     <li ng-repeat="res in protocol.resources_infastructure track by $index">
@@ -111,7 +111,8 @@
                       {{res.label}}</a>
                     </li>
                   </ul>
-                  
+                  </div>
+                  <div ng-if="protocol.resources_human && protocol.resources_human.length>0">
                     <h4>Medical expert requirements</h4>
                     <ul>
                     <li ng-repeat="res in protocol.resources_human track by $index">
@@ -119,7 +120,8 @@
                       {{res.label}}</a>
                     </li>
                   </ul>
-                  
+                  </div>
+                  <div ng-if="protocol.resources_pharmaceutical && protocol.resources_pharmaceutical.length>0">
                     <h4>Drug Requirements</h4>
                     <ul>
                     <li ng-repeat="res in protocol.resources_pharmaceutical track by $index">
@@ -127,6 +129,7 @@
                       {{res.label}}</a>
                     </li>
                   </ul>
+                  </div>
             
               </div>
               

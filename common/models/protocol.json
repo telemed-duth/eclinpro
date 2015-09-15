@@ -51,7 +51,7 @@
             ]
         },
         "initial_expression": {
-            "type": "string"
+            "type": "object"
         },
         "resources_human": {
             "type": [
