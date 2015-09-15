@@ -183,7 +183,7 @@ if ( protocolId.length===24 ) {
     if(protocol.parentId) findParent(protocol.parentId);
     //initial conditions load
     if(!$scope.protocol.initial_expression) $scope.protocol.initial_expression={};
-    $scope.filter = $scope.protocol.initial_expression.data;
+    $scope.filter = $scope.protocol.initial_expression.data || {"group": {"operator": "AND","rules": []}};
 
     $scope.fetchUsage();
     $scope.fetchHealthcenters();
