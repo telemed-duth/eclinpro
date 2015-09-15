@@ -35,7 +35,6 @@ Installation depends on `node`/`npm` with `grunt` and `bower` installed globally
 ### Checkout the project:
 
     git clone https://github.com/telemed-duth/eclinpro.git
-    git checkout final
 
 ### Install the Node packages:
 
