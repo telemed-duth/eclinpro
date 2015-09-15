@@ -1,7 +1,7 @@
 
 <h4>
   <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-  {{protocol.release_title}} 
+  {{protocol.general_name}} 
 
 
   <span ng-show="protocol.ownerId==user.id||isadmin"  class="pull-right btn-group" style="margin-top: 7px;">
@@ -18,128 +18,6 @@
 <hr>
 
 <div class="row">
-  <div class="col-lg-7 col-md-12">
-    
-    <!--<div class="panel panel-default">-->
-    <!--  <div class="panel-heading">Protocol Description</div>-->
-    <!--  <div class="panel-body">-->
-        
-    <!--  <tabset justified="true">-->
-    <!--    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">-->
-    <!--      <ul class="list-group">-->
-    <!--        <li ng-if="protocol[prop.key].length>0" ng-repeat="prop in tab.items" class="list-group-item"><b>{{pName(prop.key)}}</b> :  {{arrayNames(protocol[prop.key])}}</li>-->
-    <!--      </ul>-->
-    <!--    </tab>-->
-    <!--  </tabset>-->
-      
-      
-    <!--  </div> -->
-    <!--</div>-->
-    
-    <!--<div class="col-sm-6">-->
-      
-    <!--</div>-->
-    <!--<div class="col-sm-6">-->
-      
-    <!--</div>-->
-    
-
-    <div class="row">
-      
-      <div class="box box-primary">
-        
-            <div class="box-header">
-                <h3 class="box-title">{{protocol.general_name}}</h3>
-                <strong>{{protocol.intention_type|ucfirst}}</strong> <b>{{protocol.general_type}}</b> for 
-                <a href="intention_disease.link" title="intention_disease.id">
-                  {{protocol.intention_disease.label}}</a>
-                  by {{protocol.technical_sources[0].technical_institute}}
-                
-            </div>
-            <div class="box-body">
-              <h4>Downloads & links</h4>
-              <ul>
-                <li ng-repeat="source in protocol.technical_sources">
-                  <a ng-href="{{source.technical_url}}" target="blank">{{source.technical_type}}</a>
-                </li>
-              </ul>
-              <h4>Description</h4>
-              <p>{{protocol.general_desc}}</p>
-            </div>
-      </div>
-      
-      <div class="box box-primary">
-        
-            <div class="box-header">
-                <h3 class="box-title">Evidence based Outcomes and Requirements</h3>
-            </div>
-            <div class="box-body">
-            <h4>Evidence list</h4>
-             <ol>
-                <li ng-repeat="article in protocol.evidences track by $index">
-                  <a ng-href="http://www.ncbi.nlm.nih.gov/pubmed/{{article.pmid}}" target="_blank" class="list-group-item-heading" ng-bind-html="article.title"></a>
-              
-                  <p>
-                      <b>PMID</b> : {{article.pmid}} 
-                      <br>
-                      <b>Authors</b> : {{article.authorString}} &copy;{{article.pubYear}}
-                  </p>
-                </li>
-              </ol>
-              <hr>
-                <h4>Outcomes</h4>
-                <ul>
-                <li ng-repeat="outcome in protocol.outcomes track by $index">
-                    
-                <b>{{outcome.type|ucfirst}}</b> outcome :  
-                  <a ng-href="http://bioportal.bioontology.org/ontologies/ICD10?p=classes&conceptid={{outcome.link}}" target="_blank" >
-                     <b>{{outcome.label}}</b>
-                  </a>
-                </li>
-              </ul>
-              <hr>
-                <h4>Equipment requirements</h4>
-                <ul>
-                <li ng-repeat="res in protocol.resources_infastructure track by $index">
-                              <a href="res.link" title="res.id">
-                  {{res.label}}</a>
-                </li>
-              </ul>
-                <h4>Medical expert requirements</h4>
-                <ul>
-                <li ng-repeat="res in protocol.resources_human track by $index">
-                              <a href="res.link" title="res.id">
-                  {{res.label}}</a>
-                </li>
-              </ul>
-                <h4>Drug Requirements</h4>
-                <ul>
-                <li ng-repeat="res in protocol.resources_pharmaceutical track by $index">
-                              <a href="res.link" title="res.id">
-                  {{res.label}}</a>
-                </li>
-              </ul>
-            </div>
-      </div>
-      
-    </div>
-    
-    
-       <!-- "general_name":"ASTHMA MANAGEMENT PROTOCOL",-->
-   <!--"general_desc":"To establish guidelines for the collaborative management of patients with a diagnosis of asthma who are not adequately controlled and to define the roles and responsibilities of the collaborating clinical pharmacist and pharmacy resident following this protocol.",-->
-   <!--"general_type":"protocol",-->
-   <!--"general_active":true,-->
-   <!--"technical_sources":[  ],-->
-   <!--"evidences":[  ],-->
-   <!--"intention_type":"management",-->
-   <!--"intention_disease":{  },-->
-   <!--"outcomes":[  ],-->
-   <!--"resources_human":[  ],-->
-   <!--"resources_infastructure":[  ],-->
-   <!--"resources_pharmaceutical":[  ],-->
-            
-    
-  </div>
   
   
   <div class="col-lg-2 col-md-6">
@@ -163,6 +41,102 @@
       
       </div> 
   </div>
+  
+  
+  
+  <div class="col-lg-7 col-md-12">
+    
+    
+      
+    <div class="panel panel-default">
+      <div class="panel-heading">{{protocol.general_name}}</div>
+      <div class="panel-body">
+              <div class="col-sm-6">
+                <h4>Summary</h4>
+                <blockquote>{{protocol.intention_type|ucfirst}} {{protocol.general_type}} for 
+                <a ng-href="{{protocol.intention_disease.link}}" target="_blank"  title="{{protocol.intention_disease.id}}">
+                  {{protocol.intention_disease.label}}</a>
+                  by {{protocol.technical_sources[0].technical_institute}}</blockquote>
+              </div>
+              <div class="col-sm-6">
+                
+                <h4>Downloads & links</h4>
+                <ul>
+                  <li ng-repeat="source in protocol.technical_sources">
+                    <a ng-href="{{source.technical_url}}" target="blank">{{source.technical_type}}</a>
+                  </li>
+                </ul>
+              
+              </div>
+              <div class="col-xs-12">
+                
+                <p ng-show="protocol.divergion_type" class="lead">
+                  Derived from <a ng-href="/#/protocols/{{protocolParent.id}}">{{protocolParent.general_name}}</a> as 
+                  {{(protocol.divergion_type==='other'?protocol.divergion_other:protocol.divergion_type)}}  </p>
+              
+                  <h4>Description</h4>
+                  <p>{{protocol.general_desc}}</p>
+                  <hr>
+                  <h4>Evidence list</h4>
+                  <ol>
+                    <li ng-repeat="article in protocol.evidences track by $index">
+                      <a ng-href="http://www.ncbi.nlm.nih.gov/pubmed/{{article.pmid}}" target="_blank" class="list-group-item-heading" ng-bind-html="article.title"></a>
+                  
+                      <p>
+                          <b>PMID</b> : {{article.pmid}} 
+                          <br>
+                          <b>Authors</b> : {{article.authorString}} &copy;{{article.pubYear}}
+                      </p>
+                    </li>
+                  </ol>
+                  
+                  <hr>
+                  
+                  <h4>Outcomes</h4>
+                  <ul>
+                    <li ng-repeat="outcome in protocol.outcomes track by $index">
+                    <b>{{outcome.type|ucfirst}}</b> outcome :  
+                    <a ng-href="http://bioportal.bioontology.org/ontologies/ICD10?p=classes&conceptid={{outcome.link}}" target="_blank" >
+                       <b>{{outcome.label}}</b>
+                    </a>
+                    </li>
+                  </ul>
+                
+                  <hr>
+                
+                  <h4>Equipment requirements</h4>
+                  <ul>
+                    <li ng-repeat="res in protocol.resources_infastructure track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+                  
+                    <h4>Medical expert requirements</h4>
+                    <ul>
+                    <li ng-repeat="res in protocol.resources_human track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+                  
+                    <h4>Drug Requirements</h4>
+                    <ul>
+                    <li ng-repeat="res in protocol.resources_pharmaceutical track by $index">
+                                  <a ng-href="{{res.link}}" title="{{res.id}}">
+                      {{res.label}}</a>
+                    </li>
+                  </ul>
+            
+              </div>
+              
+              
+            </div>
+      </div>
+    
+    
+    
+    </div>
   
   
   

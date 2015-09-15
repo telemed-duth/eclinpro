@@ -132,6 +132,15 @@ $scope.removePubmedArticle=function(index){
 };
 
 
+var findParent=function(parentId){
+    Protocol.findById({
+        id: parentId
+    }, function(protocol) {
+        $scope.protocolParent=protocol;
+    });
+};
+
+
 /*CHECK FOR PROTOCOL ID or EDIT/VIEW/LIST*/
 
 var protocolId=$stateParams.id||$stateParams.parentId||'';
@@ -143,6 +152,8 @@ if ( protocolId.length===24 ) {
   }, function(protocol) {
     // console.log(protocol);
     $scope.protocol = protocol;
+    if(protocol.parentId) findParent(protocol.parentId);
+
     $scope.fetchUsage();
     $scope.fetchHealthcenters();
     loadForm();
@@ -259,7 +270,12 @@ $scope.onSubmit = function() {
       });
   
   } else {
+
     if($scope.protocol.id){
+        if(!$scope.protocol.parentId){
+            if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
+            if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
+        }
     Protocol.upsert($scope.protocol, function() {
       CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
         gettextCatalog.getString('Your protocol is safe with us!'));
@@ -270,6 +286,9 @@ $scope.onSubmit = function() {
       console.log(err);
     });
     } else {
+  
+    if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
+    if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
       Protocol.create($scope.protocol, function() {
       CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
         gettextCatalog.getString('Your protocol is safe with us!'));

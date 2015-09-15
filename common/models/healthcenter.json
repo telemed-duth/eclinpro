@@ -13,7 +13,7 @@
       "type": "string"
     },
     "general_location": {
-      "type": "object"
+      "type": "string"
     },        
     "resources_infastructure": {
       "type": [

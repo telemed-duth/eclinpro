@@ -2,25 +2,52 @@
 var app = angular.module('com.module.core');
 
 app.service('Vis', function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter) {
-
-var matchArray=function(a,b){
+function objExist(obj, list,prop) {
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i][prop] === obj[prop]) {
+          // console.log(obj[prop],' match with ',list[i][prop]);
+          return true;
+        }
+    }
+    return false;
+}
+var matchArray=function(a,b,prop){
   //returns true if all elements of array a exist on array b
-  if(!a||!b) return false;
-  for( var i = 0, l = a.length ; i < l; i++ ) {
-    if(b.indexOf(a[i]) === -1) return false;
+  //if prop assume is object array and match on property 
+  if(!b) return false;
+  if(!a) return true;
+  var l=a.length;
+  if(l<1) return true;
+  for( var i = 0; i < l; i++ ) {
+    if(prop) {
+      if(b instanceof Array &&!objExist(a[i],b,prop)) {
+        console.log('obj not exist');
+        return false;
+      }
+    } else {
+      if(b.indexOf(a[i]) === -1) return false;
+      // console.log(a[i],' exists');
+    }
   }
+  // console.log(a,' match with ',b);
   return true;
 };
+
 var matchProtocol=function(pr,hc,propArray){
   if(!propArray) propArray=["resources_human","resources_infastructure","resources_pharmaceutical"];
   for( var i = 0, l = propArray.length ; i < l; i++ ) {
     var prop=propArray[i];
-    if(!matchArray(pr[prop],hc[prop])) {
-      // console.log(pr[prop]);
-      // console.log(hc[prop]);
+    //debug
+    // console.log('Protocol: ',pr.general_name,pr[prop],
+    // 'with Hospital: ',hc.general_name,hc[prop],
+    // 'on '+prop, matchArray(pr[prop],hc[prop],'id'));
+    
+    if(!matchArray(pr[prop]||[],hc[prop]||[],'id')) {
       return false;
     }
   }
+  // console.log(pr.general_name,'match with ',hc.general_name);
   return true;
 };
 
@@ -37,12 +64,12 @@ var getData=function(results){
   
   for (var i = 0; i < protocols.length; i++) {
     var node=node=protocols[i];
-    visnodes.push({id: node.id, "label": node.release_title, "group": 1,"color":"#F39C12"});
-    if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.release_deviation, font: {align: 'middle'}});
+    visnodes.push({id: node.id, "label": node.general_name, "group": 1,"color":"#F39C12"});
+    if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.divergion_type, font: {align: 'middle'}});
       
       
     healthcenters.forEach(function(hc){
-      if(runFirstTime) visnodes.push({id: hc.id, "label": hc.main_name, "group": 3,"color":"#F56954"});
+      if(runFirstTime) visnodes.push({id: hc.id, "label": hc.general_name, "group": 3,"color":"#F56954"});
       if(matchProtocol(node,hc)){
         visedges.push({"from": hc.id, "to": node.id, label: "can endorse", font: {align: 'middle'},dashes:true});
       }

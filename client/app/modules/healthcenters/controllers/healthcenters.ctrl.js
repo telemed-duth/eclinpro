@@ -1,7 +1,7 @@
 'use strict';
 angular.module('com.module.healthcenters')
   .controller('HealthcentersCtrl', function($scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Healthcenter, HealthcentersService, $rootScope,Bioportal,ProtocolApproval,LoopBackAuth) {
+    FormHelper, gettextCatalog, Healthcenter, HealthcentersService,$timeout, $rootScope,Bioportal,ProtocolApproval,LoopBackAuth) {
 
 
 $scope.user=LoopBackAuth.currentUserData;
@@ -10,7 +10,7 @@ $scope.autocompleteResults=[];
 $scope.protocolApproval={};
 
   
-var healthcenterId=$stateParams.id||$stateParams.parentId||'';
+var healthcenterId=$stateParams.id||'';
 if ( healthcenterId.length===24 ) {
 
 // console.log("there is a healthcenter id");
@@ -108,29 +108,29 @@ $scope.bioportalAutocomplete = function(search,field) {
 
     
     $scope.fetchApproval=function(protocolId){
-      var query={
-            filter: {
-              where:  {
-                "protocolId": protocolId,
-                "healthcenterId": $scope.healthcenter.id
-              }
-            }
-          };
+      // var query={
+      //       filter: {
+      //         where:  {
+      //           "protocolId": protocolId,
+      //           "healthcenterId": $scope.healthcenter.id
+      //         }
+      //       }
+      //     };
           
-       ProtocolApproval.find(query,function(usages) {
+      // ProtocolApproval.find(query,function(usages) {
          
-        // $scope.fetchUsers();
-         if(usages.length>0) {
-            $scope.protocolApproval=usages[0];
-         } else {
-           $scope.protocolApproval={
-            "protocolId":protocolId,
-            "healthcenterId":$scope.healthcenter.id
-          };
-         }
-        },function(err){  
-         console.log(err);
-        });
+      //   // $scope.fetchUsers();
+      //   if(usages.length>0) {
+      //       $scope.protocolApproval=usages[0];
+      //   } else {
+      //     $scope.protocolApproval={
+      //       "protocolId":protocolId,
+      //       "healthcenterId":$scope.healthcenter.id
+      //     };
+      //   }
+      //   },function(err){  
+      //   console.log(err);
+      //   });
       
     };
     
@@ -201,17 +201,17 @@ $scope.bioportalAutocomplete = function(search,field) {
     };
     
     function updateDashboard(){
-      Healthcenter.find(function(prs){
-        $rootScope.updateDashboardBox(prs.length,'allhealthcenters');
-        $rootScope.updateDashboardBox($rootScope.countOwn(prs,$scope.user.id),'ownhealthcenters');
-      });
-      ProtocolApproval.count({
-        where:{
-            "protocolId":protocolId
-          }
-      },function(num){
-        $rootScope.updateDashboardBox(num.count,'usedhealthcenters');
-      });
+      // Healthcenter.find(function(prs){
+      //   $rootScope.updateDashboardBox(prs.length,'allhealthcenters');
+      //   $rootScope.updateDashboardBox($rootScope.countOwn(prs,$scope.user.id),'ownhealthcenters');
+      // });
+      // ProtocolApproval.count({
+      //   where:{
+      //       "protocolId":protocolId
+      //     }
+      // },function(num){
+      //   $rootScope.updateDashboardBox(num.count,'usedhealthcenters');
+      // });
     };
     
     //init

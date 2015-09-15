@@ -27,7 +27,7 @@
     <div class="panel panel-default mansonryitem" ng-repeat="item in protocols | filter:protocolSearch">
      	
      	<div class="panel-heading">
-     		   <a href="" ui-sref="^.view({id: item.id})">{{item.release_title}}</a>
+     		   <a href="" ui-sref="^.view({id: item.id})">{{item.general_name}}</a>
      		   
         <div class="box-tools pull-right">
     
@@ -47,7 +47,10 @@
      	</div>
      	
      	<div class="panel-body">
-     	  {{item.release_description}}
+        <blockquote>{{item.intention_type|ucfirst}} {{item.general_type}} for 
+        <a ng-href="{{item.intention_disease.link}}" target="_blank" title="{{item.intention_disease.id}}"> {{item.intention_disease.label}}</a>
+          by {{item.technical_sources[0].technical_institute}}</blockquote>
+     	  <p>{{item.general_desc}}</p>
       </div>
       
     </div>
