@@ -11,12 +11,12 @@ The project applies a variety of "lenses" to identify hazards in cancer surgical
 The expected results include the CPs for the selected disease groups and the Electronic Database with the purpose to expand it nationally to other disease groups. We will also develop a national "best clinical practices" network and affiliation with relevant international centers of excellence. Finally, an innovative, sustainable, web-based service to facilitate collaborative efforts for application, assessment and updating of relevant CPs will be developed.
 
 ##PROJECT INFO
--Acronym: e-ClinPro
--Research Area: Biological and Medical Sciences
--Coordinating Institution: National and Kapodistrian University of Athens (UoA)
--Scientific Coordinator: Skalkidis Yannis
--Research Team 2 Leader: Gennatas Konstadinos
--Research Team 3 Leader: Pallikarakis Nicolas
+* Acronym: e-ClinPro
+* Research Area: Biological and Medical Sciences
+* Coordinating Institution: National and Kapodistrian University of Athens (UoA)
+* Scientific Coordinator: Skalkidis Yannis
+* Research Team 2 Leader: Gennatas Konstadinos
+* Research Team 3 Leader: Pallikarakis Nicolas
 
 ##Preview
 [e-ClinPro Application](http://ecp.nporto.eu)
