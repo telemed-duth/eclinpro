@@ -6,7 +6,7 @@ The aim of this proposal is to develop and introduce the systematic utilization 
 
 The proposed research focuses on the impact of systematic use of electronic CPs on clinical outcomes. The comparative analyses of data will demonstrate potential care improvements due to electronic CPs, compared to the traditional way of delivering care (without protocols) and the hand-written CPs. The data analysis will also include benchmarking to international clinical standards.
 
-The project applies a variety of 'lenses' to identify hazards in cancer surgical care and uses a mixed-methods, multi-center, cohort study design to provide the first comprehensive social-technical evaluation, of cancer care pathways in Greece which includes the role of patients in care coordination.
+The project applies a variety of "lenses" to identify hazards in cancer surgical care and uses a mixed-methods, multi-center, cohort study design to provide the first comprehensive social-technical evaluation, of cancer care pathways in Greece which includes the role of patients in care coordination.
 
 The expected results include the CPs for the selected disease groups and the Electronic Database with the purpose to expand it nationally to other disease groups. We will also develop a national "best clinical practices" network and affiliation with relevant international centers of excellence. Finally, an innovative, sustainable, web-based service to facilitate collaborative efforts for application, assessment and updating of relevant CPs will be developed.
 
