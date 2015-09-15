@@ -510,8 +510,6 @@ $scope.tabs =
                 label: 'Intention disease',
                 placeholder: 'Intention disease..',
                 bioportal: {
-                    ontologies: 'ICD10',
-                    semantic_types: 'T047'
                 },
                 onselect: function(item) {
                     $scope.protocol.intention_disease = item;
