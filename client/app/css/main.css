@@ -61,6 +61,11 @@ li.protocolform > a {
   
 }
 
+/*UI select fix*/
+.content {
+  overflow:visible;
+}
+
 /*UI-SELECT FIX*/
 .ui-select-match-text{
   width: 100%;
