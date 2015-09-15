@@ -1,7 +1,7 @@
 <h4>
     <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
-    <span ng-show="!healthcenter.id" translate>Add a new healthcenter</span>
-    <span ng-show="healthcenter.id" translate>Edit healthcenter</span>
+    <span ng-show="!healthcenter.id && isadmin" translate>Add a new healthcenter</span>
+    <span ng-show="healthcenter.id && isadmin" translate>Edit healthcenter</span>
 </h4>
 
 
