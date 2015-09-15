@@ -78,7 +78,7 @@ $scope.searchPubmed = function(search) {
       var list=response.data.resultList.result;
       if(list.length<1) {
         list.push({
-          title:'No Results'
+          title:search
         });
       }
       $scope.pubmedResults = list;
