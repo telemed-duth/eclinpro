@@ -22,7 +22,6 @@ var app = angular.module('loopbackApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'leBuilder',
     'ngTouch',
     'ngVis',
     'ui.bootstrap',
