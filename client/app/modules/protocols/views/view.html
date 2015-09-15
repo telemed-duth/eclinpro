@@ -53,10 +53,12 @@
       <div class="panel-body">
               <div class="col-sm-6">
                 <h4>Summary</h4>
-                <blockquote>{{protocol.intention_type|ucfirst}} {{protocol.general_type}} for 
-                <a ng-href="{{protocol.intention_disease.link}}" target="_blank"  title="{{protocol.intention_disease.id}}">
-                  {{protocol.intention_disease.label}}</a>
-                  by {{protocol.technical_sources[0].technical_institute}}</blockquote>
+                <h4>{{protocol.intention_type|ucfirst}} {{protocol.general_type}} <span ng-show="protocol.intention_disease.label">for</span> 
+        <a ng-href="{{protocol.intention_disease.link}}" target="_blank" title="{{protocol.intention_disease.id}}"> {{protocol.intention_disease.label}}</a>
+          <span ng-show="protocol.technical_sources[0].technical_institute">by</span> {{protocol.technical_sources[0].technical_institute}}</h4>
+          
+                  
+                <p ng-show="protocol.initial_expression.label">Initial conditions : <span ng-bind-html="protocol.initial_expression.label"></span></p>
               </div>
               <div class="col-sm-6">
                 

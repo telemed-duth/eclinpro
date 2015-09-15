@@ -145,3 +145,42 @@
 
 </script>
 
+<script type="text/ng-template" id="/queryBuilderDirective.html">
+<div class="alert alert-default alert-group">
+    
+    <div class="form-inline">
+        <select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select>
+        <a style="margin-left: 5px" ng-click="addCondition()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Condition</a>
+        <a style="margin-left: 5px" ng-click="addGroup()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Group</a>
+        <a style="margin-left: 5px" ng-click="removeGroup()" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span> Remove Group</a>
+    </div>
+    <div class="group-conditions">
+        <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+            <div ng-switch="rule.hasOwnProperty('group')">
+                <div ng-switch-when="true">
+                    <le-builder group="rule.group"></le-builder>
+                </div>
+                <div ng-switch-default="ng-switch-default">
+                    <div class="form-inline">
+                        <ui-select style="display:inline-block;padding-right: 10px; width:inherit" search-enabled="true"
+                            ng-model="rule.field.selected" theme="bootstrap">
+                            <ui-select-match placeholder="Search for initial conditions...">{{$select.selected.label}}</ui-select-match>
+                            <ui-select-choices 
+                                style="width: inherit;"
+                                repeat="outcome in autocompleteResults track by $index" 
+                                refresh="autocomplete($select.search,{templateOptions:{bioportal:{}}})" 
+                                refresh-delay="0">
+                                <div ng-bind-html="outcome.label | highlight: $select.search"></div>
+                        </ui-select-choices>
+                        </ui-select>
+                        <input type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
+                        <select ng-disabled="!rule.hasValue" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
+                        <input ng-disabled="!rule.hasValue" style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm">
+                        <a style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</script>

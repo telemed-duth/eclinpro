@@ -141,6 +141,34 @@ var findParent=function(parentId){
 };
 
 
+
+
+/*Logical expression builder */
+
+    
+function htmlEntities(str) {
+    return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function computed(group) {
+    if (!group) return "";
+    for (var str = "( ", i = 0; i < group.rules.length; i++) {
+        i > 0 && (str += " <strong>" + group.operator + "</strong> ");
+        str += group.rules[i].group ?
+            computed(group.rules[i].group) :
+            group.rules[i].field.selected.label + " " + (group.rules[i].hasValue?htmlEntities(group.rules[i].condition):"") + " " + group.rules[i].data;
+    }
+
+    return str + " )";
+}
+
+$scope.$watch('filter', function (newValue) {
+    $scope.protocol.initial_expression.data = newValue;
+    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group);
+}, true);
+
+
+
 /*CHECK FOR PROTOCOL ID or EDIT/VIEW/LIST*/
 
 var protocolId=$stateParams.id||$stateParams.parentId||'';
@@ -153,6 +181,9 @@ if ( protocolId.length===24 ) {
     // console.log(protocol);
     $scope.protocol = protocol;
     if(protocol.parentId) findParent(protocol.parentId);
+    //initial conditions load
+    if(!$scope.protocol.initial_expression) $scope.protocol.initial_expression={};
+    $scope.filter = $scope.protocol.initial_expression.data;
 
     $scope.fetchUsage();
     $scope.fetchHealthcenters();
@@ -164,7 +195,8 @@ if ( protocolId.length===24 ) {
   });
   
 } else {
-  $scope.protocol = {};
+    $scope.filter ={"group": {"operator": "AND","rules": []}};
+  $scope.protocol = {initial_expression:{}};
   loadForm();
 }
 
@@ -389,17 +421,8 @@ $scope.tabs =
                             "templateOptions": {
                                 "label": "Type",
                                 "options": [{
-                                    "name": "PDF",
-                                    "value": "pdf"
-                                }, {
-                                    "name": "GLIF/xml",
-                                    "value": "glif_xml"
-                                }, {
-                                    "name": "Document",
-                                    "value": "doc"
-                                }, {
-                                    "name": "Image",
-                                    "value": "img"
+                                    "name": "File",
+                                    "value": "file"
                                 }, {
                                     "name": "Url",
                                     "value": "url"
@@ -528,19 +551,7 @@ $scope.tabs =
     outcome: true
 }, {
     title: 'Initial Conditions',
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [{
-            key: 'initial_expression',
-            type: 'input',
-            templateOptions: {
-                disabled:true,
-                label: 'Initial Conditions',
-                placeholder: 'Initial Conditions..'
-            }
-        }]
-    }
+    initial_conditions:true
 }, {
     title: 'Resources',
     onselect: function() {
@@ -646,6 +657,11 @@ $scope.tabs =
 
 
 };
+
+
+
+
+
 
 
 

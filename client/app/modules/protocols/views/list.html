@@ -47,10 +47,13 @@
      	</div>
      	
      	<div class="panel-body">
-        <blockquote>{{item.intention_type|ucfirst}} {{item.general_type}} for 
-        <a ng-href="{{item.intention_disease.link}}" target="_blank" title="{{item.intention_disease.id}}"> {{item.intention_disease.label}}</a>
-          by {{item.technical_sources[0].technical_institute}}</blockquote>
-     	  <p>{{item.general_desc}}</p>
+        <h4>{{item.intention_type|ucfirst}} {{item.general_type}} <span ng-show="protocol.intention_disease.label">for</span> 
+        <a ng-href="{{item.intention_disease.link}}" target="_blank" ng-show="item.intention_disease" title="{{item.intention_disease.id}}"> {{item.intention_disease.label}}</a>
+          <span ng-show="item.technical_sources[0].technical_institute">by</span> {{item.technical_sources[0].technical_institute}}</h4>
+          <span ng-show="item.initial_expression.label">
+          <strong>Initial conditions : </strong><br>
+          <span ng-bind-html="item.initial_expression.label"></span>
+          </span>
       </div>
       
     </div>

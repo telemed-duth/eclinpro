@@ -38,7 +38,7 @@
                         <ui-select name="outcome_uiselect" search-enabled="true" ng-disabled="!outcome.selectedType"
                             on-select="addOutcome($item, $model)" 
                             ng-model="outcome.selected" theme="bootstrap">
-                            <ui-select-match placeholder="Search for disease...">{{$select.selected.label}}</ui-select-match>
+                            <ui-select-match placeholder="Search for outcome...">{{$select.selected.label}}</ui-select-match>
                             <ui-select-choices 
                                 repeat="outcome in autocompleteResults track by $index" 
                                 refresh="bioportalAutocomplete($select.search,{templateOptions:{bioportal:{}}})" 
@@ -117,6 +117,37 @@
                         </ol>
                     </div>
                 </div>
+                        
+                    <div ng-if="tab.initial_conditions">
+                    <br>
+                    <div class="row">
+
+                        <!--<label for="evidence_uiselect" class="control-label">Select article to add as evidence</label>-->
+                        <!--<ui-select name="evidence_uiselect" search-enabled="true" reset-search-input="true"-->
+                        <!--    on-select="addPubmedArticle($item, $model)" -->
+                        <!--    ng-model="evidence.selected" theme="bootstrap">-->
+                        <!--    <ui-select-match allow-clear="true" placeholder="Search in pubmed...">{{$select.selected.title}}</ui-select-match>-->
+                        <!--    <ui-select-choices -->
+                        <!--        repeat="article in pubmedResults track by $index" -->
+                        <!--        refresh="searchPubmed($select.search)" -->
+                        <!--        refresh-delay="800">-->
+                        <!--        <div ng-bind-html="article.title | highlight: $select.search"></div>-->
+                        <!--        <small ng-bind="article.authorString"></small> <cite><b ng-bind="article.pubYear"></b></cite>-->
+                        <!--    </ui-select-choices>-->
+                        <!--    </ui-select>-->
+                        <!--    </label>-->
+                            
+                                    
+                    </div>
+                    <div class="row">
+                        
+                        <div class="alert alert-info">
+                            <strong>User friendly output: </strong>
+                            <h3><span ng-bind-html="output"></span></h3>
+                        </div>
+                        <le-builder group="filter.group"></le-builder>
+                    </div>
+                </div>
                           
                           
                         <formly-form model="tab.form.model" fields="tab.form.fields" form="form" options="tab.form.options">
@@ -141,7 +172,6 @@
             </div>
             <div class="box-body">
                 <pre>{{protocol|json}}</pre>
-                <pre>{{protocol.intention_disease|json}}</pre>
             </div>
         </div>
     </div>
