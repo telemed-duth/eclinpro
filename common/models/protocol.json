@@ -12,8 +12,8 @@
         "general_type": {
             "type": "string"
         },
-        "general_active": {
-            "type": "boolean"
+        "general_status": {
+            "type": "string"
         },
         "technical_sources": [
             {

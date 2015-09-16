@@ -150,6 +150,7 @@
 <div class="alert alert-default alert-group">
     
     <div class="form-inline">
+        <div ng-show="loading" class="loadingSelect"></div>
         <select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select>
         <a style="margin-left: 5px" ng-click="addCondition()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Condition</a>
         <a style="margin-left: 5px" ng-click="addGroup()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Group</a>
@@ -163,7 +164,6 @@
                 </div>
                 <div ng-switch-default="ng-switch-default">
                     <div class="form-inline">
-                        <div ng-show="loading" class="loadingSelect"></div>
                         <ui-select style="display:inline-block;padding-right: 10px; width:inherit" search-enabled="true"
                             ng-model="rule.field.selected" theme="bootstrap">
                             <ui-select-match placeholder="Search for initial conditions...">{{$select.selected.label}}</ui-select-match>

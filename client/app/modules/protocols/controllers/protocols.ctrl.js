@@ -168,7 +168,8 @@ function computed(group) {
 
 $scope.$watch('filter', function (newValue) {
     $scope.protocol.initial_expression.data = newValue;
-    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group);
+    $scope.computedstr=computed(newValue.group);
+    $scope.protocol.initial_expression.label=$scope.output = $scope.computedstr.substr(1,$scope.computedstr.length-2);
 }, true);
 
 
@@ -363,7 +364,8 @@ $scope.tabs =
     form: {
         options: {},
         model: $scope.protocol,
-        fields: [{
+        fields: [
+        {
             key: 'general_name',
             type: 'input',
             templateOptions: {
@@ -372,19 +374,24 @@ $scope.tabs =
                 required: true
             }
         }, {
-            key: 'general_desc',
-            type: 'textarea',
+            key: 'general_conditions',
+            type: 'async-ui-select-multiple',
             templateOptions: {
-                label: 'Protocol description',
-                placeholder: 'Protocol description..',
-                required: false
+                label: 'Related conditions',
+                placeholder: 'e.g cardiomyopathy..',
+                bioportal: {
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
             }
         }, {
-            "key": "general_type",
+            "key": "general_gender",
             "type": "select",
             "defaultValue": "protocol",
             "templateOptions": {
-                "label": "Document Type",
+                "label": "Clinical gender",
                 "options": [{
                     "name": "Protocol",
                     "value": "protocol"
@@ -396,11 +403,43 @@ $scope.tabs =
                     "value": "pathway"
                 }]
             }
-        }, {
-            key: 'general_active',
-            type: 'checkbox',
-            templateOptions: {
-                label: 'Protocol active?'
+        },{
+            "key": "general_type",
+            "type": "select",
+            "defaultValue": 'diagnostic',
+            "templateOptions": {
+                "label": "Type",
+                "options": [{
+                    "name": "Diagnostic",
+                    "value": "diagnostic"
+                }, {
+                    "name": "Treatment",
+                    "value": "treatment"
+                }, {
+                    "name": "Management",
+                    "value": "management"
+                }, {
+                    "name": "Preventative",
+                    "value": "preventative"
+                }]
+            }
+        },
+        {
+            "key": "general_status",
+            "type": "select",
+            "defaultValue": "current",
+            "templateOptions": {
+                "label": "Status",
+                "options": [{
+                    "name": "Current",
+                    "value": "current"
+                }, {
+                    "name": "Outdated",
+                    "value": "outdated"
+                }, {
+                    "name": "Expired",
+                    "value": "expired"
+                }]
             }
         }]
     }
@@ -510,44 +549,7 @@ $scope.tabs =
     form: {
         options: {},
         model: $scope.protocol,
-        fields: [{
-            "key": "intention_type",
-            "type": "select",
-            "defaultValue": 'diagnostic',
-            "templateOptions": {
-                "label": "Intention type",
-                "options": [{
-                    "name": "Diagnostic",
-                    "value": "diagnostic"
-                }, {
-                    "name": "Treatment",
-                    "value": "treatment"
-                }, {
-                    "name": "Management",
-                    "value": "management"
-                }, {
-                    "name": "Preventative",
-                    "value": "preventative"
-                }]
-            }
-        }, {
-            key: 'intention_disease',
-            type: 'async-ui-select',
-            templateOptions: {
-                label: 'Intention disease',
-                placeholder: 'Intention disease..',
-                bioportal: {
-                },
-                onselect: function(item) {
-                    $scope.protocol.intention_disease = item;
-                },
-                valueProp: 'id',
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }]
+        fields: []
     }
 }, {
     title: 'Outcomes',
