@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-sm-10">
                         <label for="outcome_uiselect" class="control-label">Select outcome to add</label>
-                        <img ng-show="loading" src="/images/ajax-loader.gif"></img>
+                        <div ng-show="loading" class="loadingSelect"></div>
                         <ui-select name="outcome_uiselect" search-enabled="true" ng-disabled="!outcome.selectedType"
                             on-select="addOutcome($item, $model)" 
                             ng-model="outcome.selected" theme="bootstrap">
@@ -76,7 +76,7 @@
                         <div class="col-sm-11">
                         <label for="evidence_uiselect" class="control-label">Select article to add as evidence</label>
                         
-                        <img ng-show="loading" src="/images/ajax-loader.gif"></img>
+                        <div ng-show="loading" class="loadingSelect"></div>
                         <ui-select name="evidence_uiselect" search-enabled="true" reset-search-input="true"
                             on-select="addPubmedArticle($item, $model)" 
                             ng-model="evidence.selected" theme="bootstrap">

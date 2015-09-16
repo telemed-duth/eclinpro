@@ -153,3 +153,12 @@ a>i.fa{
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+/*loading spinner on ui-select*/
+.loadingSelect{    
+  display: inline-block;
+  width:16px;
+  height:16px;
+  z-index: 9999;
+  background: url('../images/ajax-loader.gif') no-repeat;
+}
