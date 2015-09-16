@@ -520,8 +520,8 @@ $scope.tabs =
                     "name": "Diagnostic",
                     "value": "diagnostic"
                 }, {
-                    "name": "Therapeutic",
-                    "value": "therapeutic"
+                    "name": "Treatment",
+                    "value": "treatment"
                 }, {
                     "name": "Management",
                     "value": "management"
