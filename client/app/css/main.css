@@ -147,6 +147,7 @@ a>i.fa{
     margin-top: 10px;
     margin-bottom: 10px;
     border-color: #DDDDDD;
+    border-width: medium;
 }
 
 .condition, .group{

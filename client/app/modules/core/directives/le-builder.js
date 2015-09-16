@@ -20,7 +20,9 @@ angular.module('com.module.core')
             return function (scope, element, attrs) {
                 scope.operators = [
                     { name: 'AND' },
+                    // { name: 'AND NOT' },
                     { name: 'OR' }
+                    // { name: 'OR NOT' }
                 ];
 
                 scope.field = {};
