@@ -405,7 +405,7 @@ $scope.tabs =
         }]
     }
 }, {
-    title: 'Technical',
+    title: 'Source',
     active: false,
     form: {
         options: {},
@@ -501,7 +501,7 @@ $scope.tabs =
         }]
     }
 }, {
-    title: 'Evidence',
+    title: 'Evidence references',
     active: false,
     evidence: true
 }, {
@@ -554,10 +554,10 @@ $scope.tabs =
     active: false,
     outcome: true
 }, {
-    title: 'Initial Conditions',
+    title: 'Initial conditions',
     initial_conditions:true
 }, {
-    title: 'Resources',
+    title: 'Required resources',
     onselect: function() {
         $timeout(function() {
             $scope.$broadcast('ResourcesTabSelected');
