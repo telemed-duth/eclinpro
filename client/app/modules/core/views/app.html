@@ -33,6 +33,7 @@
 
 <!-- Put custom templates here -->
 <script type="text/ng-template" id="async-ui-select.html">
+<img ng-show="loading" src="/images/ajax-loader.gif"></img>
   <ui-select ng-disabled="{{to.disabled}}" on-select="to.onselect($item)" ng-model="model[options.key]" theme="bootstrap">
     <ui-select-match placeholder="{{to.placeholder}}">{{$select.selected[to.labelProp || 'name']}}</ui-select-match>
     <ui-select-choices repeat="option[to.valueProp || 'value'] as option in to.options | filter: $select.search"
@@ -44,7 +45,7 @@
 </script>
 
 <script type="text/ng-template" id="async-ui-select-multiple.html">
-
+<img ng-show="loading" src="/images/ajax-loader.gif"></img>
   <ui-select multiple ng-disabled="{{to.disabled}}" on-select="to.onselect($item)" ng-model="model[options.key]" theme="bootstrap">
     <ui-select-match placeholder="{{to.placeholder}}">{{$item[to.labelProp || 'name']}}</ui-select-match>
     <ui-select-choices repeat="option as option in to.options | filter: $select.search"
@@ -172,7 +173,7 @@
                                 refresh-delay="0">
                                 <div ng-bind-html="outcome.label | highlight: $select.search"></div>
                         </ui-select-choices>
-                        </ui-select>
+                        </ui-select><img ng-show="loading" src="/images/ajax-loader.gif"></img>
                         <input type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
                         <select ng-disabled="!rule.hasValue" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
                         <input ng-disabled="!rule.hasValue" style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm">

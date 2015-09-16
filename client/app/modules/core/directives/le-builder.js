@@ -38,8 +38,10 @@ angular.module('com.module.core')
                 scope.autocompleteResults=[];
                 scope.autocomplete = function(search,field) {
                   if(search.length>2){
+                $scope.loading = true;
                   Bioportal.autocomplete(search,field.templateOptions.bioportal)
                   .then(function(res){
+                    $scope.loading = false;
                     var list=res.data.collection;
                     if(list.length<1) {
                       list.push({

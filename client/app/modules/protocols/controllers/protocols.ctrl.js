@@ -42,8 +42,10 @@ $scope.arrayNames=function(arr){
 //autocomplete fetch from bioportal
 $scope.bioportalAutocomplete = function(search,field) {
   if(search.length>2){
+    $scope.loading = true;
   Bioportal.autocomplete(search,field.templateOptions.bioportal)
   .then(function(res){
+    $scope.loading=false;
     var list=res.data.collection;
     if(list.length<1) {
       list.push({
@@ -70,15 +72,16 @@ $scope.searchPubmed = function(search) {
   var newsearch=search;
   if($scope.evidence.exactPubMedSearch) newsearch='"'+search+'"';
   if(search.length>4||$scope.evidence.exactPubMedSearch){
-    $scope.loadingSelect = true;
+    $scope.loading = true;
     return $http.jsonp(
       'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='+newsearch
       +'&resulttype=lite&format=json&callback=JSON_CALLBACK'
     ).then(function(response) {
+        $scope.loading = false;
       var list=response.data.resultList.result;
       if(list.length<1) {
         list.push({
-          title:search
+          title:"No results"
         });
       }
       $scope.pubmedResults = list;
@@ -112,6 +115,7 @@ $scope.addPubmedArticle=function(item,model){
   $scope.pubmedResults=[];
   if(!$scope.protocol.evidences) $scope.protocol.evidences=[];
   var itemExist=false;
+  if(!item.pmid) return false;
   for (var i=0,l=$scope.protocol.evidences.length;i<l;i++){
     if(item.pmid===$scope.protocol.evidences[i].pmid) {
       itemExist=true;
