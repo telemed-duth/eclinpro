@@ -12,14 +12,14 @@ app.service('Bioportal', function($q, $http, ENV) {
         $http.get(
         apiurl
         +'?include=cui,prefLabel'
-        +'&suggest=true'
         +'&display_context=false'
-        +'&display_links=false'
         
         +'&pagesize='+(!!options.pagesize?options.pagesize:'20')
         +(options.semantic_types?'&semantic_types='+options.semantic_types:'')
         +(options.cui?'&cui='+options.cui:'')
         +(options.subtree?'&ontology='+options.subtree:'')
+        +(options.display_links?'&display_links=true':'&display_links=false')
+        +(!options.suggest?'&suggest=true':'&suggest=false')
         +(options.ontologies?'&ontologies='+options.ontologies:'&ontologies=ICD10,SNOMEDCT')
         +'&q='+search
         +'&apikey='+apikey
@@ -38,12 +38,12 @@ app.service('Bioportal', function($q, $http, ENV) {
         +'?include=prefLabel'
         +'&suggest=true'
         +'&display_context=false'
-        +'&display_links=false'
         
         +'&pagesize='+(!!options.pagesize?options.pagesize:'20')
         +'&cui='+cui
         +(options.subtree?'&ontology='+options.subtree:'')
-        +(options.ontologies?'&ontologies='+options.ontologies:'&ontologies=ICD10,SNOMEDCT')
+        +(options.display_links?'&display_links=true':'&display_links=false')
+        +(options.ontologies?'&ontologies='+options.ontologies:'')
         +'&q='+search
         +'&apikey='+apikey
         

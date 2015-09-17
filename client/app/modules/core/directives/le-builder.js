@@ -7,7 +7,7 @@
  * # home
  */
 angular.module('com.module.core')
-.directive('leBuilder', ['$compile','Bioportal', function ($compile,Bioportal) {
+.directive('leBuilder', ['$compile','Bioportal','$http', function ($compile,Bioportal,$http) {
     return {
         restrict: 'E',
         scope: {
@@ -27,6 +27,8 @@ angular.module('com.module.core')
 
                 scope.field = {};
 
+                scope.unit = {};
+
                 scope.conditions = [
                     { name: '=' },
                     { name: '≠' ,value:'!=' },
@@ -37,9 +39,8 @@ angular.module('com.module.core')
                     { name: '≥',value:'>=' }
                 ];
 
-                scope.autocompleteResults=[];
-                scope.autocomplete = function(search,field) {
-                  if(search.length>2){
+                scope.autocomplete = function(search,field,resultsArr) {
+                  if(search.length>1){
                 scope.loading = true;
                   Bioportal.autocomplete(search,field.templateOptions.bioportal)
                   .then(function(res){
@@ -51,7 +52,7 @@ angular.module('com.module.core')
                         prefLabel:search
                       });
                     }    
-                    scope.autocompleteResults=list.map(function(obj){
+                    scope[resultsArr]=list.map(function(obj){
                 
                         var id=obj['cui'][0]; 
                         var link=(obj['id']||obj['@id']); 
@@ -65,10 +66,43 @@ angular.module('com.module.core')
                   }
                 };
                 
+                scope.autoUnits=function(check,selectedCondition,resultsArr){
+                if(!check) return;
+                var options={
+                    suggest:'hide',
+                    semantic_types:'T081',
+                    display_links:'true'
+                }
+                Bioportal.autocomplete(selectedCondition.label+" unit",options)
+                  .then(function(res){
+                    var item=res.data.collection[0].links.descendants+'?apikey=a15281a9-d87d-4c0f-b7aa-31debe0f6449';
+                        $http.get(item).then(function(res){
+                            
+                            scope[resultsArr]=res.data.collection.map(function(obj){
+                        
+                                var link=(obj['id']||obj['@id']); 
+                                var id=(obj['cui']?obj['cui'][0]:link.substr(link.lastIndexOf('/'),link.length-1)); 
+                                
+                                return { 
+                                  "label": obj.prefLabel, 
+                                  "id": id,
+                                  "link":link
+                                };
+                            });
+                        },function(err){console.log(err);});
+                    
+                  },function(err){console.log(err);});
+                    // http://data.bioontology.org/search?q=blood%20pressure%20unit&semantic_types=T081
+                    
+                }
+                
                 scope.addCondition = function () {
                     scope.group.rules.push({
                         condition: '=',
                         field: {
+                            selected:{label:''}
+                        },
+                        unit: {
                             selected:{label:''}
                         },
                         data: ''

@@ -149,27 +149,49 @@ var findParent=function(parentId){
 
 /*Logical expression builder */
 
-    
+function repeat(pattern, count) {
+    if (count < 1) return '';
+    var result = '';
+    while (count > 1) {
+        if (count & 1) result += pattern;
+        count >>= 1, pattern += pattern;
+    }
+    return result + pattern;
+}
+
 function htmlEntities(str) {
     return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function computed(group) {
+function computed(group,nested) {
+    nested++;
     if (!group) return "";
-    for (var str = "( ", i = 0; i < group.rules.length; i++) {
-        i > 0 && (str += " <strong>" + group.operator + "</strong> ");
-        str += group.rules[i].group ?
-            computed(group.rules[i].group) :
-            group.rules[i].field.selected.label + " " + (group.rules[i].hasValue?htmlEntities(group.rules[i].condition):"") + " " + group.rules[i].data;
+    for (var str = "", i = 0; i < group.rules.length; i++) {
+        i > 0 && (str += " ");
+        // (group.rules[i].group.rules.length>1?")":"") 
+        str += group.rules[i].group ?" <br> "+repeat('&nbsp;',nested*8)+
+            "( "+
+            computed(group.rules[i].group,nested) +"<br>"+repeat('&nbsp;',nested*8)+ " )":
+            "<a href='"+group.rules[i].field.selected.link+"' target='_blank'>"+
+            group.rules[i].field.selected.label + 
+            "</a>"+
+            (group.rules[i].hasValue?
+            " <span class='le-operator label label-primary'>"+
+            htmlEntities(group.rules[i].condition) + "</span> " + 
+            group.rules[i].data+
+            " <a href='"+group.rules[i].unit.selected.link+"' target='_blank'>"+
+            group.rules[i].unit.selected.label + 
+            "</a>"
+            :"")+
+            (i!==(group.rules.length-1)?" <strong>" + group.operator + "</strong>":"");
     }
 
-    return str + " )";
+    return str;
 }
 
 $scope.$watch('filter', function (newValue) {
     $scope.protocol.initial_expression.data = newValue;
-    $scope.computedstr=computed(newValue.group);
-    $scope.protocol.initial_expression.label=$scope.output = $scope.computedstr.substr(1,$scope.computedstr.length-2);
+    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group,0);
 }, true);
 
 

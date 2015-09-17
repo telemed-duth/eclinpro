@@ -169,16 +169,29 @@
                             <ui-select-match placeholder="Search for initial conditions...">{{$select.selected.label}}</ui-select-match>
                             <ui-select-choices 
                                 style="width: inherit;"
-                                repeat="outcome in autocompleteResults track by $index" 
-                                refresh="autocomplete($select.search,{templateOptions:{bioportal:{}}})" 
+                                repeat="outcome in conditionResults track by $index" 
+                                refresh="autocomplete($select.search,{templateOptions:{bioportal:{}}},'conditionResults')" 
                                 refresh-delay="0">
                                 <div ng-bind-html="outcome.label | highlight: $select.search"></div>
                         </ui-select-choices>
                         </ui-select>
 
-                        <input type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
+                        <input ng-change="autoUnits(rule.hasValue,rule.field.selected,'unitResults')" type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
                         <select ng-disabled="!rule.hasValue" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
                         <input ng-disabled="!rule.hasValue" style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm">
+                        
+                        <ui-select ng-disabled="!rule.hasValue" style="display:inline-block;padding-right: 10px; width:inherit" search-enabled="true"
+                            ng-model="rule.unit.selected" theme="bootstrap">
+                            <ui-select-match placeholder="unit...">{{$select.selected.label}}</ui-select-match>
+                            <ui-select-choices 
+                                style="width: inherit;"
+                                repeat="outcome in unitResults track by $index" 
+                                refresh="autocomplete($select.search,{templateOptions:{bioportal:{semantic_types: 'T081'}}},'unitResults')" 
+                                refresh-delay="0">
+                                <div ng-bind-html="outcome.label | highlight: $select.search"></div>
+                        </ui-select-choices>
+                        </ui-select>
+                        
                         <a style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span></a>
                     </div>
                 </div>
