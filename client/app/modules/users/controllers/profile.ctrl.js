@@ -33,7 +33,10 @@ $scope.bioportalAutocomplete = function(search,field) {
   }
 };
 
-$scope.formFields = [{
+$scope.form= {
+    options: {},
+    model: $scope.user,
+    fields: [{
       key: 'username',
       type: 'input',
       templateOptions: {
@@ -78,14 +81,15 @@ $scope.formFields = [{
           labelProp: 'label',
           options: [],
           refresh: $scope.bioportalAutocomplete,
-          refreshDelay: 0
+          refreshDelay: 0,
+          required: true
       }
   }
-];
-    $scope.formOptions = {
-    };
+]
+}
 
     $scope.onSubmit = function() {
+      console.log($scope.user);
       User.upsert($scope.user, function() {
         CoreService.toastSuccess(gettextCatalog.getString(
           'Profile saved'), gettextCatalog.getString(
