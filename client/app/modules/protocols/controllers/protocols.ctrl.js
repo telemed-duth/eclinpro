@@ -304,7 +304,7 @@ $scope.fetchHealthcenters=function(){
     // console.log(centers);
      if(centers.length>0) $scope.pcenters=centers;
      else  $scope.pcenters=[{
-        "name":"No Health centers"
+        "name":"No Health units"
       }];
       
     },function(err){  
@@ -396,19 +396,6 @@ $scope.tabs =
                 required: true
             }
         }, {
-            key: 'general_conditions',
-            type: 'async-ui-select-multiple',
-            templateOptions: {
-                label: 'Related conditions',
-                placeholder: 'e.g cardiomyopathy..',
-                bioportal: {
-                },
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }, {
             "key": "general_gender",
             "type": "select",
             "defaultValue": "protocol",
@@ -445,8 +432,20 @@ $scope.tabs =
                     "value": "preventative"
                 }]
             }
-        },
-        {
+        },{
+            key: 'general_conditions',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Related conditions',
+                placeholder: 'e.g cardiomyopathy..',
+                bioportal: {
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        },{
             "key": "general_status",
             "type": "select",
             "defaultValue": "current",
@@ -564,22 +563,45 @@ $scope.tabs =
 }, {
     title: 'Evidence references',
     active: false,
-    evidence: true
-}, {
-    title: 'Intention',
-    active: false,
+    evidence: true,
     form: {
         options: {},
         model: $scope.protocol,
-        fields: []
+        fields: [{
+            key: 'issuing_body',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Issuing body',
+                placeholder: 'e.g Organization..',
+                bioportal: {
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }
+        ]
     }
 }, {
-    title: 'Outcomes',
+    title: 'Description',
     active: false,
-    outcome: true
-}, {
-    title: 'Initial conditions',
-    initial_conditions:true
+    outcome: true,
+    initial_conditions:true,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            key: 'general_desc',
+            type: 'textarea',
+            templateOptions: {
+                label: 'Description',
+                placeholder: 'Description..',
+                required: false
+            }
+        }
+        ]
+    }
 }, {
     title: 'Required resources',
     onselect: function() {
@@ -636,23 +658,23 @@ $scope.tabs =
         }]
     }
 }, {
-    title: 'Divergion',
+    title: 'Deviation',
     active: false,
     hide: !$stateParams.parentId,
     form: {
         options: {},
-        model: $scope.protocol,
+        model: $scope.protocol.deviation,
         fields: [
 
             {
-                "key": "divergion_type",
+                "key": "deviation_type",
                 "type": "select",
                 "defaultValue":"update",
                 "templateOptions": {
                     "label": "Type",
                     "options": [{
-                        "name": "Deviation",
-                        "value": "deviation"
+                        "name": "Translation",
+                        "value": "translation"
                     }, {
                         "name": "Variation",
                         "value": "variation"
@@ -663,21 +685,26 @@ $scope.tabs =
                         "name": "Regulatory compliance",
                         "value": "regulatory"
                     }, {
-                        "name": "Uniformity",
-                        "value": "uniformity"
-                    }, {
                         "name": "Other",
                         "value": "other"
                     }]
                 }
             }, {
-                key: 'divergion_other',
+                key: 'deviation_other',
                 type: 'input',
                 templateOptions: {
-                    label: 'Diverging reason',
+                    label: 'Reason of deviation',
                     placeholder: 'Reason'
                 },
-                hideExpression:"model.divergion_type!=='other'"
+                hideExpression:"model.deviation_type!=='other'"
+            },{
+                key: 'deviation_language',
+                type: 'input',
+                templateOptions: {
+                    label: 'Language',
+                    placeholder: 'e.g Greek'
+                },
+                hideExpression:"model.deviation_type!=='translation'"
             },
         ]
     }

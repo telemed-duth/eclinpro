@@ -151,7 +151,7 @@ $scope.bioportalAutocomplete = function(search,field) {
         // console.log(centers);
          if(centers.length>0) $scope.pcenters=centers;
          else  $scope.pcenters=[{
-            "name":"No Health centers"
+            "name":"No Health units"
           }];
           
         },function(err){  
@@ -234,16 +234,16 @@ $scope.tabs =
             key: 'general_name',
             type: 'input',
             templateOptions: {
-                label: 'Health center name',
-                placeholder: 'Health center name..',
+                label: 'Health unit name',
+                placeholder: 'Health unit name..',
                 required: true
             }
         }, {
             key: 'general_desc',
             type: 'textarea',
             templateOptions: {
-                label: 'Health center description',
-                placeholder: 'Health center description..',
+                label: 'Health unit description',
+                placeholder: 'Health unit description..',
                 required: false
             }
         }, {

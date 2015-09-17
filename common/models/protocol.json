@@ -9,6 +9,14 @@
         "general_desc": {
             "type": "string"
         },
+        "general_conditions": {
+            "type": [
+                "object"
+            ]
+        },
+        "general_gender": {
+            "type": "string"
+        },
         "general_type": {
             "type": "string"
         },
@@ -39,11 +47,10 @@
                 "object"
             ]
         },
-        "intention_type": {
-            "type": "string"
-        },
-        "intention_disease": {
-            "type": "object"
+        "issuing_body": {
+            "type": [
+                "object"
+            ]
         },
         "outcomes": {
             "type": [
@@ -68,11 +75,8 @@
                 "object"
             ]
         },
-        "divergion_type": {
-            "type": "string"
-        },
-        "divergion_other": {
-            "type": "string"
+        "deviation": {
+            "type": "object"
         }
     },
     "validations": [],
