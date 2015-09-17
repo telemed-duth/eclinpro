@@ -1,47 +1,88 @@
 'use strict';
 angular.module('com.module.users')
-  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog,$rootScope) {
+  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog,$rootScope,Bioportal) {
 
     $scope.user = $rootScope.currentUser;
+    
 
-    $scope.specialties=["Accident and emergency medicine","Allergology","Anaesthetics","Biological hematology","Cardiology","Child psychiatry","Clinical biology","Clinical chemistry","Clinical neurophysiology","Clinical radiology","Dental, oral and maxillo-facial surgery","Dermato-venerology","Dermatology","Endocrinology","Gastro-enterologic surgery","Gastroenterology","General hematology","General Practice","General surgery","Geriatrics","Immunology","Infectious diseases","Internal medicine","Laboratory medicine","Maxillo-facial surgery","Microbiology","Nephrology","Neuro-psychiatry","Neurology","Neurosurgery","Nuclear medicine","Obstetrics and gynecology","Occupational medicine","Ophthalmology","Orthopaedics","Otorhinolaryngology","Paediatric surgery","Paediatrics","Pathology","Pharmacology","Physical medicine and rehabilitation","Plastic surgery","Podiatric Medicine","Podiatric Surgery","Psychiatry","Public health and Preventive Medicine","Radiology","Radiotherapy","Respiratory medicine","Rheumatology","Stomatology","Thoracic surgery","Tropical medicine","Urology","Vascular surgery","Venereology"];
-    $scope.specialtiesObj=$scope.specialties.map(function(str) {return {"label":str,"value":str}});
-    console.log($scope.specialtiesObj);
-    $scope.formFields = [{
+//autocomplete fetch from bioportal
+$scope.bioportalAutocomplete = function(search,field) {
+  if(search.length>2){
+    $scope.loading = true;
+  Bioportal.autocomplete(search,field.templateOptions.bioportal)
+  .then(function(res){
+    $scope.loading=false;
+    var list=res.data.collection;
+    if(list.length<1) {
+      list.push({
+        cui:[Math.random()*1000,0],
+        prefLabel:search
+      });
+    }    
+    $scope.autocompleteResults=field.templateOptions.options=list.map(function(obj){
+
+        var id=obj['cui'][0]; 
+        var link=(obj['id']||obj['@id']); 
+        return { 
+          "label": obj.prefLabel, 
+          "id": id,
+          "link":link
+        };
+    });
+  },function(err){console.log(err);});
+  }
+};
+
+$scope.formFields = [{
       key: 'username',
-      type: 'text',
-      label: gettextCatalog.getString('Username'),
-      required: true
+      type: 'input',
+      templateOptions: {
+        label: gettextCatalog.getString('Username'),
+        placeholder: 'Username..',
+        required: true
+      }
     }, {
       key: 'email',
-      type: 'email',
-      label: gettextCatalog.getString('E-mail'),
-      required: true
-    }, {
-      key: 'firstName',
-      type: 'text',
-      label: gettextCatalog.getString('First name'),
-      required: true
-    }, {
-      key: 'lastName',
-      type: 'text',
-      label: gettextCatalog.getString('Last name'),
-      required: true
-    }, {
-      key: 'specialty',
-      type: 'select',    
-      "templateOptions": {
-      "label": "Medical Specialty",
-      "options":$scope.specialtiesObj
+      type: 'input',
+      templateOptions: {
+        label: gettextCatalog.getString('Email'),
+        placeholder: 'Email..',
+        type: 'email',
+        required: true
       }
-      
-    }
+    },{
+      key: 'firstName',
+      type: 'input',
+      templateOptions: {
+        label: gettextCatalog.getString('First name'),
+        placeholder: 'First name..',
+        required: true
+      }
+    },{
+      key: 'lastName',
+      type: 'input',
+      templateOptions: {
+        label: gettextCatalog.getString('Last name'),
+        placeholder: 'Last name..',
+        required: true
+      }
+    },{
+      key: 'specialty',
+      type: 'async-ui-select',
+      templateOptions: {
+          label: 'Medical Specialty',
+          placeholder: 'e.g Cardiologist..',
+          bioportal: {
+              semantic_types: 'T090,T097'
+          },
+          labelProp: 'label',
+          options: [],
+          refresh: $scope.bioportalAutocomplete,
+          refreshDelay: 0
+      }
+  }
 ];
-console.log($scope.formFields);
     $scope.formOptions = {
-      uniqueFormId: true,
-      hideSubmit: false,
-      submitCopy: gettextCatalog.getString('Save')
     };
 
     $scope.onSubmit = function() {

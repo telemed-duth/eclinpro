@@ -4,7 +4,7 @@
   "base": "User",
   "properties": {
     "specialty":{
-      "type":"string"
+      "type":"object"
     },
     "location":{
       "type":"string"
