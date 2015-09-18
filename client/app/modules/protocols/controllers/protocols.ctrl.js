@@ -163,15 +163,19 @@ function htmlEntities(str) {
     return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function computed(group,nested) {
+function computed(group,nested,next) {
     nested++;
     if (!group) return "";
     for (var str = "", i = 0; i < group.rules.length; i++) {
         i > 0 && (str += " ");
         // (group.rules[i].group.rules.length>1?")":"") 
         str += group.rules[i].group ?" <br> "+repeat('&nbsp;',nested*8)+
-            "( "+
-            computed(group.rules[i].group,nested) +"<br>"+repeat('&nbsp;',nested*8)+ " )":
+            (group.rules[i].group.rules.length>1?"( ":"") +
+            " <br> "+repeat('&nbsp;',(nested+1)*8)+
+            computed(group.rules[i].group,nested,group.rules[i+1]) +"<br>"+repeat('&nbsp;',nested*8)+ 
+            (group.rules[i].group.rules.length>1?") ":"") +
+            (group.rules[i+1]?" <strong>" + group.operator + "</strong> ":"")
+            :
             "<a href='"+group.rules[i].field.selected.link+"' target='_blank'>"+
             group.rules[i].field.selected.label + 
             "</a>"+
@@ -191,7 +195,7 @@ function computed(group,nested) {
 
 $scope.$watch('filter', function (newValue) {
     $scope.protocol.initial_expression.data = newValue;
-    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group,0);
+    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group,0,{});
 }, true);
 
 
