@@ -66,8 +66,11 @@ angular.module('com.module.core')
                   }
                 };
                 
-                scope.autoUnits=function(check,selectedCondition,resultsArr){
-                if(!check) return;
+                scope.autoUnits=function(check,selectedCondition,resultsArr,rule){
+                if(!check) {
+                    delete rule.condition;
+                    return;
+                }
                 var options={
                     suggest:'hide',
                     semantic_types:'T081',

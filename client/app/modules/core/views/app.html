@@ -164,6 +164,9 @@
                 </div>
                 <div ng-switch-default="ng-switch-default">
                     <div class="form-inline">
+                        <label>not
+                        <input ng-disabled="rule.hasValue" type="checkbox" class="form-control input-md" ng-model="rule.hasNegation">
+                        </label>
                         <ui-select style="display:inline-block;padding-right: 10px; width:inherit" search-enabled="true"
                             ng-model="rule.field.selected" theme="bootstrap">
                             <ui-select-match placeholder="Search for initial conditions...">{{$select.selected.label}}</ui-select-match>
@@ -175,8 +178,9 @@
                                 <div ng-bind-html="outcome.label | highlight: $select.search"></div>
                         </ui-select-choices>
                         </ui-select>
-
-                        <input ng-change="autoUnits(rule.hasValue,rule.field.selected,'unitResults')" type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
+                        <label>value
+                        <input ng-disabled="rule.hasNegation" ng-change="autoUnits(rule.hasValue,rule.field.selected,'unitResults',rule)" type="checkbox" class="form-control input-md" ng-model="rule.hasValue">
+                        </label>
                         <select ng-disabled="!rule.hasValue" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
                         <input ng-disabled="!rule.hasValue" style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm">
                         

@@ -187,6 +187,7 @@ function computed(group,nested,next,parent) {
                 (group.rules[i].group.rules.length>1?") ":"") +
                 (group.rules[i+1]?" <strong>" + group.operator + "</strong> ":"")
             :
+            (group.rules[i].hasNegation?" <strong>NOT</strong> ":"")+
             "<a href='"+group.rules[i].field.selected.link+"' target='_blank'>"+
             group.rules[i].field.selected.label + 
             "</a>"+
