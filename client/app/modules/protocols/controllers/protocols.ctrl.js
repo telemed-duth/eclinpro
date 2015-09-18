@@ -205,6 +205,7 @@ function computed(group,nested,next,parent) {
 }
 
 $scope.$watch('filter', function (newValue) {
+    // console.log(newValue);
     $scope.protocol.initial_expression.data = newValue;
     $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group,0,{});
 }, true);
