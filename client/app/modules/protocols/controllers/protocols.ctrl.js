@@ -175,14 +175,12 @@ function computed(group,nested,next,parent) {
     if (!parent) parent=group;
     for (var str = "", i = 0; i < group.rules.length; i++) {
         i > 0 && (str += " ");
-        // (group.rules[i].group.rules.length>1?")":"") 
-        // (simple?"":" <br> "+repeat('&nbsp;',(nested+1)*8))+
         str += 
-            group.rules[i].group ?" <br> "+repeat('&nbsp;',nested*8)+
+            group.rules[i].group ?" "+//<br> "+repeat('&nbsp;',nested*8)+
                 (group.rules[i].group.rules.length>1?"( ":"") +
                 
                 computed(group.rules[i].group,nested,group.rules[i+1],group)+
-                (parent.rules[parent.rules.length-1].group?"":"<br>"+repeat('&nbsp;',nested*8))+ 
+                // (parent.rules[parent.rules.length-1].group?"":"<br>"+repeat('&nbsp;',nested*8))+ 
                 
                 (group.rules[i].group.rules.length>1?") ":"") +
                 (group.rules[i+1]?" <strong>" + group.operator + "</strong> ":"")
