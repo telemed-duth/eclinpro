@@ -52,13 +52,21 @@
       <div class="panel-heading">{{protocol.general_name}}</div>
       <div class="panel-body">
               <div class="col-sm-6">
-                <h4>Summary</h4>
-                <h4>{{protocol.intention_type|ucfirst}} {{protocol.general_type}} <span ng-show="protocol.intention_disease.label">for</span> 
-        <a ng-href="{{protocol.intention_disease.link}}" target="_blank" title="{{protocol.intention_disease.id}}"> {{protocol.intention_disease.label}}</a>
-          <span ng-show="protocol.technical_sources[0].technical_institute">by</span> {{protocol.technical_sources[0].technical_institute}}</h4>
+                <h4>Type: 
+                <b>  {{protocol.general_type|ucfirst}} {{protocol.general_gender}} <span ng-show="protocol.intention_disease.label">
+          <span ng-show="protocol.technical_sources[0].technical_institute">by</span> {{protocol.technical_sources[0].technical_institute}}</b>
+          </h4>
           
-                  
-                <p ng-show="protocol.initial_expression.label">Initial conditions : <span ng-bind-html="protocol.initial_expression.label"></span></p>
+                <h4>Related Conditions</h4>
+                <ul>
+                  <li ng-repeat="condition in protocol.general_conditions track by $index">
+                  <a ng-href="{{condition.link}}" title="{{condition.id}}" target="_blank" >
+                     <b>{{condition.label}}</b>
+                  </a>
+                  </li>
+                </ul>
+          
+                
               </div>
               <div class="col-sm-6">
                 
@@ -75,6 +83,10 @@
                 <p ng-show="protocol.divergion_type" class="lead">
                   Derived from <a ng-href="/#/protocols/{{protocolParent.id}}">{{protocolParent.general_name}}</a> as 
                   {{(protocol.divergion_type==='other'?protocol.divergion_other:protocol.divergion_type)}}  </p>
+              
+                  <h4>Initial conditions</h4>
+                  <p ng-bind-html="protocol.initial_expression.label"></p>
+                  <hr>
               
                   <h4>Description</h4>
                   <p>{{protocol.general_desc}}</p>
@@ -98,7 +110,7 @@
                   <ul>
                     <li ng-repeat="outcome in protocol.outcomes track by $index">
                     <b>{{outcome.type|ucfirst}}</b> outcome :  
-                    <a ng-href="http://bioportal.bioontology.org/ontologies/ICD10?p=classes&conceptid={{outcome.link}}" target="_blank" >
+                    <a ng-href="{{outcome.link}}" target="_blank" >
                        <b>{{outcome.label}}</b>
                     </a>
                     </li>
