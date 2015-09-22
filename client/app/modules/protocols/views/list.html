@@ -49,25 +49,21 @@
      	<div class="panel-body">
                 
                 
-        <h4> <b>  {{protocol.general_type|ucfirst}} {{protocol.general_gender}} <span ng-show="protocol.intention_disease.label">
-          <span ng-show="protocol.technical_sources[0].technical_institute">by</span> {{protocol.technical_sources[0].technical_institute}}</b>
-        </h4>
+        <h4> <b>  {{item.general_type|ucfirst}} {{item.general_gender}} <span ng-show="item.intention_disease.label">
+          <span ng-show="item.technical_sources[0].technical_institute">by</span> {{item.technical_sources[0].technical_institute}}</b>
           
-        <h4>Related Conditions</h4>
+        <span ng-show="item.parentId">({{(item.divergion_type==='other'?item.divergion_other:item.divergion_type)+' deviation'}})</span>
+        </h4>
         <ul>
-          <li ng-repeat="condition in protocol.general_conditions track by $index">
+          <li ng-repeat="condition in item.general_conditions track by $index">
           <a ng-href="{{condition.link}}" title="{{condition.id}}" target="_blank" >
              <b>{{condition.label}}</b>
           </a>
           </li>
         </ul>
       
-        <p ng-show="protocol.divergion_type" class="lead">
-          Derived from <a ng-href="/#/protocols/{{protocolParent.id}}">{{protocolParent.general_name}}</a> as 
-          {{(protocol.divergion_type==='other'?protocol.divergion_other:protocol.divergion_type)}}  </p>
-      
           <h4>Entry points</h4>
-          <p ng-bind-html="protocol.initial_expression.label"></p>
+          <p ng-bind-html="item.initial_expression.label"></p>
                 
       </div>
       
