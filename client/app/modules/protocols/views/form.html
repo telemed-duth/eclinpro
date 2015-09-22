@@ -83,7 +83,7 @@
                     <br>
                     <div class="row">
                         <div>
-                            <label style="margin-left:15px">Initial Conditions</label>    
+                            <label style="margin-left:15px">Entry Points</label>    
                             <div class="alert alert-warning">
                                 <strong>User friendly output: </strong>
                                 <h3><span ng-bind-html="output"></span></h3>
@@ -98,12 +98,12 @@
                     <br>
                     <div class="row" >
 
-                        <label for="outcome_uiselect" class="control-label">Select outcome to add</label>
+                        <label for="outcome_uiselect" class="control-label">Exit Points</label>
                         <div ng-show="loading" class="loadingSelect"></div>
                         <ui-select name="outcome_uiselect" search-enabled="true"
                             on-select="addOutcome($item, $model)" 
                             ng-model="outcome.selected" theme="bootstrap">
-                            <ui-select-match placeholder="Search for outcome...">{{$select.selected.label}}</ui-select-match>
+                            <ui-select-match placeholder="Search for exit points...">{{$select.selected.label}}</ui-select-match>
                             <ui-select-choices 
                                 repeat="outcome in autocompleteResults track by $index" 
                                 refresh="bioportalAutocomplete($select.search,{templateOptions:{bioportal:{}}})" 
