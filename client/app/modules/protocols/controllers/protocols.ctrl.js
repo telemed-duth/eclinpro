@@ -415,7 +415,7 @@ $scope.tabs =
             "type": "select",
             "defaultValue": "protocol",
             "templateOptions": {
-                "label": "Clinical gender",
+                "label": "Genre",
                 "options": [{
                     "name": "Protocol",
                     "value": "protocol"
