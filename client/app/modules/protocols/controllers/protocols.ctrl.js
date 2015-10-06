@@ -425,6 +425,9 @@ $scope.tabs =
                 }, {
                     "name": "Pathway",
                     "value": "pathway"
+                }, {
+                    "name": "Other",
+                    "value": "other"
                 }]
             }
         },{
