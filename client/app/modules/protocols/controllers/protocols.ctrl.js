@@ -446,8 +446,8 @@ $scope.tabs =
                     "name": "Management",
                     "value": "management"
                 }, {
-                    "name": "Preventative",
-                    "value": "preventative"
+                    "name": "Preventive",
+                    "value": "preventive"
                 }]
             }
         },{
