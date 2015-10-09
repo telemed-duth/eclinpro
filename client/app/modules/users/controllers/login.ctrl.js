@@ -94,7 +94,9 @@ angular.module('com.module.users')
           }
           // $location.path(next);
           // $state.go('app.app');
-          window.location.assign('/');
+          var path=window.location.pathname||'/';
+          console.log(path);
+          window.location.assign(path);
 
         },
         function(res) {
