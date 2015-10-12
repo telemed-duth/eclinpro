@@ -9,6 +9,7 @@ $scope.isadmin=$rootScope.isadmin;
 $scope.autocompleteResults=[];
 $scope.protocolUsage={};
 $scope.evidence={};
+$scope.evidence.exactPubMedSearch=true;
 
 var BioportalSplitter=".";
 var CategorySplitter="_";
@@ -71,7 +72,7 @@ $scope.bioportalAutocomplete = function(search,field) {
 $scope.searchPubmed = function(search) {
   var newsearch=search;
   if($scope.evidence.exactPubMedSearch) newsearch='"'+search+'"';
-  if(search.length>4||$scope.evidence.exactPubMedSearch){
+  if(search.length>2||$scope.evidence.exactPubMedSearch){
     $scope.loading = true;
     return $http.jsonp(
       'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='+newsearch
@@ -115,6 +116,7 @@ $scope.addPubmedArticle=function(item,model){
   $scope.pubmedResults=[];
   if(!$scope.protocol.evidences) $scope.protocol.evidences=[];
   var itemExist=false;
+  item.pmid=item.pmid||item.id;
   if(!item.pmid) return false;
   for (var i=0,l=$scope.protocol.evidences.length;i<l;i++){
     if(item.pmid===$scope.protocol.evidences[i].pmid) {
@@ -587,19 +589,13 @@ $scope.tabs =
         model: $scope.protocol,
         fields: [{
             key: 'issuing_body',
-            type: 'async-ui-select-multiple',
+            type: 'input',
             templateOptions: {
-                label: 'Issuing body',
-                placeholder: 'e.g Organization..',
-                bioportal: {
-                },
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
+                label: 'Protocol name',
+                placeholder: 'e.g NICE',
+                required: true
             }
-        }
-        ]
+        }]
     }
 }, {
     title: 'Description',
