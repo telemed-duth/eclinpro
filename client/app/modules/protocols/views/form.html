@@ -42,7 +42,7 @@
                             <ui-select-choices 
                                 repeat="article in pubmedResults track by $index" 
                                 refresh="searchPubmed($select.search)" 
-                                refresh-delay="0">
+                                refresh-delay="50">
                                 <div ng-bind-html="article.title | highlight: $select.search"></div>
                                 <small ng-bind="article.authorString"></small> <cite><b ng-bind="article.pubYear"></b></cite>
                             </ui-select-choices>
@@ -53,7 +53,7 @@
                         <div class="col-sm-1">
                         <br>
                         <br>
-                        <label class="control-label"><input type="checkbox" ng-model="evidence.exactPubMedSearch">Exact</label>
+                        <!--<label class="control-label"><input type="checkbox" ng-model="evidence.exactPubMedSearch">Exact</label>-->
                         </div>
                     </div>
                     <div class="row" ng-show="protocol.evidences.length>0"><hr></div>

@@ -71,13 +71,14 @@ $scope.bioportalAutocomplete = function(search,field) {
 //autocomplete for pubmed
 $scope.searchPubmed = function(search) {
   var newsearch=search;
-  if($scope.evidence.exactPubMedSearch) newsearch='"'+search+'"';
-  if(search.length>2||$scope.evidence.exactPubMedSearch){
+//   if($scope.evidence.exactPubMedSearch) newsearch='"'+search+'"';
+  if(search.length>2){
     $scope.loading = true;
     return $http.jsonp(
       'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='+newsearch
-      +'&resulttype=lite&format=json&callback=JSON_CALLBACK'
+      +' src:med&resulttype=lite&format=json&callback=JSON_CALLBACK'
     ).then(function(response) {
+        
         $scope.loading = false;
       var list=response.data.resultList.result;
       if(list.length<1) {
@@ -87,6 +88,94 @@ $scope.searchPubmed = function(search) {
       }
       $scope.pubmedResults = list;
       });
+  }
+};
+//autocomplete for pubmed
+$scope.searchPubmed2 = function(search) {
+  var newsearch=search;
+  if($scope.evidence.exactPubMedSearch) newsearch='"'+search+'"';
+  if(search.length>4){
+    $scope.loading = true;
+    var pubmed_ids=[];
+    return $http.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term='+newsearch+'&reldate=60&datetype=edat&retmax=20&retmode=json').then(function(res){
+        pubmed_ids=res.data.esearchresult.idlist;
+    })
+    .then(function(){
+        $http.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&rettype=abstract&id='+pubmed_ids.join(','))
+        .then(function(response) {
+            
+        $scope.loading = false;
+        var resobj=response.data.result;
+      var listKeys=resobj.uids;
+      var list=[];
+      for (var i = 0; i < listKeys.length; i++) {
+          
+          list.push({
+              "title":resobj[listKeys[i]]["title"],
+              "pmid":resobj[listKeys[i]]["uid"],
+              "authorString":resobj[listKeys[i]]["authors"].map(function(author){
+                  return author.name;
+              }).join(','),
+              "pubYear":resobj[listKeys[i]]["pubdate"].split(' ')[0],
+          });
+
+        //   "uid": "26458231",
+        //     "pubdate": "2015 Oct 12",
+        //     "epubdate": "2015 Oct 12",
+        //     "source": "J Radiol Prot",
+        //     "authors": [
+        //         {
+        //             "name": "Shimada K",
+        //             "authtype": "Author",
+        //             "clusterid": ""
+        //         },
+        //         {
+        //             "name": "Kai M",
+        //             "authtype": "Author",
+        //             "clusterid": ""
+        //         }
+        //     ],
+        //     "lastauthor": "Kai M",
+        //     "title": "Calculating disability-adjusted life years (DALY) as a measure of excess cancer risk following radiation exposure.",
+        
+        //      "id":"26031779",
+        //     "source":"MED",
+        //     "pmid":"26031779",
+        //     "title":"EGF-Induced Connexin43 Negatively Regulates Cell Proliferation in Human Ovarian Cancer.",
+        //     "authorString":"Qiu X, Cheng JC, Klausen C, Chang HM, Fan Q, Leung PC.",
+        //     "journalTitle":"J Cell Physiol",
+        //     "issue":"1",
+        //     "journalVolume":"231",
+        //     "pubYear":"2016",
+        //     "journalIssn":"0021-9541",
+        //     "pageInfo":"111-119",
+        //     "pubType":"journal article",
+        //     "inEPMC":"N",
+        //     "inPMC":"N",
+        //     "citedByCount":0,
+        //     "hasReferences":"N",
+        //     "hasTextMinedTerms":"N",
+        //     "hasDbCrossReferences":"N",
+        //     "hasLabsLinks":"N",
+        //     "hasTMAccessionNumbers":"N",
+        //     "luceneScore":"4438.0483",
+        //     "hasBook":"N",
+        //     "doi":"10.1002/jcp.25058"
+        //  },
+         
+
+      }
+      if(list.length<1) {
+        list.push({
+          title:"No results"
+        });
+      }
+        $scope.pubmedResults = list;
+      });
+    });
+        
+    
+    
   }
 };
 
@@ -565,7 +654,8 @@ $scope.tabs =
                     {
                         className: '',
                         fieldGroup: [
-                          {
+            
+                    {
                       "className": "col-xs-12",
                         key: 'technical_file',
                         type: 'fileUpload',
