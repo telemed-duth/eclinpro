@@ -254,16 +254,16 @@ $scope.toggleProtocolUsage=function(){
       $scope.protocolUsage=res;
       updateDashboard();
       $scope.fetchUsage();
-      CoreService.toastSuccess(gettextCatalog.getString('Protocol usage'),
-          gettextCatalog.getString('You are now using this protocol.'));
+      CoreService.toastSuccess(gettextCatalog.getString('Care Plan usage'),
+          gettextCatalog.getString('You are now using this Care Plan.'));
           
       });
     } else {
       ProtocolUsage.deleteById({"id":$scope.protocolUsage.id}, function(res) {
       updateDashboard();
       $scope.fetchUsage();
-      CoreService.toastWarning(gettextCatalog.getString('Protocol usage stopped'),
-          gettextCatalog.getString('You have stopped using this protocol.'));
+      CoreService.toastWarning(gettextCatalog.getString('Care Plan usage stopped'),
+          gettextCatalog.getString('You have stopped using this Care Plan.'));
       });   
 
     }
@@ -336,8 +336,8 @@ $scope.onSubmit = function() {
       delete $scope.protocol['id'];
       $scope.protocol.parentId=$stateParams.parentId;
       Protocol.create($scope.protocol, function() {
-      CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
-        gettextCatalog.getString('Your protocol is safe with us!'));
+      CoreService.toastSuccess(gettextCatalog.getString('Care Plan created'),
+        gettextCatalog.getString('Your Care Plan is safe with us!'));
         updateDashboard();
 
       $state.go('app.protocols.list', {}, { reload: true });
@@ -353,8 +353,8 @@ $scope.onSubmit = function() {
             if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
         }
     Protocol.upsert($scope.protocol, function() {
-      CoreService.toastSuccess(gettextCatalog.getString('Protocol saved'),
-        gettextCatalog.getString('Your protocol is safe with us!'));
+      CoreService.toastSuccess(gettextCatalog.getString('Care Plan saved'),
+        gettextCatalog.getString('Your Care Plan is safe with us!'));
         updateDashboard();
 
       $state.go('app.protocols.list', {}, { reload: true });
@@ -366,8 +366,8 @@ $scope.onSubmit = function() {
     if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
     if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
       Protocol.create($scope.protocol, function() {
-      CoreService.toastSuccess(gettextCatalog.getString('Protocol created'),
-        gettextCatalog.getString('Your protocol is safe with us!'));
+      CoreService.toastSuccess(gettextCatalog.getString('Care Plan created'),
+        gettextCatalog.getString('Your Care Plan is safe with us!'));
         updateDashboard();
       $state.go('app.protocols.list', {}, { reload: true });
       }, function(err) {
@@ -408,24 +408,32 @@ $scope.tabs =
             key: 'general_name',
             type: 'input',
             templateOptions: {
-                label: 'Protocol name',
-                placeholder: 'Protocol name..',
+                label: 'Care Plan title',
+                placeholder: 'Care Plan title..',
                 required: true
             }
         }, {
+            key: 'general_desc',
+            type: 'textarea',
+            templateOptions: {
+                label: 'Description',
+                placeholder: 'Description..',
+                required: false
+            }
+        },{
             "key": "general_gender",
             "type": "select",
             "defaultValue": "protocol",
             "templateOptions": {
                 "label": "Genre",
                 "options": [{
-                    "name": "Protocol",
+                    "name": "Clinical Protocol",
                     "value": "protocol"
                 }, {
-                    "name": "Guideline",
+                    "name": "Clinical Guideline",
                     "value": "guideline"
                 }, {
-                    "name": "Pathway",
+                    "name": "Clinical Pathway",
                     "value": "pathway"
                 }, {
                     "name": "Other",
@@ -456,7 +464,7 @@ $scope.tabs =
             key: 'general_conditions',
             type: 'async-ui-select-multiple',
             templateOptions: {
-                label: 'Related conditions',
+                label: 'Related Health issues',
                 placeholder: 'e.g cardiomyopathy..',
                 bioportal: {
                 },
@@ -465,24 +473,26 @@ $scope.tabs =
                 refresh: $scope.bioportalAutocomplete,
                 refreshDelay: 0
             }
-        },{
-            "key": "general_status",
-            "type": "select",
-            "defaultValue": "current",
-            "templateOptions": {
-                "label": "Status",
-                "options": [{
-                    "name": "Current",
-                    "value": "current"
-                }, {
-                    "name": "Outdated",
-                    "value": "outdated"
-                }, {
-                    "name": "Expired",
-                    "value": "expired"
-                }]
-            }
-        }]
+        }
+        // ,{
+        //     "key": "general_status",
+        //     "type": "select",
+        //     "defaultValue": "current",
+        //     "templateOptions": {
+        //         "label": "Status",
+        //         "options": [{
+        //             "name": "Current",
+        //             "value": "current"
+        //         }, {
+        //             "name": "Outdated",
+        //             "value": "outdated"
+        //         }, {
+        //             "name": "Expired",
+        //             "value": "expired"
+        //         }]
+        //     }
+        // }
+        ]
     }
 }, {
     title: 'Source',
@@ -591,31 +601,17 @@ $scope.tabs =
             key: 'issuing_body',
             type: 'input',
             templateOptions: {
-                label: 'Protocol name',
+                label: 'Issuing body',
                 placeholder: 'e.g NICE',
                 required: true
             }
         }]
     }
 }, {
-    title: 'Description',
+    title: 'Entry/Exit Points',
     active: false,
     outcome: true,
-    initial_conditions:true,
-    form: {
-        options: {},
-        model: $scope.protocol,
-        fields: [{
-            key: 'general_desc',
-            type: 'textarea',
-            templateOptions: {
-                label: 'Description',
-                placeholder: 'Description..',
-                required: false
-            }
-        }
-        ]
-    }
+    initial_conditions:true
 }, {
     title: 'Required resources',
     onselect: function() {

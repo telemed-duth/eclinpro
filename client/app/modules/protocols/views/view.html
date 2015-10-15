@@ -29,7 +29,7 @@
         <div>
           <ul class="list-group">
           <li class="list-group-item"><a ui-sref="^.deviate({parentId: protocol.id})">Create a deviation <i class="ion-fork-repo"></i></a></li>
-          <li ng-show="!protocolUsage.id" class="list-group-item"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Use Protocol <i class="ion-checkmark"></i></a></li>
+          <li ng-show="!protocolUsage.id" class="list-group-item"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Use Care Plan <i class="ion-checkmark"></i></a></li>
           <li ng-show="protocolUsage.id" class="list-group-item"><a href="" ng-click="toggleProtocolUsage(protocol.id)">Stop using it! <i class="ion-close"></i></a></li>
           </ul>
           
@@ -162,7 +162,7 @@
       <div class="panel-body">
       <tabset justified="true">
         
-        <tab heading="Protocol Users">
+        <tab heading="Care Plan Users">
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="user in pusers">{{user.firstName +' '+ user.lastName}} {{ user.specialty }}</li>
           </ul>
