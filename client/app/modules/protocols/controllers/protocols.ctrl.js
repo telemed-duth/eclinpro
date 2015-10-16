@@ -22,6 +22,16 @@ $scope.formProps=[];
 
 
   /*USEFUL HELPERS*/
+$scope.getFileExtension=function(file){ 
+    var format='';
+    var formatname=format=file.type.split('/')[1];
+    if(format.lastIndexOf('.')>0){
+        formatname=format.substring(format.lastIndexOf('.'));
+    } else {
+        // formatname=file.type;
+    }
+    return formatname;
+}
 $scope.capFirst=function(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
 var propname=function(str){
   return $scope.capFirst(str.split(CategorySplitter)[1]||" ");
@@ -274,9 +284,9 @@ function computed(group,nested,next,parent) {
                 // (parent.rules[parent.rules.length-1].group?"":"<br>"+repeat('&nbsp;',nested*8))+ 
                 
                 (group.rules[i].group.rules.length>1?") ":"") +
-                (group.rules[i+1]?" <strong>" + group.operator + "</strong> ":"")
+                (group.rules[i+1]?" <span class='le-builder group-operator'>" + group.operator + "</span> ":"")
             :
-            (group.rules[i].hasNegation?" <strong>NOT</strong> ":"")+
+            (group.rules[i].hasNegation?" <span class='le-builder not-operator'>NOT</span> ":"")+
             "<a href='"+group.rules[i].field.selected.link+"' target='_blank'>"+
             group.rules[i].field.selected.label + 
             "</a>"+
@@ -288,7 +298,7 @@ function computed(group,nested,next,parent) {
             group.rules[i].unit.selected.label + 
             "</a>"
             :"")+
-            (i!==(group.rules.length-1)?" <strong>" + group.operator + "</strong>":"");
+            (i!==(group.rules.length-1)?" <span class='le-builder group-operator'>" + group.operator + "</span>":"");
     }
 
     return str;
