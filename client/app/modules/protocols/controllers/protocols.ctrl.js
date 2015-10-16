@@ -75,8 +75,8 @@ $scope.searchPubmed = function(search) {
   if(search.length>2){
     $scope.loading = true;
     return $http.jsonp(
-      'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='+newsearch
-      +' src:med&resulttype=lite&format=json&callback=JSON_CALLBACK'
+      'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query="'+newsearch
+      +'"&resulttype=lite&format=json&callback=JSON_CALLBACK'
     ).then(function(response) {
         
         $scope.loading = false;
