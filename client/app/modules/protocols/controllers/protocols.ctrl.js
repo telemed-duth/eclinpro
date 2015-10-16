@@ -1,7 +1,7 @@
 'use strict';
 angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($http,$scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Protocol, ProtocolsService, $rootScope,Bioportal,$timeout,ProtocolUsage,LoopBackAuth) {
+    FormHelper, gettextCatalog, Protocol, ProtocolsService, $rootScope,Bioportal,$timeout,ProtocolUsage,LoopBackAuth,Exporter) {
 
 
 $scope.user=LoopBackAuth.currentUserData;
@@ -22,6 +22,11 @@ $scope.formProps=[];
 
 
   /*USEFUL HELPERS*/
+$scope.exportToXML=function(protocol){
+    delete protocol.initial_expression.label;
+    delete protocol.ownerId;
+    Exporter.toXML(angular.toJson(protocol),protocol.general_name);
+}
 $scope.getFileExtension=function(file){ 
     var format='';
     var formatname=format=file.type.split('/')[1];

@@ -13,6 +13,7 @@ var app = angular.module('loopbackApp', [
     'angularFileUpload',
     'oitozero.ngSweetAlert',
     'config',
+    'cb.x2js',
     'formly',
     'formlyBootstrap',
     'lbServices',

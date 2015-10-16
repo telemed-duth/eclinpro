@@ -2,6 +2,7 @@
     <a href="" ui-sref="^.list" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>
     <span ng-show="!protocol.id" translate>Add a new Care Plan</span>
     <span ng-show="protocol.id" translate>Edit Care Plan</span>
+    <button ng-click="exportToXML(protocol)">Export to XML</button>
 </h4>
 
 
@@ -9,7 +10,7 @@
     <div class="col-md-8-offset-2">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title"></h3>
+                <h3 class="box-title"></h3> 
             </div>
             <div class="box-body">
                 <form ng-submit="onSubmit(form)" name="form" novalidate>
@@ -145,6 +146,7 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Care Plan</h3>
+                <button ng-click="exportToXML(protocol)">Export to XML</button>
             </div>
             <div class="box-body">
                 <pre>{{protocol|json}}</pre>
