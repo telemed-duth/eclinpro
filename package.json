@@ -20,7 +20,7 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "nodemon server/server.js --watch server --watch common --ext js,json ",
-    "postinstall": "bower install && grunt build"
+    "postinstall": "bower install && API_URL=http://0.0.0.0/api grunt build"
   },
   "main": "server/server.js",
   "dependencies": {
