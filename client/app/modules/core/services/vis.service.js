@@ -87,6 +87,7 @@ var getData=function(results){
     visedges.push({"from": node.healthcenterId, "to": node.protocolId, label: 'endorses', font: {align: 'middle'}});
   });  
   
+  console.log(visnodes,visedges);
   return {
     "nodes":visnodes,
     "edges":visedges
