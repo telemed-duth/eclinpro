@@ -16,16 +16,16 @@ angular.module('com.module.core')
     $scope.loading=true;
 
     $scope.visevents = {
-        "onload": function(network){
+        'onload': function(network){
             // console.log(network);
             console.log('graphloaded!');
         }
     };
     
     $scope.graphbutton = {
-        "protocols": true,
-        "doctors": true,
-        "healthcenters": true
+        'protocols': true,
+        'doctors': true,
+        'healthcenters': true
     };
     
     $scope.$watchCollection('graphbutton', function () {
@@ -36,17 +36,17 @@ angular.module('com.module.core')
         switch (group) {
             case 1:
                 // protocols
-                return "protocols"
+                return 'protocols'
                 break;
             
             case 2:
                 // doctors
-                return "doctors"
+                return 'doctors'
                 break;
             
             case 3:
                 // healthcenters
-                return "healthcenters"
+                return 'healthcenters'
                 break;
         }
     };
@@ -55,7 +55,7 @@ angular.module('com.module.core')
         $scope.loading=true;
         var onArr=[];
         var exclude=[];
-        var data={"nodes":[],"edges":[]};
+        var data={'nodes':[],'edges':[]};
         angular.forEach($scope.graphbutton, function (value, key) {
             if (value) { onArr.push(key); }
         });
@@ -72,6 +72,16 @@ angular.module('com.module.core')
                return false;
            } else return true;
         });
+        
+        draw(data);
+    }
+    
+    $scope.createDemoGraph=function(demonodes,demoedges){
+        $scope.loading=true;
+        var onArr=[];
+        var exclude=[];
+        console.log(demonodes,demoedges);
+        var data={'nodes':angular.fromJson(demonodes).data,'edges':angular.fromJson(demoedges).data};
         
         draw(data);
     }
@@ -108,4 +118,19 @@ angular.module('com.module.core')
         
     };
       
+    var demonodes={
+        data:[
+        {id: 1, 'label': 'kati', 'group': 1,'color':'#F56954'},
+        {id: 2, 'label': 'kati allo', 'group': 2,'color':'#F39C12'},
+        {id: 3, 'label': 'kati diaforetiko', 'group': 3,'color':'#3C8DBC'}
+        ]
+    }
+    $scope.demonodes=angular.toJson(demonodes,true);
+    console.log(demonodes);
+    var demoedges={data:[ 
+        {'from': 1, 'to': 2, label: 'can endorse', font: {align: 'middle'},dashes:true} 
+        ]};
+    console.log(demoedges);
+
+    $scope.demoedges=angular.toJson(demoedges,true);
 });

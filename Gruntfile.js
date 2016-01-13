@@ -10,7 +10,9 @@
 module.exports = function (grunt) {
 
   // Load grunt tasks automatically
-  require('load-grunt-tasks')(grunt);
+  require('load-grunt-tasks')(grunt);  
+  grunt.loadNpmTasks('grunt-plato');
+
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -57,6 +59,17 @@ module.exports = function (grunt) {
         },
         files: {
           '<%= yeoman.app %>/js/translations.js': ['po/*.po']
+        }
+      }
+    },  
+    plato: {
+      all: {
+        options: {
+          excludeFromFile: '.jshintignore',
+          exclude: /\.min\.js$/
+        },
+        files: {
+          'client/app/report': ['./client/app/modules/**/*.js','./client/app/js/*.js']
         }
       }
     },
@@ -667,6 +680,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'test',
+    'plato',
     'ngconstant:production',
     'loopback_sdk_angular:production',
     'includeSource:dist',

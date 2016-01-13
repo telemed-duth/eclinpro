@@ -28,7 +28,14 @@ The expected results include the CPs for the selected disease groups and the Ele
 * Diavgeia: ΑΔΑ: Β49Ι9-Α84
 
 ##Preview
-[e-ClinPro Application](http://ecp.nporto.eu)
+
+[ ![Codeship Status for telemed-duth/eclinpro](https://codeship.com/projects/9cda4d60-6afc-0133-7b78-4e7d03b9bb62/status?branch=master)](https://codeship.com/projects/115059)
+[![Build Status](https://travis-ci.org/telemed-duth/eclinpro.svg)](https://travis-ci.org/telemed-duth/eclinpro)
+##
+Live Application: [WEB PREVIEW](http://ecp.apps.nporto.com)
+
+Code metrics: [CODE METRICS](http://ecp.apps.nporto.com:9999)
+
 
 ## Installation
 

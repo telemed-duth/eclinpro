@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - modules/core/config/core.config.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>modules/core/config/core.config.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">74.08</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">339</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">37.94</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">2.62</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
+var app = angular.module(&#039;com.module.core&#039;);
+app.run(function($rootScope, Setting, gettextCatalog,Permission,User,ProtocolsService,HealthcentersService,$q) {
+
+
+   
+    //angular-permission
+     Permission.defineRole(&#039;admin&#039;, function (stateParams) {
+          var deferred = $q.defer();
+          
+          User.getCurrent(function (user) {
+            
+            User.roles({&quot;id&quot;:user.id}).$promise.then(function(roles){
+              
+              if(roles[0]) {
+                  if(roles[0].name===&#039;admin&#039;){
+                    $rootScope.isadmin=true;
+                    deferred.resolve();
+                  } else deferred.reject();
+              } else deferred.reject();
+            }, function () {
+              // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });
+      
+      
+      Permission.defineRole(&#039;protocolowner&#039;, function (stateParams) {
+          var deferred = $q.defer();
+          User.getCurrent(function (user) {
+            
+            ProtocolsService.getProtocol(stateParams.id).then(function(protocol){
+              if(protocol.ownerId==user.id) deferred.resolve();
+              else deferred.reject();
+            }, function () {
+            // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });      
+      
+      Permission.defineRole(&#039;healthcenterowner&#039;, function (stateParams) {
+          var deferred = $q.defer();
+          User.getCurrent(function (user) {
+            
+            HealthcentersService.getHealthcenter(stateParams.id).then(function(protocol){
+              if(protocol.ownerId==user.id) deferred.resolve();
+              else deferred.reject();
+            }, function () {
+            // Error with request
+              deferred.reject();
+            });
+            
+          }, function () {
+            // Error with request
+            deferred.reject();
+          });
+          return deferred.promise;
+      });
+
+
+  // Left Sidemenu
+  $rootScope.menu = [];
+
+  // Add Sidebar Menu //filterout non-admin menus
+  $rootScope.addMenu = function(name, uisref, icon) {
+      $rootScope.menu.push({
+        name: name,
+        sref: uisref,
+        icon: icon
+      });
+  };
+
+  // Add Menu Dashboard
+  $rootScope.addMenu(gettextCatalog.getString(&#039;Dashboard&#039;), &#039;app.home&#039;,
+    &#039;fa-dashboard&#039;);
+
+  // Dashboard
+  $rootScope.dashboardBox = [];
+
+  // Add Dashboard Box
+  $rootScope.addDashboardBox = function(name, color, icon, quantity, href, id) {
+    $rootScope.dashboardBox.push({
+      name: name,
+      color: color,
+      icon: icon,
+      quantity: quantity,
+      href: href,
+      id: id
+    });
+  };
+  
+  // update Dashboard Box
+  $rootScope.updateDashboardBox = function(quantity,id) {
+   for (var i = 0; i &lt; $rootScope.dashboardBox.length; i++) {
+     if($rootScope.dashboardBox[i].id===id){
+       $rootScope.dashboardBox[i].quantity=quantity;
+     }
+   }
+  };
+  
+      
+  $rootScope.countOwn=function(protocols,userId){
+    var count=0;
+    protocols.forEach(function(obj) {
+      if (obj.ownerId===userId) count++;
+    });
+    return count;
+  };
+    
+  
+  // Get Settings for Database
+  $rootScope.setSetting = function(key, value) {
+
+    Setting.find({
+      filter: {
+        where: {
+          key: key
+        }
+      }
+    }, function(data) {
+
+      if (data.length) {
+        data[0].value = value;
+        data[0].$save();
+      } else {
+        Setting.create({
+          key: key,
+          value: value
+        }, function(data) {
+          console.log(data);
+        });
+      }
+      $rootScope.loadSettings();
+    });
+  };
+
+  // Load Settings blank
+  $rootScope.settings = {};
+
+  // Get Settings for Loopback Service
+  $rootScope.loadSettings = function() {
+    Setting.find(function(settings) {
+      $rootScope.settings.data = settings;
+    });
+  };
+
+});
+
+/*Loading Bar*/
+app.config([&#039;cfpLoadingBarProvider&#039;, function(cfpLoadingBarProvider) {
+  cfpLoadingBarProvider.includeSpinner = false;
+}]);
+
+
+/*Form templates config*/
+app.run(function(formlyConfig,CoreService,$http) {
+  // NOTE: This next line is highly recommended. Otherwise Chrome&#039;s autocomplete will appear over your options!
+  formlyConfig.extras.removeChromeAutoComplete = true;
+  formlyConfig.setType({
+    name: &#039;async-ui-select&#039;,
+    extends: &#039;select&#039;,
+    templateUrl: &#039;async-ui-select.html&#039;
+  });
+  formlyConfig.setType({
+    name: &#039;async-ui-select-multiple&#039;,
+    extends: &#039;select&#039;,
+    templateUrl: &#039;async-ui-select-multiple.html&#039;
+  });
+  var unique = 1;
+  formlyConfig.setType({
+    name: &#039;repeatSection&#039;,
+    templateUrl: &#039;repeatSection.html&#039;,
+    controller: function($scope) {
+      $scope.formOptions = {formState: $scope.formState};
+      
+      
+      $scope.copyFields = function(fields) {
+        fields = angular.copy(fields);
+        addRandomIds(fields);
+        return fields;
+      }
+      $scope.addNew = function(){
+        $scope.model[$scope.options.key] = $scope.model[$scope.options.key] || [];
+        var repeatsection = $scope.model[$scope.options.key];
+        var lastSection = repeatsection[repeatsection.length - 1];
+        var newsection = {};
+        // if (lastSection) {
+        //   newsection = angular.copy(lastSection);
+        // }
+        repeatsection.push(newsection);
+      }
+      
+      function addRandomIds(fields) {
+        unique++;
+        angular.forEach(fields, function(field, index) {
+          if (field.fieldGroup) {
+            addRandomIds(field.fieldGroup);
+            return; // fieldGroups don&#039;t need an ID
+          }
+          
+          if (field.templateOptions &amp;&amp; field.templateOptions.fields) {
+            addRandomIds(field.templateOptions.fields);
+          }
+          
+          field.id = field.id || (field.key + &#039;_&#039; + index + &#039;_&#039; + unique + getRandomInt(0, 9999));
+        });
+      }
+      
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+      
+      
+      //init
+      if(!$scope.model[$scope.options.key]){
+        $scope.addNew();
+      }
+      
+    }
+  });
+  formlyConfig.setType({
+    name: &#039;fileUpload&#039;,
+    templateUrl: &#039;fileUpload.html&#039;,
+    controller: function($scope, FileUploader, CoreService) {
+
+  // create a uploader with options
+  var uploader = $scope.uploader = new FileUploader({
+    scope: $scope, // to automatically update the html. Default: $rootScope
+    url: CoreService.env.apiUrl + &#039;/containers/files/upload&#039;,
+    formData: [{
+      key: &#039;value&#039;
+    }]
+  });
+  
+  if($scope.model.technical_file) {
+    console.log(&#039;loaded initial file&#039;);
+    uploader.queue.push($scope.model.technical_file);
+  }
+  // console.log(&#039;Add filters and callbacks to the uploader object:&#039;, uploader);
+
+  // FILTERS AND CALLBACKS
+
+  //uploader.filters.push({
+  //  name: &#039;customFilter&#039;,
+  //  fn: function () {
+  //    return this.queue.length &lt; 10;
+  //  }
+  //});
+
+  // CALLBACKS
+
+  //uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
+  //  console.info(&#039;onWhenAddingFileFailed&#039;, item, filter, options);
+  //};
+  uploader.onAfterAddingFile = function (fileItem) {
+    if(!fileItem.isReady &amp;&amp; !fileItem.isUploading &amp;&amp; !fileItem.isSuccess) fileItem.upload();
+  };
+  //uploader.onAfterAddingAll = function (addedFileItems) {
+  //  console.info(&#039;onAfterAddingAll&#039;, addedFileItems);
+  //};
+  //uploader.onBeforeUploadItem = function (item) {
+  //  console.info(&#039;onBeforeUploadItem&#039;, item);
+  //};
+  //uploader.onProgressItem = function (fileItem, progress) {
+  //  console.info(&#039;onProgressItem&#039;, fileItem, progress);
+  //};
+  //uploader.onProgressAll = function (progress) {
+  //  console.info(&#039;onProgressAll&#039;, progress);
+  //};
+  //uploader.onSuccessItem = function (fileItem, response, status, headers) {
+  //  console.info(&#039;onSuccessItem&#039;, fileItem, response, status, headers);
+  //};
+  //uploader.onErrorItem = function (fileItem, response, status, headers) {
+  //  console.info(&#039;onErrorItem&#039;, fileItem, response, status, headers);
+  //};
+  //uploader.onCancelItem = function (fileItem, response, status, headers) {
+  //  console.info(&#039;onCancelItem&#039;, fileItem, response, status, headers);
+  //};
+  uploader.onCompleteItem = function (fileItem, response, status, headers) {
+    $scope.model.technical_file={
+      file:fileItem.file,
+      isCancel: false,
+      isError: false,
+      isReady: false,
+      isSuccess: true,
+      isUploaded: true,
+      isUploading: false,
+      progress: 100,
+      removeAfterUpload: false,
+      url: &quot;/api//containers/files/upload&quot;
+    };
+    
+    $scope.model.technical_url=CoreService.env.apiUrl+&quot;/containers/files/download/&quot;+fileItem.file.name;
+    console.info(&#039;onAfterAddingFile&#039;, fileItem);
+    console.log(&#039;Current queue&#039;,uploader.queue);
+  };
+  
+  $scope.delete = function(item) {
+  CoreService.confirm(&#039;Are you sure?&#039;,&#039;Deleting this cannot be undone&#039;,
+    function() {
+      $http.delete(CoreService.env.apiUrl +
+        &#039;/containers/files/files/&#039; + encodeURIComponent(item.file.name)).success(
+        function(data, status, headers) {
+          console.log(data);
+          console.log(status);
+          console.log(headers);
+          
+          $scope.model.technical_file={};
+          item.remove();
+          CoreService.toastSuccess(&#039;File deleted&#039;, &#039;Your file is deleted!&#039;);
+        });
+    },
+    function() {
+      return false;
+    });
+};
+  //uploader.onCompleteAll = function () {
+  //  console.info(&#039;onCompleteAll&#039;);
+  //};
+
+  }
+  
+  });
+
+  
+  
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

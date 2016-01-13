@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - modules/core/controllers/home.ctrl.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>modules/core/controllers/home.ctrl.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">62.76</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">136</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">21.14</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.16</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
+/**
+ * @ngdoc function
+ * @name com.module.core.controller:HomeCtrl
+ * @description Dashboard
+ * @requires $scope
+ * @requires $rootScope
+ **/
+angular.module(&#039;com.module.core&#039;)
+  .controller(&#039;HomeCtrl&#039;, function($scope, $rootScope,Vis,$timeout,visdata) {
+
+    $scope.count = {};
+    $scope.visdata=visdata;
+    $scope.boxes = $rootScope.dashboardBox;
+    $scope.visnetwork={};
+    $scope.loading=true;
+
+    $scope.visevents = {
+        &#039;onload&#039;: function(network){
+            // console.log(network);
+            console.log(&#039;graphloaded!&#039;);
+        }
+    };
+    
+    $scope.graphbutton = {
+        &#039;protocols&#039;: true,
+        &#039;doctors&#039;: true,
+        &#039;healthcenters&#039;: true
+    };
+    
+    $scope.$watchCollection(&#039;graphbutton&#039;, function () {
+         $scope.createGraph();
+    });
+    
+    var mapgroup=function(group){
+        switch (group) {
+            case 1:
+                // protocols
+                return &#039;protocols&#039;
+                break;
+            
+            case 2:
+                // doctors
+                return &#039;doctors&#039;
+                break;
+            
+            case 3:
+                // healthcenters
+                return &#039;healthcenters&#039;
+                break;
+        }
+    };
+    
+    $scope.createGraph=function(){
+        $scope.loading=true;
+        var onArr=[];
+        var exclude=[];
+        var data={&#039;nodes&#039;:[],&#039;edges&#039;:[]};
+        angular.forEach($scope.graphbutton, function (value, key) {
+            if (value) { onArr.push(key); }
+        });
+        data.nodes=visdata.nodes.filter(function(node){
+            if(onArr.indexOf(mapgroup(node.group))&gt;-1){
+                return true;
+            } else {
+                exclude.push(node.id);
+                return false;
+            }
+        });
+        data.edges=visdata.edges.filter(function(edge){
+           if(exclude.indexOf(edge.from)&gt;-1||exclude.indexOf(edge.to)&gt;-1){
+               return false;
+           } else return true;
+        });
+        
+        draw(data);
+    }
+    
+    $scope.createDemoGraph=function(demonodes,demoedges){
+        $scope.loading=true;
+        var onArr=[];
+        var exclude=[];
+        console.log(demonodes,demoedges);
+        var data={&#039;nodes&#039;:angular.fromJson(demonodes).data,&#039;edges&#039;:angular.fromJson(demoedges).data};
+        
+        draw(data);
+    }
+    
+// Network graph related
+
+     var draw=function(data){
+        $scope.visdata=data;
+        $scope.visoptions={
+            autoResize: false,
+            height: &#039;600&#039;,
+            width: &#039;100%&#039;,
+            nodes: {
+                shape: &#039;dot&#039;,
+                size: 16
+            },
+            edges:{
+                arrows:&#039;to&#039;,
+                color:{opacity:0.4}
+            },
+            physics: {
+                forceAtlas2Based: {
+                    gravitationalConstant: -30,
+                    centralGravity: 0.005,
+                    springLength: 200,
+                    springConstant: 0.5
+                },
+                maxVelocity: 146,
+                solver: &#039;forceAtlas2Based&#039;,
+                timestep: 0.35,
+                stabilization: {iterations: 100}
+            }
+        };
+        
+    };
+      
+    var demonodes={
+        data:[
+        {id: 1, &#039;label&#039;: &#039;kati&#039;, &#039;group&#039;: 1,&#039;color&#039;:&#039;#F56954&#039;},
+        {id: 2, &#039;label&#039;: &#039;kati allo&#039;, &#039;group&#039;: 2,&#039;color&#039;:&#039;#F39C12&#039;},
+        {id: 3, &#039;label&#039;: &#039;kati diaforetiko&#039;, &#039;group&#039;: 3,&#039;color&#039;:&#039;#3C8DBC&#039;}
+        ]
+    }
+    $scope.demonodes=angular.toJson(demonodes,true);
+    console.log(demonodes);
+    var demoedges={data:[ 
+        {&#039;from&#039;: 1, &#039;to&#039;: 2, label: &#039;can endorse&#039;, font: {align: &#039;middle&#039;},dashes:true} 
+        ]};
+    console.log(demoedges);
+
+    $scope.demoedges=angular.toJson(demoedges,true);
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

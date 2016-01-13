@@ -19,14 +19,32 @@
           </div>
         </tab>
         <tab select="createGraph()" heading="{{ 'Visualizations' | translate }}">
-
+          <div ng-show="isadmin" >
+                  
+                 <button class="btn btn-primary" ng-click="createDemoGraph(demonodes,demoedges)" type="button">Draw</button>
+                 <button class="btn btn-primary" ng-click="debugNodes=!debugNodes" type="button">Hide</button>
+          <div class="row" collapse="debugNodes">
+            
+                  <div class="col-xs-6" class="form-group">
+                    <label for="nodes">Nodes :</label>
+                    <textarea ng-model="demonodes" class="form-control" rows="15" id="nodes"></textarea>
+                  </div>
+                  
+                  <div class="col-xs-6" class="form-group">
+                    <label for="edges">Edges :</label>
+                    <textarea ng-model="demoedges" class="form-control" rows="15" id="edges"></textarea>
+                  </div>
+          </div>
+          </div>
+                  
           <div class="row">
                 <div class="container">
                   <label class="btn btn-warning" ng-model="graphbutton.protocols" btn-checkbox>Care Plans</label>
-                  <label class="btn btn-danger" ng-model="graphbutton.healthcenters" btn-checkbox>Health centers</label>
+                  <label class="btn btn-danger" ng-model="graphbutton.healthcenters" btn-checkbox>Health Units</label>
                   <label class="btn btn-primary" ng-model="graphbutton.doctors" btn-checkbox>Doctors</label>
               
                  <vis-network data="visdata" options="visoptions" events="visevents"></vis-network>
+                  
                 </div>
             
           </div>
