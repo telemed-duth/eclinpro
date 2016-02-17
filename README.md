@@ -34,7 +34,7 @@ The expected results include the CPs for the selected disease groups and the Ele
 ##
 Live Application: [WEB PREVIEW](http://ecp.apps.nporto.com)
 
-Code metrics: [CODE METRICS](http://ecp.apps.nporto.com:9999)
+Code metrics: [CODE METRICS](http://ecp.apps.nporto.com/report)
 
 
 ## Installation
