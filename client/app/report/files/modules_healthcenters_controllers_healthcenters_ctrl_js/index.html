@@ -44,11 +44,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
-      <p class="stat">70.10</p>
+      <p class="stat">72.54</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
-      <p class="stat">342</p>
+      <p class="stat">286</p>
     </div>
   </div>
   <div class="row historical">
@@ -62,11 +62,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
-      <p class="stat">30.58</p>
+      <p class="stat">29.17</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
-      <p class="stat">2.57</p>
+      <p class="stat">2.11</p>
     </div>
   </div>
 </div>
@@ -242,7 +242,7 @@ $scope.bioportalAutocomplete = function(search,field) {
         // console.log(centers);
          if(centers.length&gt;0) $scope.pcenters=centers;
          else  $scope.pcenters=[{
-            &quot;name&quot;:&quot;No Health units&quot;
+            &quot;name&quot;:&quot;No Issuing bodies&quot;
           }];
           
         },function(err){  
@@ -325,16 +325,16 @@ $scope.tabs =
             key: &#039;general_name&#039;,
             type: &#039;input&#039;,
             templateOptions: {
-                label: &#039;Health unit name&#039;,
-                placeholder: &#039;Health unit name..&#039;,
+                label: &#039;Issuing body name&#039;,
+                placeholder: &#039;Issuing body name..&#039;,
                 required: true
             }
         }, {
             key: &#039;general_desc&#039;,
             type: &#039;textarea&#039;,
             templateOptions: {
-                label: &#039;Health unit description&#039;,
-                placeholder: &#039;Health unit description..&#039;,
+                label: &#039;Issuing body description&#039;,
+                placeholder: &#039;Issuing body description..&#039;,
                 required: false
             }
         }, {
@@ -364,62 +364,6 @@ $scope.tabs =
             }
         }]
     }
-}, {
-    title: &#039;Resources&#039;,
-    onselect: function() {
-        $timeout(function() {
-            $scope.$broadcast(&#039;ResourcesTabSelected&#039;);
-        }, 100)
-    },
-    form: {
-        options: {},
-        model: $scope.healthcenter,
-        active: false,
-        fields: [{
-            key: &#039;resources_human&#039;,
-            type: &#039;async-ui-select-multiple&#039;,
-            templateOptions: {
-                label: &#039;Required Staff&#039;,
-                placeholder: &#039;e.g Cardiologist..&#039;,
-                bioportal: {
-                    semantic_types: &#039;T090,T097&#039;
-                },
-                labelProp: &#039;label&#039;,
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }, {
-            key: &#039;resources_infastructure&#039;,
-            type: &#039;async-ui-select-multiple&#039;,
-            templateOptions: {
-                label: &#039;Special equipment required&#039;,
-                placeholder: &#039;e.g magnetic tomography scanner..&#039;,
-                bioportal: {
-                    semantic_types: &#039;T074,T073&#039;
-                },
-                labelProp: &#039;label&#039;,
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }, {
-            key: &#039;resources_pharmaceutical&#039;,
-            type: &#039;async-ui-select-multiple&#039;,
-            templateOptions: {
-                label: &#039;Special drug requirements&#039;,
-                placeholder: &#039;e.g Erythromycin..&#039;,
-                bioportal: {
-                    semantic_types: &#039;T200&#039;
-                },
-                labelProp: &#039;label&#039;,
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }]
-    }
-
 }];
 
 

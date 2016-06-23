@@ -44,11 +44,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
-      <p class="stat">64.63</p>
+      <p class="stat">64.20</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
-      <p class="stat">122</p>
+      <p class="stat">125</p>
     </div>
   </div>
   <div class="row historical">
@@ -62,11 +62,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
-      <p class="stat">34.13</p>
+      <p class="stat">31.90</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
-      <p class="stat">1.37</p>
+      <p class="stat">1.42</p>
     </div>
   </div>
 </div>
@@ -92,7 +92,7 @@
     <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
 var app = angular.module(&#039;com.module.core&#039;);
 
-app.service(&#039;Vis&#039;, function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter) {
+app.service(&#039;Vis&#039;, function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter,$rootScope) {
 function objExist(obj, list,prop) {
     var i;
     for (i = 0; i &lt; list.length; i++) {
@@ -140,50 +140,52 @@ var matchProtocol=function(pr,hc,propArray){
 };
 
 var getData=function(results){
+  // console.debug()
+    
+    if(results[5].username===&#039;user&#039;) return window.demoGraphData;
   
-  var visnodes=[];
-  var visedges=[];
-  var healthcenters=results[0];
-  var protocols=results[1];
-  var users=results[2];
-  var protocolusage=results[3];
-  var protocolapproval=results[4];
-  var runFirstTime=true;
-  
-  for (var i = 0; i &lt; protocols.length; i++) {
-    var node=node=protocols[i];
-    visnodes.push({id: node.id, &quot;label&quot;: node.general_name, &quot;group&quot;: 1,&quot;color&quot;:&quot;#F39C12&quot;});
-    if(node.parentId) visedges.push({&quot;from&quot;: node.parentId, &quot;to&quot;: node.id, label: node.divergion_type, font: {align: &#039;middle&#039;}});
-      
-      
-    healthcenters.forEach(function(hc){
-      if(runFirstTime) visnodes.push({id: hc.id, &quot;label&quot;: hc.general_name, &quot;group&quot;: 3,&quot;color&quot;:&quot;#F56954&quot;});
-      if(matchProtocol(node,hc)){
-        visedges.push({&quot;from&quot;: hc.id, &quot;to&quot;: node.id, label: &quot;can endorse&quot;, font: {align: &#039;middle&#039;},dashes:true});
-      }
+    var visnodes=[];
+    var visedges=[];
+    var healthcenters=results[0];
+    var protocols=results[1];
+    var users=results[2];
+    var protocolusage=results[3];
+    var protocolapproval=results[4];
+    var runFirstTime=true;
+    
+    for (var i = 0; i &lt; protocols.length; i++) {
+      var node=node=protocols[i];
+      visnodes.push({id: node.id, &quot;label&quot;: node.general_name, &quot;group&quot;: 1,&quot;color&quot;:&quot;#F39C12&quot;});
+      if(node.parentId) visedges.push({&quot;from&quot;: node.parentId, &quot;to&quot;: node.id, label: node.divergion_type, font: {align: &#039;middle&#039;}});
+        
+        
+      healthcenters.forEach(function(hc){
+        if(runFirstTime) visnodes.push({id: hc.id, &quot;label&quot;: hc.general_name, &quot;group&quot;: 3,&quot;color&quot;:&quot;#F56954&quot;});
+        if(matchProtocol(node,hc)){
+          visedges.push({&quot;from&quot;: hc.id, &quot;to&quot;: node.id, label: &quot;can endorse&quot;, font: {align: &#039;middle&#039;},dashes:true});
+        }
+      });
+      runFirstTime=false;
+    }
+    
+    
+    users.forEach(function(node){
+      visnodes.push({id: node.id, &quot;label&quot;: node.firstName, &quot;group&quot;: 2,&quot;color&quot;:&quot;#3C8DBC&quot;});
     });
-    runFirstTime=false;
-  }
-  
-  
-  users.forEach(function(node){
-    visnodes.push({id: node.id, &quot;label&quot;: node.firstName+&#039; &#039;+node.lastName, &quot;group&quot;: 2,&quot;color&quot;:&quot;#3C8DBC&quot;});
-  });
-  
-  protocolusage.forEach(function(node){
-    visedges.push({&quot;from&quot;: node.userId, &quot;to&quot;: node.protocolId, label: &#039;uses&#039;, font: {align: &#039;middle&#039;}});
-  });  
-  
-  protocolapproval.forEach(function(node){
-    visedges.push({&quot;from&quot;: node.healthcenterId, &quot;to&quot;: node.protocolId, label: &#039;endorses&#039;, font: {align: &#039;middle&#039;}});
-  });  
-  
-  console.log(visnodes,visedges);
-  return {
-    &quot;nodes&quot;:visnodes,
-    &quot;edges&quot;:visedges
-  };
-  
+    
+    protocolusage.forEach(function(node){
+      visedges.push({&quot;from&quot;: node.userId, &quot;to&quot;: node.protocolId, label: &#039;uses&#039;, font: {align: &#039;middle&#039;}});
+    });  
+    
+    protocolapproval.forEach(function(node){
+      visedges.push({&quot;from&quot;: node.healthcenterId, &quot;to&quot;: node.protocolId, label: &#039;endorses&#039;, font: {align: &#039;middle&#039;}});
+    });  
+    
+    console.log(visnodes,visedges);
+    return {
+      &quot;nodes&quot;:visnodes,
+      &quot;edges&quot;:visedges
+    };
 };  
   
 
@@ -195,7 +197,8 @@ return {
     dataCalls.push(Protocol.find().$promise);
     dataCalls.push(User.find().$promise);
     dataCalls.push(ProtocolUsage.find().$promise);
-    dataCalls.push(ProtocolApproval.find());
+    dataCalls.push(ProtocolApproval.find().$promise);
+    dataCalls.push(User.getCurrent().$promise);
     
     
     $q.all(dataCalls).then(function(results) {

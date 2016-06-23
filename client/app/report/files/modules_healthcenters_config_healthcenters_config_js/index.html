@@ -92,11 +92,11 @@
     <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
 angular.module(&#039;com.module.healthcenters&#039;)
   .run(function($rootScope, Healthcenter, gettextCatalog) {
-    $rootScope.addMenu(gettextCatalog.getString(&#039;Health units&#039;), &#039;app.healthcenters.list&#039;,
+    $rootScope.addMenu(gettextCatalog.getString(&#039;Issuing Bodies&#039;), &#039;app.healthcenters.list&#039;,
       &#039;fa fa-hospital-o&#039;);
 
     Healthcenter.find(function(healthcenters) {
-      $rootScope.addDashboardBox(gettextCatalog.getString(&#039;Health units&#039;),
+      $rootScope.addDashboardBox(gettextCatalog.getString(&#039;Issuing Bodies&#039;),
         &#039;bg-red&#039;, &#039;fa fa-hospital-o&#039;, healthcenters.length, &#039;app.healthcenters.list&#039;,&#039;healthcenters&#039;);
     });
 
