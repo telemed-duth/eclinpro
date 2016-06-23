@@ -14,7 +14,7 @@ angular.module('com.module.users')
       })
       .state('app.users', {
         abstract: true,
-        url: '/users',
+        url: '/health_unit',
         templateUrl: 'modules/users/views/main.html'
         
       })

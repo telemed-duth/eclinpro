@@ -5,7 +5,7 @@ var app = angular.module('com.module.healthcenters');
 app.config(function($stateProvider) {
   $stateProvider.state('app.healthcenters', {
     abstract: true,
-    url: '/healthcenters',
+    url: '/issuing_bodies',
     templateUrl: 'modules/healthcenters/views/main.html',
     controller: 'HealthcentersCtrl'
   }).state('app.healthcenters.list', {

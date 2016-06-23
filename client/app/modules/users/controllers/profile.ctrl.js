@@ -1,6 +1,6 @@
 'use strict';
 angular.module('com.module.users')
-  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog,$rootScope,Bioportal) {
+  .controller('ProfileCtrl', function($scope, CoreService, User, gettextCatalog,$rootScope,Bioportal,$resource,$timeout) {
 
     $scope.user = $rootScope.currentUser;
     
@@ -36,7 +36,16 @@ $scope.bioportalAutocomplete = function(search,field) {
 $scope.form= {
     options: {},
     model: $scope.user,
-    fields: [{
+    fields: [
+      {
+      key: 'firstName',
+      type: 'input',
+      templateOptions: {
+        label: gettextCatalog.getString('Health unit'),
+        placeholder: 'PGNA..',
+        required: true
+      }
+    },{
       key: 'username',
       type: 'input',
       templateOptions: {
@@ -54,43 +63,61 @@ $scope.form= {
         required: true
       }
     },{
-      key: 'firstName',
-      type: 'input',
-      templateOptions: {
-        label: gettextCatalog.getString('First name'),
-        placeholder: 'First name..',
-        required: true
-      }
-    },{
-      key: 'lastName',
-      type: 'input',
-      templateOptions: {
-        label: gettextCatalog.getString('Last name'),
-        placeholder: 'Last name..',
-        required: true
-      }
-    },{
-      key: 'specialty',
-      type: 'async-ui-select',
-      templateOptions: {
-          label: 'Medical Specialty',
-          placeholder: 'e.g Cardiologist..',
-          bioportal: {
-              semantic_types: 'T090,T097'
-          },
-          labelProp: 'label',
-          options: [],
-          refresh: $scope.bioportalAutocomplete,
-          refreshDelay: 0,
-          required: true
-      }
-  }
+            key: 'resources_human',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Required Staff',
+                placeholder: 'e.g Cardiologist..',
+                bioportal: {
+                    semantic_types: 'T090,T097'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: 'resources_infastructure',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Special equipment required',
+                placeholder: 'e.g magnetic tomography scanner..',
+                bioportal: {
+                    semantic_types: 'T074,T073'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: 'resources_pharmaceutical',
+            type: 'async-ui-select-multiple',
+            templateOptions: {
+                label: 'Special drug requirements',
+                placeholder: 'e.g Erythromycin..',
+                bioportal: {
+                    semantic_types: 'T200'
+                },
+                labelProp: 'label',
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }
 ]
-}
-
+};  
+    
+    var urlBase = "/api";
+var UserUpdate = $resource(
+    urlBase + '/users/:id',{id:'@id'},
+    {"upsert": { url: urlBase + "/users/:id", method: "PUT"}}
+ );
     $scope.onSubmit = function() {
       console.log($scope.user);
-      User.upsert($scope.user, function() {
+      $timeout(function(){
+        
+      UserUpdate.upsert($scope.user, function() {
         CoreService.toastSuccess(gettextCatalog.getString(
           'Profile saved'), gettextCatalog.getString(
           'Enjoy the new you!'));
@@ -99,6 +126,8 @@ $scope.form= {
           'Error saving profile'), gettextCatalog.getString(
           'Your profile is not saved: ') + err);
       });
+        
+      },10)
     };
 
   });

@@ -44,11 +44,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
-      <p class="stat">57.96</p>
+      <p class="stat">57.99</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
-      <p class="stat">14121</p>
+      <p class="stat">14147</p>
     </div>
   </div>
   <div class="row historical">
@@ -62,11 +62,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
-      <p class="stat">95.05</p>
+      <p class="stat">114.28</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
-      <p class="stat">30.47</p>
+      <p class="stat">30.80</p>
     </div>
   </div>
 </div>
@@ -89,10 +89,28 @@
 
 <div class="container">
   <div class="row">
-    <textarea id="file-source" class="col-md-12">(function(window, angular, undefined) {&#039;use strict&#039;;
+    <textarea id="file-source" class="col-md-12">// CommonJS package manager support
+if (typeof module !== &#039;undefined&#039; &amp;&amp; typeof exports !== &#039;undefined&#039; &amp;&amp; module.exports === exports) {
+  // Export the *name* of this Angular module
+  // Sample usage:
+  //
+  //   import lbServices from &#039;./lb-services&#039;;
+  //   angular.module(&#039;app&#039;, [lbServices]);
+  //
+  module.exports = &quot;lbServices&quot;;
+}
+
+(function(window, angular, undefined) {&#039;use strict&#039;;
 
 var urlBase = &quot;/api&quot;;
 var authHeader = &#039;authorization&#039;;
+
+function getHost(url) {
+  var m = url.match(/^(?:https?:)?\/\/([^\/]+)/);
+  return m ? m[1] : null;
+}
+
+var urlBaseHost = getHost(urlBase) || location.host;
 
 /**
  * @ngdoc overview
@@ -799,6 +817,10 @@ module.factory(
  * @description
  *
  * A $resource object for interacting with the `RoleMapping` model.
+ *
+ * **Details**
+ *
+ * Map principals to roles
  *
  * ## Example
  *
@@ -14046,7 +14068,7 @@ module.factory(
 
 module
   .factory(&#039;LoopBackAuth&#039;, function() {
-    var props = [&#039;accessTokenId&#039;, &#039;currentUserId&#039;];
+    var props = [&#039;accessTokenId&#039;, &#039;currentUserId&#039;, &#039;rememberMe&#039;];
     var propsPrefix = &#039;$LoopBack$&#039;;
 
     function LoopBackAuth() {
@@ -14054,7 +14076,6 @@ module
       props.forEach(function(name) {
         self[name] = load(name);
       });
-      this.rememberMe = undefined;
       this.currentUserData = null;
     }
 
@@ -14090,9 +14111,13 @@ module
     // Note: LocalStorage converts the value to string
     // We are using empty string as a marker for null/undefined values.
     function save(storage, name, value) {
-      var key = propsPrefix + name;
-      if (value == null) value = &#039;&#039;;
-      storage[key] = value;
+      try {
+        var key = propsPrefix + name;
+        if (value == null) value = &#039;&#039;;
+        storage[key] = value;
+      } catch(err) {
+        console.log(&#039;Cannot access local/session storage:&#039;, err);
+      }
     }
 
     function load(name) {
@@ -14108,8 +14133,9 @@ module
       return {
         &#039;request&#039;: function(config) {
 
-          // filter out non urlBase requests
-          if (config.url.substr(0, urlBase.length) !== urlBase) {
+          // filter out external requests
+          var host = getHost(config.url);
+          if (host &amp;&amp; host !== urlBaseHost) {
             return config;
           }
 
@@ -14177,6 +14203,7 @@ module
      */
     this.setUrlBase = function(url) {
       urlBase = url;
+      urlBaseHost = getHost(urlBase) || location.host;
     };
 
     /**

@@ -425,7 +425,7 @@ $scope.fetchHealthcenters=function(){
     // console.log(centers);
      if(centers.length>0) $scope.pcenters=centers;
      else  $scope.pcenters=[{
-        "name":"No Health units"
+        "name":"No Issuing bodies"
       }];
       
     },function(err){  

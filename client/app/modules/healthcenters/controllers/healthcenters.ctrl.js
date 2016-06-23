@@ -151,7 +151,7 @@ $scope.bioportalAutocomplete = function(search,field) {
         // console.log(centers);
          if(centers.length>0) $scope.pcenters=centers;
          else  $scope.pcenters=[{
-            "name":"No Health units"
+            "name":"No Issuing bodies"
           }];
           
         },function(err){  
@@ -234,16 +234,16 @@ $scope.tabs =
             key: 'general_name',
             type: 'input',
             templateOptions: {
-                label: 'Health unit name',
-                placeholder: 'Health unit name..',
+                label: 'Issuing body name',
+                placeholder: 'Issuing body name..',
                 required: true
             }
         }, {
             key: 'general_desc',
             type: 'textarea',
             templateOptions: {
-                label: 'Health unit description',
-                placeholder: 'Health unit description..',
+                label: 'Issuing body description',
+                placeholder: 'Issuing body description..',
                 required: false
             }
         }, {
@@ -273,62 +273,6 @@ $scope.tabs =
             }
         }]
     }
-}, {
-    title: 'Resources',
-    onselect: function() {
-        $timeout(function() {
-            $scope.$broadcast('ResourcesTabSelected');
-        }, 100)
-    },
-    form: {
-        options: {},
-        model: $scope.healthcenter,
-        active: false,
-        fields: [{
-            key: 'resources_human',
-            type: 'async-ui-select-multiple',
-            templateOptions: {
-                label: 'Required Staff',
-                placeholder: 'e.g Cardiologist..',
-                bioportal: {
-                    semantic_types: 'T090,T097'
-                },
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }, {
-            key: 'resources_infastructure',
-            type: 'async-ui-select-multiple',
-            templateOptions: {
-                label: 'Special equipment required',
-                placeholder: 'e.g magnetic tomography scanner..',
-                bioportal: {
-                    semantic_types: 'T074,T073'
-                },
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }, {
-            key: 'resources_pharmaceutical',
-            type: 'async-ui-select-multiple',
-            templateOptions: {
-                label: 'Special drug requirements',
-                placeholder: 'e.g Erythromycin..',
-                bioportal: {
-                    semantic_types: 'T200'
-                },
-                labelProp: 'label',
-                options: [],
-                refresh: $scope.bioportalAutocomplete,
-                refreshDelay: 0
-            }
-        }]
-    }
-
 }];
 
 

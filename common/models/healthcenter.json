@@ -14,21 +14,6 @@
     },
     "general_location": {
       "type": "string"
-    },        
-    "resources_infastructure": {
-      "type": [
-          "object"
-      ]
-    },
-    "resources_pharmaceutical": {
-      "type": [
-          "object"
-      ]
-    },
-    "resources_human": {
-      "type": [
-          "object"
-      ]
     }
   },
   "validations": [],

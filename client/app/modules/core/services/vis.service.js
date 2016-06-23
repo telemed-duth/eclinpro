@@ -76,7 +76,7 @@ var getData=function(results){
   
   
   users.forEach(function(node){
-    visnodes.push({id: node.id, "label": node.firstName+' '+node.lastName, "group": 2,"color":"#3C8DBC"});
+    visnodes.push({id: node.id, "label": node.firstName, "group": 2,"color":"#3C8DBC"});
   });
   
   protocolusage.forEach(function(node){

@@ -183,12 +183,12 @@
       <div class="panel-body">
       <tabset justified="true">
         
-        <tab heading="Care Plan Users">
+        <tab heading="Health units">
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="user in pusers">{{user.firstName +' '+ user.lastName}} {{ user.specialty }}</li>
           </ul>
         </tab>
-        <tab heading="Health units">
+        <tab heading="Issuing bodies">
           <ul class="list-group">
             <li ng-repeat="center in pcenters" class="list-group-item">{{center.name}} {{center.location }}</li>
             
