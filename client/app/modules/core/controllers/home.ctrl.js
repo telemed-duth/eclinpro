@@ -8,7 +8,8 @@
  **/
 angular.module('com.module.core')
   .controller('HomeCtrl', function($scope, $rootScope,Vis,$timeout,visdata) {
-
+    
+    // visdata = visdata||{nodes:[],edges:[]};
     $scope.count = {};
     $scope.visdata=visdata;
     $scope.boxes = $rootScope.dashboardBox;

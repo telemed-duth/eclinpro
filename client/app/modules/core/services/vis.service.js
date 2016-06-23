@@ -1,7 +1,7 @@
 'use strict';
 var app = angular.module('com.module.core');
 
-app.service('Vis', function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter) {
+app.service('Vis', function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter,$rootScope) {
 function objExist(obj, list,prop) {
     var i;
     for (i = 0; i < list.length; i++) {
@@ -49,50 +49,52 @@ var matchProtocol=function(pr,hc,propArray){
 };
 
 var getData=function(results){
+  // console.debug()
+    
+    if(results[5].username==='user') return window.demoGraphData;
   
-  var visnodes=[];
-  var visedges=[];
-  var healthcenters=results[0];
-  var protocols=results[1];
-  var users=results[2];
-  var protocolusage=results[3];
-  var protocolapproval=results[4];
-  var runFirstTime=true;
-  
-  for (var i = 0; i < protocols.length; i++) {
-    var node=node=protocols[i];
-    visnodes.push({id: node.id, "label": node.general_name, "group": 1,"color":"#F39C12"});
-    if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.divergion_type, font: {align: 'middle'}});
-      
-      
-    healthcenters.forEach(function(hc){
-      if(runFirstTime) visnodes.push({id: hc.id, "label": hc.general_name, "group": 3,"color":"#F56954"});
-      if(matchProtocol(node,hc)){
-        visedges.push({"from": hc.id, "to": node.id, label: "can endorse", font: {align: 'middle'},dashes:true});
-      }
+    var visnodes=[];
+    var visedges=[];
+    var healthcenters=results[0];
+    var protocols=results[1];
+    var users=results[2];
+    var protocolusage=results[3];
+    var protocolapproval=results[4];
+    var runFirstTime=true;
+    
+    for (var i = 0; i < protocols.length; i++) {
+      var node=node=protocols[i];
+      visnodes.push({id: node.id, "label": node.general_name, "group": 1,"color":"#F39C12"});
+      if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.divergion_type, font: {align: 'middle'}});
+        
+        
+      healthcenters.forEach(function(hc){
+        if(runFirstTime) visnodes.push({id: hc.id, "label": hc.general_name, "group": 3,"color":"#F56954"});
+        if(matchProtocol(node,hc)){
+          visedges.push({"from": hc.id, "to": node.id, label: "can endorse", font: {align: 'middle'},dashes:true});
+        }
+      });
+      runFirstTime=false;
+    }
+    
+    
+    users.forEach(function(node){
+      visnodes.push({id: node.id, "label": node.firstName, "group": 2,"color":"#3C8DBC"});
     });
-    runFirstTime=false;
-  }
-  
-  
-  users.forEach(function(node){
-    visnodes.push({id: node.id, "label": node.firstName, "group": 2,"color":"#3C8DBC"});
-  });
-  
-  protocolusage.forEach(function(node){
-    visedges.push({"from": node.userId, "to": node.protocolId, label: 'uses', font: {align: 'middle'}});
-  });  
-  
-  protocolapproval.forEach(function(node){
-    visedges.push({"from": node.healthcenterId, "to": node.protocolId, label: 'endorses', font: {align: 'middle'}});
-  });  
-  
-  console.log(visnodes,visedges);
-  return {
-    "nodes":visnodes,
-    "edges":visedges
-  };
-  
+    
+    protocolusage.forEach(function(node){
+      visedges.push({"from": node.userId, "to": node.protocolId, label: 'uses', font: {align: 'middle'}});
+    });  
+    
+    protocolapproval.forEach(function(node){
+      visedges.push({"from": node.healthcenterId, "to": node.protocolId, label: 'endorses', font: {align: 'middle'}});
+    });  
+    
+    console.log(visnodes,visedges);
+    return {
+      "nodes":visnodes,
+      "edges":visedges
+    };
 };  
   
 
@@ -104,7 +106,8 @@ return {
     dataCalls.push(Protocol.find().$promise);
     dataCalls.push(User.find().$promise);
     dataCalls.push(ProtocolUsage.find().$promise);
-    dataCalls.push(ProtocolApproval.find());
+    dataCalls.push(ProtocolApproval.find().$promise);
+    dataCalls.push(User.getCurrent().$promise);
     
     
     $q.all(dataCalls).then(function(results) {
