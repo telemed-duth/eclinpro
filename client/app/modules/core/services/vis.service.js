@@ -16,7 +16,8 @@ var getData=function(results){
     var protocolusage=results[3];
     
     var getHealthcenter = function (pr) {
-      return healthcenters.filter(function(hc){ return pr.issuing_body === hc.general_name})[0];
+      var res = healthcenters.filter(function(hc){ return pr.issuing_body === hc.general_name})
+      return res.length>=0?res[0]:false;
     }
     var edgeExist = function(e){
       return visedges.filter(function(edge){return e.from===edge.from && e.to===edge.to}).length>0;
@@ -45,7 +46,8 @@ var getData=function(results){
       if(node.parentId) visedges.push({"from": node.parentId, "to": node.id, label: node.deviation, font: {align: 'middle'}});
       
       if(node.issuing_body.length>0){
-        visedges.push({"from": getHealthcenter(node).id, "to": node.id, label: "issues", font: {align: 'middle'}});
+        var hc = getHealthcenter(node);
+        if(hc) visedges.push({"from": hc.id, "to": node.id, label: "issues", font: {align: 'middle'}});
       }
         
     }
