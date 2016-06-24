@@ -74,7 +74,7 @@
             ]
         },
         "deviation": {
-            "type": "object"
+            "type": "string"
         }
     },
     "validations": [],

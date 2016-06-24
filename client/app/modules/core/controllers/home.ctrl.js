@@ -77,15 +77,15 @@ angular.module('com.module.core')
         draw(data);
     }
     
-    $scope.createDemoGraph=function(demonodes,demoedges){
-        $scope.loading=true;
-        var onArr=[];
-        var exclude=[];
-        console.log(demonodes,demoedges);
-        var data={'nodes':angular.fromJson(demonodes).data,'edges':angular.fromJson(demoedges).data};
+    // $scope.createDemoGraph=function(demonodes,demoedges){
+    //     $scope.loading=true;
+    //     var onArr=[];
+    //     var exclude=[];
+    //     console.log(demonodes,demoedges);
+    //     var data={'nodes':angular.fromJson(demonodes).data,'edges':angular.fromJson(demoedges).data};
         
-        draw(data);
-    }
+    //     draw(data);
+    // }
     
 // Network graph related
 
@@ -119,19 +119,19 @@ angular.module('com.module.core')
         
     };
       
-    var demonodes={
-        data:[
-        {id: 1, 'label': 'kati', 'group': 1,'color':'#F56954'},
-        {id: 2, 'label': 'kati allo', 'group': 2,'color':'#F39C12'},
-        {id: 3, 'label': 'kati diaforetiko', 'group': 3,'color':'#3C8DBC'}
-        ]
-    }
-    $scope.demonodes=angular.toJson(demonodes,true);
-    console.log(demonodes);
-    var demoedges={data:[ 
-        {'from': 1, 'to': 2, label: 'can endorse', font: {align: 'middle'},dashes:true} 
-        ]};
-    console.log(demoedges);
+    // var demonodes={
+    //     data:[
+    //     {id: 1, 'label': 'kati', 'group': 1,'color':'#F56954'},
+    //     {id: 2, 'label': 'kati allo', 'group': 2,'color':'#F39C12'},
+    //     {id: 3, 'label': 'kati diaforetiko', 'group': 3,'color':'#3C8DBC'}
+    //     ]
+    // }
+    // $scope.demonodes=angular.toJson(demonodes,true);
+    // console.log(demonodes);
+    // var demoedges={data:[ 
+    //     {'from': 1, 'to': 2, label: 'can endorse', font: {align: 'middle'},dashes:true} 
+    //     ]};
+    // console.log(demoedges);
 
-    $scope.demoedges=angular.toJson(demoedges,true);
+    // $scope.demoedges=angular.toJson(demoedges,true);
 });
