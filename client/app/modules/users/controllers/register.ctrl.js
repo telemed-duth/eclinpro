@@ -22,20 +22,7 @@ angular.module('com.module.users')
     $scope.schema = [{
         label: '',
         property: 'firstName',
-        placeholder: gettextCatalog.getString('First Name'),
-        type: 'text',
-        attr: {
-          ngMinlength: 4,
-          required: true
-        },
-        msgs: {
-          minlength: gettextCatalog.getString(
-            'Needs to have at least 4 characters')
-        }
-      }, {
-        label: '',
-        property: 'lastName',
-        placeholder: gettextCatalog.getString('Last Name'),
+        placeholder: gettextCatalog.getString('Healthcare Unit name'),
         type: 'text',
         attr: {
           ngMinlength: 4,
