@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);  
-  grunt.loadNpmTasks('grunt-plato');
+  // grunt.loadNpmTasks('grunt-plato');
 
 
   // Time how long tasks take. Can help when optimizing build times
@@ -62,17 +62,17 @@ module.exports = function (grunt) {
         }
       }
     },  
-    plato: {
-      all: {
-        options: {
-          excludeFromFile: '.jshintignore',
-          exclude: /\.min\.js$/
-        },
-        files: {
-          'client/app/report': ['./client/app/modules/**/*.js','./client/app/js/*.js']
-        }
-      }
-    },
+    // plato: {
+    //   all: {
+    //     options: {
+    //       excludeFromFile: '.jshintignore',
+    //       exclude: /\.min\.js$/
+    //     },
+    //     files: {
+    //       'client/app/report': ['./client/app/modules/**/*.js','./client/app/js/*.js']
+    //     }
+    //   }
+    // },
     watch: {
       bower: {
         files: ['bower.json'],
