@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - modules/core/directives/le-builder.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>modules/core/directives/le-builder.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">71.18</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">140</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">29.29</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.33</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
+
+/**
+ * @ngdoc directive
+ * @name com.module.core.directive:home
+ * @description
+ * # home
+ */
+angular.module(&#039;com.module.core&#039;)
+.directive(&#039;leBuilder&#039;, [&#039;$compile&#039;,&#039;Bioportal&#039;,&#039;$http&#039;, function ($compile,Bioportal,$http) {
+    return {
+        restrict: &#039;E&#039;,
+        scope: {
+            group: &#039;=&#039;
+        },
+        templateUrl: &#039;/queryBuilderDirective.html&#039;,
+        compile: function (element, attrs) {
+            var content, directive;
+            content = element.contents().remove();
+            return function (scope, element, attrs) {
+                scope.operators = [
+                    { name: &#039;AND&#039; },
+                    // { name: &#039;AND NOT&#039; },
+                    { name: &#039;OR&#039; }
+                    // { name: &#039;OR NOT&#039; }
+                ];
+
+                scope.field = {};
+
+                scope.unit = {};
+
+                scope.conditions = [
+                    { name: &#039;=&#039; },
+                    { name: &#039;≠&#039; ,value:&#039;!=&#039; },
+                    { name: &#039;~&#039; ,value:&#039;&amp;asymp;&#039;},
+                    { name: &#039;&lt;&#039;,value:&#039;&lt;&#039; },
+                    { name: &#039;≤&#039;,value:&#039;&lt;=&#039; },
+                    { name: &#039;&gt;&#039;,value:&#039;&gt;&#039; },
+                    { name: &#039;≥&#039;,value:&#039;&gt;=&#039; }
+                ];
+
+                scope.autocomplete = function(search,field,resultsArr) {
+                  if(search.length&gt;1){
+                scope.loading = true;
+                  Bioportal.autocomplete(search,field.templateOptions.bioportal)
+                  .then(function(res){
+                    scope.loading = false;
+                    var list=res.data.collection;
+                    if(list.length&lt;1) {
+                      list.push({
+                        cui:[Math.random()*1000,0],
+                        prefLabel:search
+                      });
+                    }    
+                    scope[resultsArr]=list.map(function(obj){
+                
+                        var id=obj[&#039;cui&#039;][0]; 
+                        var link=(obj[&#039;id&#039;]||obj[&#039;@id&#039;]); 
+                        return { 
+                          &quot;label&quot;: obj.prefLabel, 
+                          &quot;id&quot;: id,
+                          &quot;link&quot;:link
+                        };
+                    });
+                  },function(err){console.log(err);});
+                  }
+                };
+                
+                scope.autoUnits=function(check,selectedCondition,resultsArr,rule){
+                if(!check) {
+                    delete rule.condition;
+                    return;
+                }
+                var options={
+                    suggest:&#039;hide&#039;,
+                    semantic_types:&#039;T081&#039;,
+                    display_links:&#039;true&#039;
+                }
+                Bioportal.autocomplete(selectedCondition.label+&quot; unit&quot;,options)
+                  .then(function(res){
+                    var item=res.data.collection[0].links.descendants+&#039;?apikey=a15281a9-d87d-4c0f-b7aa-31debe0f6449&#039;;
+                        $http.get(item).then(function(res){
+                            
+                            scope[resultsArr]=res.data.collection.map(function(obj){
+                        
+                                var link=(obj[&#039;id&#039;]||obj[&#039;@id&#039;]); 
+                                var id=(obj[&#039;cui&#039;]?obj[&#039;cui&#039;][0]:link.substr(link.lastIndexOf(&#039;/&#039;),link.length-1)); 
+                                
+                                return { 
+                                  &quot;label&quot;: obj.prefLabel, 
+                                  &quot;id&quot;: id,
+                                  &quot;link&quot;:link
+                                };
+                            });
+                        },function(err){console.log(err);});
+                    
+                  },function(err){console.log(err);});
+                    // http://data.bioontology.org/search?q=blood%20pressure%20unit&amp;semantic_types=T081
+                    
+                }
+                
+                scope.addCondition = function () {
+                    scope.group.rules.push({
+                        condition: &#039;=&#039;,
+                        field: {
+                            selected:{label:&#039;&#039;}
+                        },
+                        unit: {
+                            selected:{label:&#039;&#039;}
+                        },
+                        data: &#039;&#039;
+                    });
+                };
+
+                scope.removeCondition = function (index) {
+                    scope.group.rules.splice(index, 1);
+                };
+
+                scope.addGroup = function () {
+                    scope.group.rules.push({
+                        group: {
+                            operator: &#039;AND&#039;,
+                            rules: []
+                        }
+                    });
+                };
+
+                scope.removeGroup = function () {
+                    &quot;group&quot; in scope.$parent &amp;&amp; scope.$parent.group.rules.splice(scope.$parent.$index, 1);
+                };
+
+                directive || (directive = $compile(content));
+
+                element.append(directive(scope, function ($compile) {
+                    return $compile;
+                }));
+            }
+        }
+    }
+}]);</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

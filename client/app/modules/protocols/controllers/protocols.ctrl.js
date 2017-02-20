@@ -1,7 +1,7 @@
 'use strict';
 angular.module('com.module.protocols')
   .controller('ProtocolsCtrl', function($http,$scope, $state, $stateParams, CoreService,
-    FormHelper, gettextCatalog, Protocol, ProtocolsService, $rootScope,Bioportal,$timeout,ProtocolUsage,LoopBackAuth,Exporter) {
+    FormHelper, gettextCatalog, Protocol, ProtocolsService, $rootScope,Bioportal,$timeout,ProtocolUsage,LoopBackAuth,Exporter,HealthcenterDATA) {
 
 
 $scope.user=LoopBackAuth.currentUserData;
@@ -26,7 +26,7 @@ $scope.exportToXML=function(protocol){
     delete protocol.initial_expression.label;
     delete protocol.ownerId;
     Exporter.toXML(angular.toJson(protocol),protocol.general_name);
-}
+};
 $scope.getFileExtension=function(file){ 
     var format='';
     var formatname=format=file.type.split('/')[1];
@@ -36,7 +36,7 @@ $scope.getFileExtension=function(file){
         // formatname=file.type;
     }
     return formatname;
-}
+};
 $scope.capFirst=function(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
 var propname=function(str){
   return $scope.capFirst(str.split(CategorySplitter)[1]||" ");
@@ -425,24 +425,45 @@ $scope.fetchHealthcenters=function(){
     // console.log(centers);
      if(centers.length>0) $scope.pcenters=centers;
      else  $scope.pcenters=[{
-        "name":"No Health units"
+        "name":"No Issuing bodies"
       }];
       
     },function(err){  
       console.log(err);
     });
 };
-
-
+$scope.deviation = {};
 $scope.onSubmit = function() {
+    
   if($stateParams.parentId){
       $scope.protocol.id=null;
       delete $scope.protocol['id'];
+    // fix deviation
+    switch ($scope.deviation.deviation_type) {
+        case 'other':
+            // code
+            $scope.protocol.deviation = $scope.deviation.deviation_other;
+            break;
+        
+        case 'translation':
+            // code
+            $scope.protocol.deviation = "translated to "+$scope.deviation.deviation_language;
+            break;
+        
+        default:
+            $scope.protocol.deviation = $scope.deviation.deviation_type;
+    }
       $scope.protocol.parentId=$stateParams.parentId;
-      Protocol.create($scope.protocol, function() {
+      Protocol.create($scope.protocol, function(data) {
       CoreService.toastSuccess(gettextCatalog.getString('Care Plan created'),
         gettextCatalog.getString('Your Care Plan is safe with us!'));
-        updateDashboard();
+        updateDashboard();       
+        
+        $scope.protocolUsage={
+            "userId":$scope.user.id,
+            "protocolId":data.id
+        };
+        $scope.toggleProtocolUsage();
 
       $state.go('app.protocols.list', {}, { reload: true });
       }, function(err) {
@@ -469,10 +490,15 @@ $scope.onSubmit = function() {
   
     if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
     if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
-      Protocol.create($scope.protocol, function() {
+      Protocol.create($scope.protocol, function(data) {
       CoreService.toastSuccess(gettextCatalog.getString('Care Plan created'),
         gettextCatalog.getString('Your Care Plan is safe with us!'));
         updateDashboard();
+        $scope.protocolUsage={
+            "userId":$scope.user.id,
+            "protocolId":data.id
+        };
+        $scope.toggleProtocolUsage();
       $state.go('app.protocols.list', {}, { reload: true });
       }, function(err) {
       console.log(err);
@@ -702,15 +728,18 @@ $scope.tabs =
     form: {
         options: {},
         model: $scope.protocol,
-        fields: [{
+        fields: [
+            {
             key: 'issuing_body',
-            type: 'input',
+            type: 'select',
             templateOptions: {
-                label: 'Issuing body',
-                placeholder: 'e.g NICE',
-                required: true
+                label: 'Issuing Body',
+                placeholder: 'e.g Nice..',
+                labelProp: 'label',
+                options: HealthcenterDATA.map(function(op){return {"label":op.general_name,"value":op.general_name||op.id} } )
             }
-        }]
+        }
+        ]
     }
 }, {
     title: 'Entry/Exit Points',
@@ -778,7 +807,7 @@ $scope.tabs =
     hide: !$stateParams.parentId,
     form: {
         options: {},
-        model: $scope.protocol.deviation,
+        model: $scope.deviation,
         fields: [
 
             {
@@ -796,9 +825,6 @@ $scope.tabs =
                     }, {
                         "name": "Update",
                         "value": "update"
-                    }, {
-                        "name": "Regulatory compliance",
-                        "value": "regulatory"
                     }, {
                         "name": "Other",
                         "value": "other"

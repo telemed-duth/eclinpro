@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - modules/protocols/controllers/protocols.ctrl.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>modules/protocols/controllers/protocols.ctrl.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">63.53</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">838</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">64.52</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">8.48</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
+angular.module(&#039;com.module.protocols&#039;)
+  .controller(&#039;ProtocolsCtrl&#039;, function($http,$scope, $state, $stateParams, CoreService,
+    FormHelper, gettextCatalog, Protocol, ProtocolsService, $rootScope,Bioportal,$timeout,ProtocolUsage,LoopBackAuth,Exporter) {
+
+
+$scope.user=LoopBackAuth.currentUserData;
+$scope.isadmin=$rootScope.isadmin;
+$scope.autocompleteResults=[];
+$scope.protocolUsage={};
+$scope.evidence={};
+$scope.evidence.exactPubMedSearch=true;
+
+var BioportalSplitter=&quot;.&quot;;
+var CategorySplitter=&quot;_&quot;;
+var SpaceSplitter=&quot;0&quot;;
+  
+//retrieve protocol model
+$scope.requiredProps=[];
+$scope.schemaProps={};
+$scope.formProps=[];
+
+
+  /*USEFUL HELPERS*/
+$scope.exportToXML=function(protocol){
+    delete protocol.initial_expression.label;
+    delete protocol.ownerId;
+    Exporter.toXML(angular.toJson(protocol),protocol.general_name);
+}
+$scope.getFileExtension=function(file){ 
+    var format=&#039;&#039;;
+    var formatname=format=file.type.split(&#039;/&#039;)[1];
+    if(format.lastIndexOf(&#039;.&#039;)&gt;0){
+        formatname=format.substring(format.lastIndexOf(&#039;.&#039;));
+    } else {
+        // formatname=file.type;
+    }
+    return formatname;
+}
+$scope.capFirst=function(str) { return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}); }
+var propname=function(str){
+  return $scope.capFirst(str.split(CategorySplitter)[1]||&quot; &quot;);
+};  
+var catname=function(str){
+  return $scope.capFirst(str.split(CategorySplitter)[0]||&quot; &quot;);
+};
+$scope.cName=catname;
+$scope.pName=propname;
+$scope.arrayNames=function(arr){
+  console.log(arr);
+  if(arr instanceof Array) return arr.map(function(val){
+    return bName(val);
+  }).join(&quot;, &quot;);
+  else return bName(arr);
+}
+
+
+//autocomplete fetch from bioportal
+$scope.bioportalAutocomplete = function(search,field) {
+  if(search.length&gt;2){
+    $scope.loading = true;
+  Bioportal.autocomplete(search,field.templateOptions.bioportal)
+  .then(function(res){
+    $scope.loading=false;
+    var list=res.data.collection;
+    if(list.length&lt;1) {
+      list.push({
+        cui:[Math.random()*1000,0],
+        prefLabel:search
+      });
+    }    
+    $scope.autocompleteResults=field.templateOptions.options=list.map(function(obj){
+
+        var id=obj[&#039;cui&#039;][0]; 
+        var link=(obj[&#039;id&#039;]||obj[&#039;@id&#039;]); 
+        return { 
+          &quot;label&quot;: obj.prefLabel, 
+          &quot;id&quot;: id,
+          &quot;link&quot;:link
+        };
+    });
+  },function(err){console.log(err);});
+  }
+};
+
+//autocomplete for pubmed
+$scope.searchPubmed = function(search) {
+  var newsearch=search;
+//   if($scope.evidence.exactPubMedSearch) newsearch=&#039;&quot;&#039;+search+&#039;&quot;&#039;;
+  if(search.length&gt;2){
+    $scope.loading = true;
+    return $http.jsonp(
+      &#039;http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=&quot;&#039;+newsearch
+      +&#039;&quot;&amp;resulttype=lite&amp;format=json&amp;callback=JSON_CALLBACK&#039;
+    ).then(function(response) {
+        
+        $scope.loading = false;
+      var list=response.data.resultList.result;
+      if(list.length&lt;1) {
+        list.push({
+          title:&quot;No results&quot;
+        });
+      }
+      $scope.pubmedResults = list;
+      });
+  }
+};
+//autocomplete for pubmed
+$scope.searchPubmed2 = function(search) {
+  var newsearch=search;
+  if($scope.evidence.exactPubMedSearch) newsearch=&#039;&quot;&#039;+search+&#039;&quot;&#039;;
+  if(search.length&gt;4){
+    $scope.loading = true;
+    var pubmed_ids=[];
+    return $http.get(&#039;http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&amp;term=&#039;+newsearch+&#039;&amp;reldate=60&amp;datetype=edat&amp;retmax=20&amp;retmode=json&#039;).then(function(res){
+        pubmed_ids=res.data.esearchresult.idlist;
+    })
+    .then(function(){
+        $http.get(&#039;http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&amp;retmode=json&amp;rettype=abstract&amp;id=&#039;+pubmed_ids.join(&#039;,&#039;))
+        .then(function(response) {
+            
+        $scope.loading = false;
+        var resobj=response.data.result;
+      var listKeys=resobj.uids;
+      var list=[];
+      for (var i = 0; i &lt; listKeys.length; i++) {
+          
+          list.push({
+              &quot;title&quot;:resobj[listKeys[i]][&quot;title&quot;],
+              &quot;pmid&quot;:resobj[listKeys[i]][&quot;uid&quot;],
+              &quot;authorString&quot;:resobj[listKeys[i]][&quot;authors&quot;].map(function(author){
+                  return author.name;
+              }).join(&#039;,&#039;),
+              &quot;pubYear&quot;:resobj[listKeys[i]][&quot;pubdate&quot;].split(&#039; &#039;)[0],
+          });
+
+        //   &quot;uid&quot;: &quot;26458231&quot;,
+        //     &quot;pubdate&quot;: &quot;2015 Oct 12&quot;,
+        //     &quot;epubdate&quot;: &quot;2015 Oct 12&quot;,
+        //     &quot;source&quot;: &quot;J Radiol Prot&quot;,
+        //     &quot;authors&quot;: [
+        //         {
+        //             &quot;name&quot;: &quot;Shimada K&quot;,
+        //             &quot;authtype&quot;: &quot;Author&quot;,
+        //             &quot;clusterid&quot;: &quot;&quot;
+        //         },
+        //         {
+        //             &quot;name&quot;: &quot;Kai M&quot;,
+        //             &quot;authtype&quot;: &quot;Author&quot;,
+        //             &quot;clusterid&quot;: &quot;&quot;
+        //         }
+        //     ],
+        //     &quot;lastauthor&quot;: &quot;Kai M&quot;,
+        //     &quot;title&quot;: &quot;Calculating disability-adjusted life years (DALY) as a measure of excess cancer risk following radiation exposure.&quot;,
+        
+        //      &quot;id&quot;:&quot;26031779&quot;,
+        //     &quot;source&quot;:&quot;MED&quot;,
+        //     &quot;pmid&quot;:&quot;26031779&quot;,
+        //     &quot;title&quot;:&quot;EGF-Induced Connexin43 Negatively Regulates Cell Proliferation in Human Ovarian Cancer.&quot;,
+        //     &quot;authorString&quot;:&quot;Qiu X, Cheng JC, Klausen C, Chang HM, Fan Q, Leung PC.&quot;,
+        //     &quot;journalTitle&quot;:&quot;J Cell Physiol&quot;,
+        //     &quot;issue&quot;:&quot;1&quot;,
+        //     &quot;journalVolume&quot;:&quot;231&quot;,
+        //     &quot;pubYear&quot;:&quot;2016&quot;,
+        //     &quot;journalIssn&quot;:&quot;0021-9541&quot;,
+        //     &quot;pageInfo&quot;:&quot;111-119&quot;,
+        //     &quot;pubType&quot;:&quot;journal article&quot;,
+        //     &quot;inEPMC&quot;:&quot;N&quot;,
+        //     &quot;inPMC&quot;:&quot;N&quot;,
+        //     &quot;citedByCount&quot;:0,
+        //     &quot;hasReferences&quot;:&quot;N&quot;,
+        //     &quot;hasTextMinedTerms&quot;:&quot;N&quot;,
+        //     &quot;hasDbCrossReferences&quot;:&quot;N&quot;,
+        //     &quot;hasLabsLinks&quot;:&quot;N&quot;,
+        //     &quot;hasTMAccessionNumbers&quot;:&quot;N&quot;,
+        //     &quot;luceneScore&quot;:&quot;4438.0483&quot;,
+        //     &quot;hasBook&quot;:&quot;N&quot;,
+        //     &quot;doi&quot;:&quot;10.1002/jcp.25058&quot;
+        //  },
+         
+
+      }
+      if(list.length&lt;1) {
+        list.push({
+          title:&quot;No results&quot;
+        });
+      }
+        $scope.pubmedResults = list;
+      });
+    });
+        
+    
+    
+  }
+};
+
+/*OUTCOMES*/
+$scope.outcome={};
+$scope.outcome.types=[&quot;primary&quot;,&quot;secondary&quot;,&quot;other&quot;];
+$scope.addOutcome=function(item,model){
+  if(!$scope.protocol.outcomes) $scope.protocol.outcomes=[];
+  var itemExist=false;
+  for (var i=0,l=$scope.protocol.outcomes.length;i&lt;l;i++){
+    if(item.id===$scope.protocol.outcomes[i].id) {
+      itemExist=true;
+      break;
+    }
+  }
+  if(!itemExist){
+    item.type=&quot;&quot;+$scope.outcome.selectedType;
+    $scope.protocol.outcomes.push(item);
+  }
+};
+$scope.removeOutcome=function(index){
+  $scope.protocol.outcomes.splice(index,1);
+};
+
+/*Evidence*/
+$scope.addPubmedArticle=function(item,model){
+  $scope.pubmedResults=[];
+  if(!$scope.protocol.evidences) $scope.protocol.evidences=[];
+  var itemExist=false;
+  item.pmid=item.pmid||item.id;
+  if(!item.pmid) return false;
+  for (var i=0,l=$scope.protocol.evidences.length;i&lt;l;i++){
+    if(item.pmid===$scope.protocol.evidences[i].pmid) {
+      itemExist=true;
+      break;
+    }
+  }
+  if(!itemExist){
+    $scope.protocol.evidences.push({
+      &quot;title&quot;:item.title,
+      &quot;pmid&quot;:item.pmid,
+      &quot;authorString&quot;:item.authorString,
+      &quot;pubYear&quot;:item.pubYear
+    });
+  }
+};
+$scope.removePubmedArticle=function(index){
+  $scope.protocol.evidences.splice(index,1);
+};
+
+
+var findParent=function(parentId){
+    Protocol.findById({
+        id: parentId
+    }, function(protocol) {
+        $scope.protocolParent=protocol;
+    });
+};
+
+
+
+
+/*Logical expression builder */
+
+function repeat(pattern, count) {
+    if (count &lt; 1) return &#039;&#039;;
+    var result = &#039;&#039;;
+    while (count &gt; 1) {
+        if (count &amp; 1) result += pattern;
+        count &gt;&gt;= 1, pattern += pattern;
+    }
+    return result + pattern;
+}
+
+function htmlEntities(str) {
+    return String(str).replace(/&lt;/g, &#039;&amp;lt;&#039;).replace(/&gt;/g, &#039;&amp;gt;&#039;);
+}
+function groupExist(rules){
+    for (var obj in rules) {
+        if(obj===&#039;group&#039;) return true;
+    }
+    return false;
+}
+
+function computed(group,nested,next,parent) {
+    nested++;
+    if (!group) return &quot;&quot;;
+    if (!parent) parent=group;
+    for (var str = &quot;&quot;, i = 0; i &lt; group.rules.length; i++) {
+        i &gt; 0 &amp;&amp; (str += &quot; &quot;);
+        str += 
+            group.rules[i].group ?&quot; &quot;+//&lt;br&gt; &quot;+repeat(&#039;&amp;nbsp;&#039;,nested*8)+
+                (group.rules[i].group.rules.length&gt;1?&quot;( &quot;:&quot;&quot;) +
+                
+                computed(group.rules[i].group,nested,group.rules[i+1],group)+
+                // (parent.rules[parent.rules.length-1].group?&quot;&quot;:&quot;&lt;br&gt;&quot;+repeat(&#039;&amp;nbsp;&#039;,nested*8))+ 
+                
+                (group.rules[i].group.rules.length&gt;1?&quot;) &quot;:&quot;&quot;) +
+                (group.rules[i+1]?&quot; &lt;span class=&#039;le-builder group-operator&#039;&gt;&quot; + group.operator + &quot;&lt;/span&gt; &quot;:&quot;&quot;)
+            :
+            (group.rules[i].hasNegation?&quot; &lt;span class=&#039;le-builder not-operator&#039;&gt;NOT&lt;/span&gt; &quot;:&quot;&quot;)+
+            &quot;&lt;a href=&#039;&quot;+group.rules[i].field.selected.link+&quot;&#039; target=&#039;_blank&#039;&gt;&quot;+
+            group.rules[i].field.selected.label + 
+            &quot;&lt;/a&gt;&quot;+
+            (group.rules[i].hasValue?
+            &quot; &lt;span class=&#039;le-operator label label-primary&#039;&gt;&quot;+
+            htmlEntities(group.rules[i].condition) + &quot;&lt;/span&gt; &quot; + 
+            group.rules[i].data+
+            &quot; &lt;a href=&#039;&quot;+group.rules[i].unit.selected.link+&quot;&#039; target=&#039;_blank&#039;&gt;&quot;+
+            group.rules[i].unit.selected.label + 
+            &quot;&lt;/a&gt;&quot;
+            :&quot;&quot;)+
+            (i!==(group.rules.length-1)?&quot; &lt;span class=&#039;le-builder group-operator&#039;&gt;&quot; + group.operator + &quot;&lt;/span&gt;&quot;:&quot;&quot;);
+    }
+
+    return str;
+}
+
+$scope.$watch(&#039;filter&#039;, function (newValue) {
+    // console.log(newValue);
+    $scope.protocol.initial_expression.data = newValue;
+    $scope.protocol.initial_expression.label=$scope.output = computed(newValue.group,0,{});
+}, true);
+
+
+
+/*CHECK FOR PROTOCOL ID or EDIT/VIEW/LIST*/
+
+var protocolId=$stateParams.id||$stateParams.parentId||&#039;&#039;;
+if ( protocolId.length===24 ) {
+  
+  // console.log(&quot;there is a protocol id&quot;);
+  Protocol.findById({
+    id: protocolId
+  }, function(protocol) {
+    // console.log(protocol);
+    $scope.protocol = protocol;
+    if(protocol.parentId) findParent(protocol.parentId);
+    //initial conditions load
+    if(!$scope.protocol.initial_expression) $scope.protocol.initial_expression={};
+    $scope.filter = $scope.protocol.initial_expression.data || {&quot;group&quot;: {&quot;operator&quot;: &quot;AND&quot;,&quot;rules&quot;: []}};
+
+    $scope.fetchUsage();
+    $scope.fetchHealthcenters();
+    loadForm();
+    
+  }, function(err) {
+    $state.go(&#039;app.protocols.list&#039;);
+    console.log(err);
+  });
+  
+} else {
+    $scope.filter ={&quot;group&quot;: {&quot;operator&quot;: &quot;AND&quot;,&quot;rules&quot;: []}};
+  $scope.protocol = {initial_expression:{}};
+  loadForm();
+}
+
+
+/*logic functions*/
+
+$scope.toggleProtocolUsage=function(){
+  console.log($scope.protocolUsage);
+  if(!$scope.protocolUsage.id){
+      ProtocolUsage.create($scope.protocolUsage, function(res) {
+      $scope.protocolUsage=res;
+      updateDashboard();
+      $scope.fetchUsage();
+      CoreService.toastSuccess(gettextCatalog.getString(&#039;Care Plan usage&#039;),
+          gettextCatalog.getString(&#039;You are now using this Care Plan.&#039;));
+          
+      });
+    } else {
+      ProtocolUsage.deleteById({&quot;id&quot;:$scope.protocolUsage.id}, function(res) {
+      updateDashboard();
+      $scope.fetchUsage();
+      CoreService.toastWarning(gettextCatalog.getString(&#039;Care Plan usage stopped&#039;),
+          gettextCatalog.getString(&#039;You have stopped using this Care Plan.&#039;));
+      });   
+
+    }
+}
+
+$scope.delete = function(id) {
+  ProtocolsService.deleteProtocol(id, function() {
+    updateDashboard();
+    $state.go(&#039;app.protocols.list&#039;, {}, { reload: true });
+  });
+};
+
+
+$scope.fetchUsage=function(){
+  var query={
+        filter: {
+          where:  {
+            &quot;userId&quot;: $scope.user.id,
+            &quot;protocolId&quot;: $scope.protocol.id
+          }
+        }
+      };
+      
+   ProtocolUsage.find(query,function(usages) {
+     
+    $scope.fetchUsers();
+     if(usages.length&gt;0) {
+        $scope.protocolUsage=usages[0];
+     } else {
+       $scope.protocolUsage={
+        &quot;userId&quot;:$scope.user.id,
+        &quot;protocolId&quot;:$scope.protocol.id
+      };
+     }
+    },function(err){  
+     console.log(err);
+    });
+  
+};
+
+
+$scope.fetchUsers=function(){
+   Protocol.usedBy({id:$scope.protocol.id},function(users) {
+       if(users.length&gt;0) $scope.pusers=users;
+       else $scope.pusers=[{
+        &quot;firstName&quot;:&quot;Nobody&quot;
+      }];
+    },function(err){  
+      console.log(err);
+    });
+};
+
+$scope.fetchHealthcenters=function(){
+   Protocol.healthcenters({id:$scope.protocol.id},function(centers) {
+    // console.log(centers);
+     if(centers.length&gt;0) $scope.pcenters=centers;
+     else  $scope.pcenters=[{
+        &quot;name&quot;:&quot;No Issuing bodies&quot;
+      }];
+      
+    },function(err){  
+      console.log(err);
+    });
+};
+
+
+$scope.onSubmit = function() {
+  if($stateParams.parentId){
+      $scope.protocol.id=null;
+      delete $scope.protocol[&#039;id&#039;];
+      $scope.protocol.parentId=$stateParams.parentId;
+      Protocol.create($scope.protocol, function() {
+      CoreService.toastSuccess(gettextCatalog.getString(&#039;Care Plan created&#039;),
+        gettextCatalog.getString(&#039;Your Care Plan is safe with us!&#039;));
+        updateDashboard();
+
+      $state.go(&#039;app.protocols.list&#039;, {}, { reload: true });
+      }, function(err) {
+      console.log(err);
+      });
+  
+  } else {
+
+    if($scope.protocol.id){
+        if(!$scope.protocol.parentId){
+            if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
+            if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
+        }
+    Protocol.upsert($scope.protocol, function() {
+      CoreService.toastSuccess(gettextCatalog.getString(&#039;Care Plan saved&#039;),
+        gettextCatalog.getString(&#039;Your Care Plan is safe with us!&#039;));
+        updateDashboard();
+
+      $state.go(&#039;app.protocols.list&#039;, {}, { reload: true });
+    }, function(err) {
+      console.log(err);
+    });
+    } else {
+  
+    if($scope.protocol.divergion_type) $scope.protocol.divergion_type=null;
+    if($scope.protocol.divergion_other) $scope.protocol.divergion_other=null;
+      Protocol.create($scope.protocol, function() {
+      CoreService.toastSuccess(gettextCatalog.getString(&#039;Care Plan created&#039;),
+        gettextCatalog.getString(&#039;Your Care Plan is safe with us!&#039;));
+        updateDashboard();
+      $state.go(&#039;app.protocols.list&#039;, {}, { reload: true });
+      }, function(err) {
+      console.log(err);
+      });
+    }
+  }
+
+};
+
+function updateDashboard(){
+  Protocol.find(function(prs){
+    $rootScope.updateDashboardBox(prs.length,&#039;allprotocols&#039;);
+    $rootScope.updateDashboardBox($rootScope.countOwn(prs,$scope.user.id),&#039;ownprotocols&#039;);
+  });
+  ProtocolUsage.count({
+    where:{
+        &quot;userId&quot;:$scope.user.id
+      }
+  },function(num){
+    $rootScope.updateDashboardBox(num.count,&#039;usedprotocols&#039;);
+  });
+};
+
+
+
+function loadForm(){
+
+$scope.tabs = 
+[{
+    title: &#039;General&#039;,
+    active: true,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [
+        {
+            key: &#039;general_name&#039;,
+            type: &#039;input&#039;,
+            templateOptions: {
+                label: &#039;Care Plan title&#039;,
+                placeholder: &#039;Care Plan title..&#039;,
+                required: true
+            }
+        }, {
+            key: &#039;general_desc&#039;,
+            type: &#039;textarea&#039;,
+            templateOptions: {
+                label: &#039;Description&#039;,
+                placeholder: &#039;Description..&#039;,
+                required: false
+            }
+        },{
+            &quot;key&quot;: &quot;general_gender&quot;,
+            &quot;type&quot;: &quot;select&quot;,
+            &quot;defaultValue&quot;: &quot;protocol&quot;,
+            &quot;templateOptions&quot;: {
+                &quot;label&quot;: &quot;Genre&quot;,
+                &quot;options&quot;: [{
+                    &quot;name&quot;: &quot;Clinical Protocol&quot;,
+                    &quot;value&quot;: &quot;protocol&quot;
+                }, {
+                    &quot;name&quot;: &quot;Clinical Guideline&quot;,
+                    &quot;value&quot;: &quot;guideline&quot;
+                }, {
+                    &quot;name&quot;: &quot;Clinical Pathway&quot;,
+                    &quot;value&quot;: &quot;pathway&quot;
+                }, {
+                    &quot;name&quot;: &quot;Other&quot;,
+                    &quot;value&quot;: &quot;other&quot;
+                }]
+            }
+        },{
+            &quot;key&quot;: &quot;general_type&quot;,
+            &quot;type&quot;: &quot;select&quot;,
+            &quot;defaultValue&quot;: &#039;diagnostic&#039;,
+            &quot;templateOptions&quot;: {
+                &quot;label&quot;: &quot;Type&quot;,
+                &quot;options&quot;: [{
+                    &quot;name&quot;: &quot;Diagnostic&quot;,
+                    &quot;value&quot;: &quot;diagnostic&quot;
+                }, {
+                    &quot;name&quot;: &quot;Treatment&quot;,
+                    &quot;value&quot;: &quot;treatment&quot;
+                }, {
+                    &quot;name&quot;: &quot;Management&quot;,
+                    &quot;value&quot;: &quot;management&quot;
+                }, {
+                    &quot;name&quot;: &quot;Preventive&quot;,
+                    &quot;value&quot;: &quot;preventive&quot;
+                }]
+            }
+        },{
+            key: &#039;general_conditions&#039;,
+            type: &#039;async-ui-select-multiple&#039;,
+            templateOptions: {
+                label: &#039;Related Health issues&#039;,
+                placeholder: &#039;e.g cardiomyopathy..&#039;,
+                bioportal: {
+                },
+                labelProp: &#039;label&#039;,
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }
+        // ,{
+        //     &quot;key&quot;: &quot;general_status&quot;,
+        //     &quot;type&quot;: &quot;select&quot;,
+        //     &quot;defaultValue&quot;: &quot;current&quot;,
+        //     &quot;templateOptions&quot;: {
+        //         &quot;label&quot;: &quot;Status&quot;,
+        //         &quot;options&quot;: [{
+        //             &quot;name&quot;: &quot;Current&quot;,
+        //             &quot;value&quot;: &quot;current&quot;
+        //         }, {
+        //             &quot;name&quot;: &quot;Outdated&quot;,
+        //             &quot;value&quot;: &quot;outdated&quot;
+        //         }, {
+        //             &quot;name&quot;: &quot;Expired&quot;,
+        //             &quot;value&quot;: &quot;expired&quot;
+        //         }]
+        //     }
+        // }
+        ]
+    }
+}, {
+    title: &#039;Source&#039;,
+    active: false,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            type: &#039;repeatSection&#039;,
+            key: &#039;technical_sources&#039;,
+            templateOptions: {
+                btnText: &#039;Add new source&#039;,
+                fields: [{
+                        className: &#039;&#039;,
+                        fieldGroup: [{
+                            &quot;className&quot;: &quot;col-xs-4&quot;,
+                            &quot;key&quot;: &quot;technical_type&quot;,
+                            &quot;type&quot;: &quot;select&quot;,
+                            &quot;defaultValue&quot;: &quot;url&quot;,
+                            &quot;templateOptions&quot;: {
+                                &quot;label&quot;: &quot;Type&quot;,
+                                &quot;options&quot;: [{
+                                    &quot;name&quot;: &quot;File&quot;,
+                                    &quot;value&quot;: &quot;file&quot;
+                                }, {
+                                    &quot;name&quot;: &quot;Url&quot;,
+                                    &quot;value&quot;: &quot;url&quot;
+                                }]
+                            }
+                        }, {
+                            &quot;className&quot;: &quot;col-xs-4&quot;,
+                            key: &#039;technical_institute&#039;,
+                            type: &#039;input&#039;,
+                            templateOptions: {
+                                label: &#039;Institute&#039;,
+                                placeholder: &#039;Institute&#039;,
+                                required: false
+                            }
+                        }, {
+                            &quot;className&quot;: &quot;col-xs-4&quot;,
+                            &quot;key&quot;: &quot;technical_license_type&quot;,
+                            &quot;type&quot;: &quot;select&quot;,
+                            &quot;defaultValue&quot;: &quot;http://purl.org/meducator/licenses#Attribution-Share-Alike&quot;,
+                            &quot;templateOptions&quot;: {
+                                &quot;label&quot;: &quot;License&quot;,
+                                &quot;options&quot;: [{
+                                    &quot;name&quot;: &quot;Attribution&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution&quot;
+                                },{
+                                    &quot;name&quot;: &quot;Attribution Share Alike&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution-Share-Alike&quot;
+                                },{
+                                    &quot;name&quot;: &quot;Attribution No Derivatives&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution-No-Derivatives&quot;
+                                },{
+                                    &quot;name&quot;: &quot;Attribution Non Commercial&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution-Non-Commercial&quot;
+                                },{
+                                    &quot;name&quot;: &quot;Attribution Non Commercial Share Alike&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution-Non-Commercial-Share-Alike&quot;
+                                },{
+                                    &quot;name&quot;: &quot;Attribution Non Commercial No Derivatives&quot;,
+                                    &quot;value&quot;: &quot;http://purl.org/meducator/licenses#Attribution-Non-Commercial-No-Derivatives&quot;
+                                }
+                                ]
+                            }
+                        }
+                        ]
+                    }, 
+                    {
+                        className: &#039;&#039;,
+                        fieldGroup: [
+            
+                    {
+                      &quot;className&quot;: &quot;col-xs-12&quot;,
+                        key: &#039;technical_file&#039;,
+                        type: &#039;fileUpload&#039;,
+                        templateOptions: {
+                            label: &#039;File upload&#039;
+                        },
+                        hideExpression: &#039;model.technical_type===&quot;url&quot;&#039;
+                    }, {
+                     &quot;className&quot;: &quot;col-xs-12&quot;,
+                        key: &#039;technical_url&#039;,
+                        type: &#039;input&#039;,
+                        templateOptions: {
+                            label: &#039;URL source&#039;,
+                            placeholder: &#039;e.g www.google.com or http://www.google.com&#039;
+                        },
+                        hideExpression: &#039;model.technical_type!==&quot;url&quot;&#039;
+                    }
+                    ]
+                  }
+
+                ]
+            }
+        }]
+    }
+}, {
+    title: &#039;Evidence references&#039;,
+    active: false,
+    evidence: true,
+    form: {
+        options: {},
+        model: $scope.protocol,
+        fields: [{
+            key: &#039;issuing_body&#039;,
+            type: &#039;input&#039;,
+            templateOptions: {
+                label: &#039;Issuing body&#039;,
+                placeholder: &#039;e.g NICE&#039;,
+                required: true
+            }
+        }]
+    }
+}, {
+    title: &#039;Entry/Exit Points&#039;,
+    active: false,
+    outcome: true,
+    initial_conditions:true
+}, {
+    title: &#039;Required resources&#039;,
+    onselect: function() {
+        $timeout(function() {
+            $scope.$broadcast(&#039;ResourcesTabSelected&#039;);
+        }, 100)
+    },
+    form: {
+        options: {},
+        model: $scope.protocol,
+        active: false,
+        fields: [{
+            key: &#039;resources_human&#039;,
+            type: &#039;async-ui-select-multiple&#039;,
+            templateOptions: {
+                label: &#039;Required Staff&#039;,
+                placeholder: &#039;e.g Cardiologist..&#039;,
+                bioportal: {
+                    semantic_types: &#039;T090,T097&#039;
+                },
+                labelProp: &#039;label&#039;,
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: &#039;resources_infastructure&#039;,
+            type: &#039;async-ui-select-multiple&#039;,
+            templateOptions: {
+                label: &#039;Special equipment required&#039;,
+                placeholder: &#039;e.g magnetic tomography scanner..&#039;,
+                bioportal: {
+                    semantic_types: &#039;T074,T073&#039;
+                },
+                labelProp: &#039;label&#039;,
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }, {
+            key: &#039;resources_pharmaceutical&#039;,
+            type: &#039;async-ui-select-multiple&#039;,
+            templateOptions: {
+                label: &#039;Special drug requirements&#039;,
+                placeholder: &#039;e.g Erythromycin..&#039;,
+                bioportal: {
+                    semantic_types: &#039;T200&#039;
+                },
+                labelProp: &#039;label&#039;,
+                options: [],
+                refresh: $scope.bioportalAutocomplete,
+                refreshDelay: 0
+            }
+        }]
+    }
+}, {
+    title: &#039;Deviation&#039;,
+    active: false,
+    hide: !$stateParams.parentId,
+    form: {
+        options: {},
+        model: $scope.protocol.deviation,
+        fields: [
+
+            {
+                &quot;key&quot;: &quot;deviation_type&quot;,
+                &quot;type&quot;: &quot;select&quot;,
+                &quot;defaultValue&quot;:&quot;update&quot;,
+                &quot;templateOptions&quot;: {
+                    &quot;label&quot;: &quot;Type&quot;,
+                    &quot;options&quot;: [{
+                        &quot;name&quot;: &quot;Translation&quot;,
+                        &quot;value&quot;: &quot;translation&quot;
+                    }, {
+                        &quot;name&quot;: &quot;Variation&quot;,
+                        &quot;value&quot;: &quot;variation&quot;
+                    }, {
+                        &quot;name&quot;: &quot;Update&quot;,
+                        &quot;value&quot;: &quot;update&quot;
+                    }, {
+                        &quot;name&quot;: &quot;Regulatory compliance&quot;,
+                        &quot;value&quot;: &quot;regulatory&quot;
+                    }, {
+                        &quot;name&quot;: &quot;Other&quot;,
+                        &quot;value&quot;: &quot;other&quot;
+                    }]
+                }
+            }, {
+                key: &#039;deviation_other&#039;,
+                type: &#039;input&#039;,
+                templateOptions: {
+                    label: &#039;Reason of deviation&#039;,
+                    placeholder: &#039;Reason&#039;
+                },
+                hideExpression:&quot;model.deviation_type!==&#039;other&#039;&quot;
+            },{
+                key: &#039;deviation_language&#039;,
+                type: &#039;input&#039;,
+                templateOptions: {
+                    label: &#039;Language&#039;,
+                    placeholder: &#039;e.g Greek&#039;
+                },
+                hideExpression:&quot;model.deviation_type!==&#039;translation&#039;&quot;
+            },
+        ]
+    }
+}];
+
+
+};
+
+
+
+
+
+
+
+
+});
+//end of controller  
+     
+   //SUPER SEARCH FILTERS!!!
+   
+  // $scope.availableSearchParams=[];
+  // var obj={};
+  // for (var key in $scope.schemaProps) {
+  //   obj=$scope.schemaProps[key];
+  //   if(
+  //     obj.type===&quot;string&quot; &amp;&amp;
+  //     key!==&quot;release_url&quot; &amp;&amp;
+  //     key!==&quot;release_version&quot; &amp;&amp;
+  //     key!==&quot;release_date&quot; &amp;&amp;
+  //     key!==&quot;evidence_url&quot; &amp;&amp;
+  //     key!==&quot;evidence_date&quot;
+  //   ) {
+  //     // console.log(key+&quot; is inserted to filters&quot;);
+  //     $scope.availableSearchParams.push({&quot;key&quot;:key,&quot;name&quot;:catname(key)+&quot; &quot;+propname(key), &quot;placeholder&quot;: propname(key)+&quot;...&quot;});
+  //   }
+  //   }
+
+  //   // console.log(JSON.stringify($scope.schema));
+  //   // console.log(JSON.stringify($scope.form));
+  //   console.log($scope.schema);
+  //   console.log($scope.form);
+  // });</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

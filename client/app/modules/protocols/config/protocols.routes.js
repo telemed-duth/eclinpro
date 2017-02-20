@@ -7,7 +7,12 @@ app.config(function($stateProvider) {
     abstract: true,
     url: '/protocols',
     templateUrl: 'modules/protocols/views/main.html',
-    controller: 'ProtocolsCtrl',
+    controller: 'ProtocolsCtrl',    
+    resolve: {
+      HealthcenterDATA: ['HealthcentersService', function(HealthcentersService) {
+        return HealthcentersService.getHealthcenters();
+      }]
+    }
   }).state('app.protocols.list', {
     url: '',
     params: {

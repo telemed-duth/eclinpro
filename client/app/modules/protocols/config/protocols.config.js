@@ -15,7 +15,6 @@ angular.module('com.module.protocols')
           "userId":userId
         }
     },function(num){
-      console.log(num);
         $rootScope.addDashboardBox('Care Plans I use','bg-blue', 'ion ion-document-text', num.count, 'app.protocols.list({filtered:\'used\'})','usedprotocols');
     });
 

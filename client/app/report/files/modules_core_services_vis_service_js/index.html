@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - modules/core/services/vis.service.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>modules/core/services/vis.service.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">64.20</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">125</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">31.90</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.42</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
+var app = angular.module(&#039;com.module.core&#039;);
+
+app.service(&#039;Vis&#039;, function($q, $http, ENV,Protocol,ProtocolUsage,ProtocolApproval,User,Healthcenter,$rootScope) {
+function objExist(obj, list,prop) {
+    var i;
+    for (i = 0; i &lt; list.length; i++) {
+        if (list[i][prop] === obj[prop]) {
+          // console.log(obj[prop],&#039; match with &#039;,list[i][prop]);
+          return true;
+        }
+    }
+    return false;
+}
+var matchArray=function(a,b,prop){
+  //returns true if all elements of array a exist on array b
+  //if prop assume is object array and match on property 
+  var l=a.length;
+  if(l&lt;1) return true;
+  for( var i = 0; i &lt; l; i++ ) {
+    if(prop) {
+      if(b instanceof Array &amp;&amp;!objExist(a[i],b,prop)) {
+        // console.log(&#039;obj not exist&#039;);
+        return false;
+      }
+    } else {
+      if(b.indexOf(a[i]) === -1) return false;
+      // console.log(a[i],&#039; exists&#039;);
+    }
+  }
+  // console.log(a,&#039; match with &#039;,b);
+  return true;
+};
+var matchProtocol=function(pr,hc,propArray){
+  if(!propArray) propArray=[&quot;resources_human&quot;,&quot;resources_infastructure&quot;,&quot;resources_pharmaceutical&quot;];
+  for( var i = 0, l = propArray.length ; i &lt; l; i++ ) {
+    var prop=propArray[i];
+    //debug
+    // console.log(&#039;Protocol: &#039;,pr.general_name,pr[prop],
+    // &#039;with Hospital: &#039;,hc.general_name,hc[prop],
+    // &#039;on &#039;+prop, matchArray(pr[prop],hc[prop],&#039;id&#039;));
+    
+    if(!matchArray(pr[prop]||[],hc[prop]||[],&#039;id&#039;)) {
+      return false;
+    }
+  }
+  // console.log(pr.general_name,&#039;match with &#039;,hc.general_name);
+  return true;
+};
+
+var getData=function(results){
+  // console.debug()
+    
+    if(results[5].username===&#039;user&#039;) return window.demoGraphData;
+  
+    var visnodes=[];
+    var visedges=[];
+    var healthcenters=results[0];
+    var protocols=results[1];
+    var users=results[2];
+    var protocolusage=results[3];
+    var protocolapproval=results[4];
+    var runFirstTime=true;
+    
+    for (var i = 0; i &lt; protocols.length; i++) {
+      var node=node=protocols[i];
+      visnodes.push({id: node.id, &quot;label&quot;: node.general_name, &quot;group&quot;: 1,&quot;color&quot;:&quot;#F39C12&quot;});
+      if(node.parentId) visedges.push({&quot;from&quot;: node.parentId, &quot;to&quot;: node.id, label: node.divergion_type, font: {align: &#039;middle&#039;}});
+        
+        
+      healthcenters.forEach(function(hc){
+        if(runFirstTime) visnodes.push({id: hc.id, &quot;label&quot;: hc.general_name, &quot;group&quot;: 3,&quot;color&quot;:&quot;#F56954&quot;});
+        if(matchProtocol(node,hc)){
+          visedges.push({&quot;from&quot;: hc.id, &quot;to&quot;: node.id, label: &quot;can endorse&quot;, font: {align: &#039;middle&#039;},dashes:true});
+        }
+      });
+      runFirstTime=false;
+    }
+    
+    
+    users.forEach(function(node){
+      visnodes.push({id: node.id, &quot;label&quot;: node.firstName, &quot;group&quot;: 2,&quot;color&quot;:&quot;#3C8DBC&quot;});
+    });
+    
+    protocolusage.forEach(function(node){
+      visedges.push({&quot;from&quot;: node.userId, &quot;to&quot;: node.protocolId, label: &#039;uses&#039;, font: {align: &#039;middle&#039;}});
+    });  
+    
+    protocolapproval.forEach(function(node){
+      visedges.push({&quot;from&quot;: node.healthcenterId, &quot;to&quot;: node.protocolId, label: &#039;endorses&#039;, font: {align: &#039;middle&#039;}});
+    });  
+    
+    console.log(visnodes,visedges);
+    return {
+      &quot;nodes&quot;:visnodes,
+      &quot;edges&quot;:visedges
+    };
+};  
+  
+
+return {
+  data: function() {
+    var deferred = $q.defer();
+    var dataCalls = [];
+    dataCalls.push(Healthcenter.find().$promise);
+    dataCalls.push(Protocol.find().$promise);
+    dataCalls.push(User.find().$promise);
+    dataCalls.push(ProtocolUsage.find().$promise);
+    dataCalls.push(ProtocolApproval.find().$promise);
+    dataCalls.push(User.getCurrent().$promise);
+    
+    
+    $q.all(dataCalls).then(function(results) {
+      deferred.resolve(getData(results));
+    },function(errors) {
+      deferred.reject(errors);
+    },function(updates) {
+      deferred.update(updates);
+    });
+    return deferred.promise;
+  }
+};
+
+
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

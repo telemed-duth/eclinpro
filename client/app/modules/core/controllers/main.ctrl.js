@@ -22,10 +22,11 @@ angular.module('com.module.core')
     
     User.getCurrent(function(result) {
       
-      User.roles({"id":result.id},function(roles){
-      result.roles=roles;
       $scope.currentUser = result;
       $rootScope.currentUser = result;
+      
+      User.roles({"id":result.id},function(roles){
+      result.roles=roles;
       if(roles[0]) {
           if(roles[0].name==='admin'){
             console.log('Admin asserted!');
