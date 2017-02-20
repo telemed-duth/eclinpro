@@ -681,7 +681,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'test',
-    'plato',
+    // 'plato',
     'ngconstant:production',
     'loopback_sdk_angular:production',
     'includeSource:dist',
