@@ -1,5 +1,6 @@
-export API_URL=http://$IP:$PORT/api
+export API_PORT=8081
+export API_URL=http://$HOST:$API_PORT/api
 export NODE_ENV=development
 export INIT_USERS=true
 grunt devbuild
-npm start
+PORT=$API_PORT npm start
